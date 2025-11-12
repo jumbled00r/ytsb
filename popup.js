@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 	const toggleSearchSuggestions = document.getElementById('toggleSearchSuggestions');
 	const toggleVoiceSearch = document.getElementById('toggleVoiceSearch');
+	const togglePremiumNag = document.getElementById('togglePremiumNag');
 	const toggleSurveys = document.getElementById('toggleSurveys');
 	const toggleSponsor = document.getElementById('toggleSponsor');
 	const toggleClip = document.getElementById('toggleClip');
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	browser.storage.local.get([
 		'blockSearchSuggestions',
 		'blockVoiceSearch',
+		'blockPremiumNag',
 		'blockSurveys',
 		'blockSponsor',
 		'blockClip', 
@@ -39,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		], (result) => {
 		toggleSearchSuggestions.checked = result.blockSearchSuggestions !== false;
 		toggleVoiceSearch.checked = result.blockVoiceSearch !== false;
+		togglePremiumNag.checked = result.blockPremiumNag !== false;
 		toggleSurveys.checked = result.blockSurveys !== false;
 		toggleSponsor.checked = result.blockSponsor !== false;
 		toggleClip.checked = result.blockClip !== false;
@@ -51,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function saveAndApplySettings() {
 		const blockSearchSuggestions = toggleSearchSuggestions.checked;
 		const blockVoiceSearch = toggleVoiceSearch.checked;
+		const blockPremiumNag = togglePremiumNag.checked;
 		const blockSurveys = toggleSurveys.checked;
 		const blockSponsor = toggleSponsor.checked;
 		const blockClip = toggleClip.checked;
@@ -62,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		browser.storage.local.set({
 			blockSearchSuggestions,
 			blockVoiceSearch,
+			blockPremiumNag,
 			blockSurveys,
 			blockSponsor,
 			blockClip,
@@ -76,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						action: "updateCSS",
 						blockSearchSuggestions: blockSearchSuggestions,
 						blockVoiceSearch: blockVoiceSearch,
+						blockPremiumNag: blockPremiumNag,
 						blockSurveys: blockSurveys,
 						blockSponsor: blockSponsor,
 						blockClip: blockClip,
@@ -91,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	toggleSearchSuggestions.addEventListener('change', saveAndApplySettings);
 	toggleVoiceSearch.addEventListener('change', saveAndApplySettings);
+	togglePremiumNag.addEventListener('change', saveAndApplySettings);
 	toggleSurveys.addEventListener('change', saveAndApplySettings);
 	toggleSponsor.addEventListener('change', saveAndApplySettings);
 	toggleClip.addEventListener('change', saveAndApplySettings);

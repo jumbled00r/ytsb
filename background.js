@@ -2,6 +2,7 @@ browser.runtime.onInstalled.addListener(() => {
 	browser.storage.local.set({
 		blockSearchSuggestions: true,
 		blockVoiceSearch: true,
+		blockPremiumNag: true,
 		blockSurveys: true,
 		blockSponsor: true,
 		blockClip: true,
@@ -17,6 +18,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 		browser.storage.local.get([
 			'blockSearchSuggestions',
 			'blockVoiceSearch',
+			'blockPremiumNag',
 			'blockSurveys',
 			'blockSponsor',
 			'blockClip',
@@ -29,6 +31,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 				action: "updateCSS",
 				blockSearchSuggestions: result.blockSearchSuggestions !== false,
 				blockVoiceSearch: result.blockVoiceSearch !== false,
+				blockPremiumNag: result.blockPremiumNag !== false,
 				blockSurveys: result.blockSurveys !== false,
 				blockSponsor: result.blockSponsor !== false,
 				blockClip: result.blockClip !== false,

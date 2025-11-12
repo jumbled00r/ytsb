@@ -1,5 +1,6 @@
 const SEARCH_SUGGESTIONS_STYLE_ID = 'yt-search-suggestions-block-style';
 const VOICE_SEARCH_STYLE_ID = 'yt-voice-search-block-style';
+const PREMIUM_NAG_STYLE_ID = 'yt-premium-nag-block-style';
 const SURVEYS_STYLE_ID = 'yt-surveys-block-style';
 const SPONSOR_STYLE_ID = 'yt-sponsor-block-style';
 const CLIP_STYLE_ID = 'yt-clip-block-style';
@@ -20,6 +21,13 @@ const VOICE_SEARCH_CSS = `
 }
 `;
 
+const PREMIUM_NAG_CSS = `
+yt-mealbar-promo-renderer,
+tp-yt-paper-toast#toast.toast-button.style-scope.yt-notification-action-renderer {
+    display: none !important;
+}
+`;
+
 const SURVEYS_CSS = `
 ytd-inline-survey-renderer {
 	display: none !important;
@@ -28,6 +36,11 @@ ytd-inline-survey-renderer {
 
 const SPONSOR_CSS = `
 button-view-model:has(button[aria-label="Thanks"]),
+ytd-creator-store-chip-bar-renderer,
+ytd-commerce-button-renderer,
+ytd-membership-item-renderer,
+yt-live-chat-paid-sticker-button-renderer,
+#chips-and-icon-grid,
 #merch-shelf,
 #ticket-shelf,
 #purchase-button,
@@ -86,6 +99,7 @@ function removeCSS(styleId) {
 function updateBlocking(
 	blockSearchSuggestions,
 	blockVoiceSearch,
+	blockPremiumNag,
 	blockSurveys,
 	blockSponsor,
 	blockClip,
@@ -104,6 +118,12 @@ function updateBlocking(
 		applyCSS(VOICE_SEARCH_CSS, VOICE_SEARCH_STYLE_ID);
 	} else {
 		removeCSS(VOICE_SEARCH_STYLE_ID);
+	}
+	
+	if (blockPremiumNag) {
+		applyCSS(PREMIUM_NAG_CSS, PREMIUM_NAG_STYLE_ID);
+	} else {
+		removeCSS(PREMIUM_NAG_STYLE_ID);
 	}
 
 	if (blockSurveys) {
@@ -154,6 +174,7 @@ browser.runtime.onMessage.addListener((request) => {
 		updateBlocking(
 			request.blockSearchSuggestions,
 			request.blockVoiceSearch,
+			request.blockPremiumNag,
 			request.blockSurveys,
 			request.blockSponsor,
 			request.blockClip,
@@ -167,6 +188,7 @@ browser.runtime.onMessage.addListener((request) => {
 browser.storage.local.get([
 	'blockSearchSuggestions', 
 	'blockVoiceSearch',
+	'blockPremiumNag',
 	'blockSurveys',
 	'blockSponsor',
 	'blockClip',
@@ -177,6 +199,7 @@ browser.storage.local.get([
 	], (result) => {
 	const blockSearchSuggestions = result.blockSearchSuggestions !== false;
 	const blockVoiceSearch = result.blockVoiceSearch !== false;
+	const blockPremiumNag = result.blockPremiumNag !== false;
 	const blockSurveys = result.blockSurveys !== false;
 	const blockSponsor = result.blockSponsor !== false;
 	const blockClip = result.blockClip !== false;
@@ -187,6 +210,7 @@ browser.storage.local.get([
 	updateBlocking(
 		blockSearchSuggestions,
 		blockVoiceSearch,
+		blockPremiumNag,
 		blockSurveys,
 		blockSponsor,
 		blockClip,
