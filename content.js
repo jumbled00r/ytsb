@@ -1,6 +1,9 @@
 const SEARCH_SUGGESTIONS_STYLE_ID = 'yt-search-suggestions-block-style';
 const VOICE_SEARCH_STYLE_ID = 'yt-voice-search-block-style';
 const SURVEYS_STYLE_ID = 'yt-surveys-block-style';
+const SPONSOR_STYLE_ID = 'yt-sponsor-block-style';
+const CLIP_STYLE_ID = 'yt-clip-block-style';
+const COMMENTS_STYLE_ID = 'yt-comments-block-style';
 const SHORTS_LINK_STYLE_ID = 'yt-shorts-link-block-style';
 const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'yt-shorts-homepage-suggestions-block-style';
 const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'yt-shorts-session-suggestions-block-style';
@@ -19,6 +22,28 @@ const VOICE_SEARCH_CSS = `
 
 const SURVEYS_CSS = `
 ytd-inline-survey-renderer {
+	display: none !important;
+}
+`;
+
+const SPONSOR_CSS = `
+button-view-model:has(button[aria-label="Thanks"]),
+#merch-shelf,
+#ticket-shelf,
+#purchase-button,
+#sponsor-button {
+    display: none !important;
+}
+`;
+
+const CLIP_CSS = `
+button-view-model:has(button[aria-label="Clip"]) {
+    display: none !important;
+}
+`;
+
+const COMMENTS_CSS = `
+ytd-comments {
 	display: none !important;
 }
 `;
@@ -62,6 +87,9 @@ function updateBlocking(
 	blockSearchSuggestions,
 	blockVoiceSearch,
 	blockSurveys,
+	blockSponsor,
+	blockClip,
+	blockComments,
 	blockShortsLink,
 	blockShortsHomepageSuggestions,
 	blockShortsSessionSuggestions) {
@@ -82,6 +110,24 @@ function updateBlocking(
 		applyCSS(SURVEYS_CSS, SURVEYS_STYLE_ID);
 	} else {
 		removeCSS(SURVEYS_STYLE_ID);
+	}
+
+	if (blockSponsor) {
+		applyCSS(SPONSOR_CSS, SPONSOR_STYLE_ID);
+	} else {
+		removeCSS(SPONSOR_STYLE_ID);
+	}
+
+	if (blockClip) {
+		applyCSS(CLIP_CSS, CLIP_STYLE_ID);
+	} else {
+		removeCSS(CLIP_STYLE_ID);
+	}
+
+	if (blockComments) {
+		applyCSS(COMMENTS_CSS, COMMENTS_STYLE_ID);
+	} else {
+		removeCSS(COMMENTS_STYLE_ID);
 	}
 
 	if (blockShortsLink) {
@@ -109,6 +155,9 @@ browser.runtime.onMessage.addListener((request) => {
 			request.blockSearchSuggestions,
 			request.blockVoiceSearch,
 			request.blockSurveys,
+			request.blockSponsor,
+			request.blockClip,
+			request.blockComments,
 			request.blockShortsLink,
 			request.blockShortsHomepageSuggestions,
 			request.blockShortsSessionSuggestions);
@@ -119,6 +168,9 @@ browser.storage.local.get([
 	'blockSearchSuggestions', 
 	'blockVoiceSearch',
 	'blockSurveys',
+	'blockSponsor',
+	'blockClip',
+	'blockComments',
 	'blockShortsLink', 
 	'blockShortsHomepageSuggestions',
 	'blockShortsSessionSuggestions'
@@ -126,6 +178,9 @@ browser.storage.local.get([
 	const blockSearchSuggestions = result.blockSearchSuggestions !== false;
 	const blockVoiceSearch = result.blockVoiceSearch !== false;
 	const blockSurveys = result.blockSurveys !== false;
+	const blockSponsor = result.blockSponsor !== false;
+	const blockClip = result.blockClip !== false;
+	const blockComments = result.blockComments !== false;
 	const blockShortsLink = result.blockShortsLink !== false;
 	const blockShortsHomepageSuggestions = result.blockShortsHomepageSuggestions !== false;
 	const blockShortsSessionSuggestions = result.blockShortsSessionSuggestions !== false;
@@ -133,6 +188,9 @@ browser.storage.local.get([
 		blockSearchSuggestions,
 		blockVoiceSearch,
 		blockSurveys,
+		blockSponsor,
+		blockClip,
+		blockComments,
 		blockShortsLink,
 		blockShortsHomepageSuggestions,
 		blockShortsSessionSuggestions);
