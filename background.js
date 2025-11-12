@@ -1,3 +1,5 @@
+importScripts('shim.js');
+
 browser.runtime.onInstalled.addListener(() => {
 	browser.storage.local.set({
 		blockSearchSuggestions: true,
@@ -35,7 +37,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 				blockSurveys: result.blockSurveys !== false,
 				blockSponsor: result.blockSponsor !== false,
 				blockClip: result.blockClip !== false,
-				blockComments: result.blockComments !== false,
+				blockComments: result.blockComments === true,
 				blockShortsLink: result.blockShortsLink !== false,
 				blockShortsHomepageSuggestions: result.blockShortsHomepageSuggestions !== false,
 				blockShortsSessionSuggestions: result.blockShortsSessionSuggestions !== false

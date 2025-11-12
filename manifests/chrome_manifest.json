@@ -1,0 +1,58 @@
+{
+	"manifest_version": 3,
+	"name": "YouTube Search Suggestions Blocker",
+	"version": "1.28",
+	"description": "Blocks YouTube search suggestions.",
+	"homepage_url": "https://github.com/jumbled00r/ytsb",
+	"permissions": [
+		"storage",
+		"scripting"
+	],
+	"host_permissions": [
+		"*://*.youtube.com/*"
+	],
+	"content_scripts": [
+		{
+			"matches": ["*://*.youtube.com/*"],
+			"js": ["shim.js", "content.js"],
+			"run_at": "document_start"
+		}
+	],
+	"background": {
+        "service_worker": "background.js"
+    },
+	"icons": {
+		"16": "icons/sx-16.png",
+		"32": "icons/sx-32.png",
+		"48": "icons/sx-48.png",
+		"64": "icons/sx-64.png",
+		"96": "icons/sx-96.png",
+		"128": "icons/sx-128.png",
+		"256": "icons/sx-256.png",
+		"512": "icons/sx-512.png"
+	},
+	"action": {
+		"default_title": "YouTube Suggestions Blocker",
+		"default_popup": "popup.html",
+		"default_icon": {
+			"16": "icons/sx-16.png",
+			"32": "icons/sx-32.png",
+			"48": "icons/sx-48.png",
+			"64": "icons/sx-64.png",
+			"96": "icons/sx-96.png",
+			"128": "icons/sx-128.png",
+			"256": "icons/sx-256.png",
+			"512": "icons/sx-512.png"
+		}
+	},
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "{efbcef5b-811e-4558-ba04-944d8bc3a630}",
+			"data_collection_permissions": {
+				"required": [
+					"none"
+				]
+			}
+		}
+	}
+}

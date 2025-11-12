@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
 		updateBackground(event.matches);
 	});
+	
+	document.body.classList.add('no-transition');
 
 	browser.storage.local.get([
 		'blockSearchSuggestions',
@@ -45,10 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		toggleSurveys.checked = result.blockSurveys !== false;
 		toggleSponsor.checked = result.blockSponsor !== false;
 		toggleClip.checked = result.blockClip !== false;
-		toggleComments.checked = result.blockComments !== false;
+		toggleComments.checked = result.blockComments === true;
 		toggleShortsLink.checked = result.blockShortsLink !== false;
 		toggleShortsHomepageSuggestions.checked = result.blockShortsHomepageSuggestions !== false;
 		toggleShortsSessionSuggestions.checked = result.blockShortsSessionSuggestions !== false;
+
+		setTimeout(() => {
+			document.body.classList.remove('no-transition');
+		}, 100);
 	});
 
 	function saveAndApplySettings() {

@@ -203,7 +203,7 @@ browser.storage.local.get([
 	const blockSurveys = result.blockSurveys !== false;
 	const blockSponsor = result.blockSponsor !== false;
 	const blockClip = result.blockClip !== false;
-	const blockComments = result.blockComments !== false;
+	const blockComments = result.blockComments === true;
 	const blockShortsLink = result.blockShortsLink !== false;
 	const blockShortsHomepageSuggestions = result.blockShortsHomepageSuggestions !== false;
 	const blockShortsSessionSuggestions = result.blockShortsSessionSuggestions !== false;

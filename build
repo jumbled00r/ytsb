@@ -1,0 +1,18 @@
+#!/bin/sh
+if [[ "$1" = "firefox" ]]; then
+	cp -v manifests/firefox_manifest.json manifest.json
+elif [[ "$1" = "chrome" ]]; then
+	cp -v manifests/chrome_manifest.json manifest.json
+elif [[ "$1" = "clean" ]]; then
+	rm -rf web-ext-artifacts
+	rm -f manifest.json
+	exit 0
+else
+	echo "No build target."
+	exit 1
+fi
+
+web-ext build \
+	--overwrite-dest \
+	--ignore-files \
+		"build" "LICENSE" "README.md" "manifests"
