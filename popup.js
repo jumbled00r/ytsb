@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 	const toggleSearchSuggestions = document.getElementById('toggleSearchSuggestions');
 	const toggleVoiceSearch = document.getElementById('toggleVoiceSearch');
+	const toggleAIrec = document.getElementById('toggleAIrec');
+	const togglePlayables = document.getElementById('togglePlayables');
 	const togglePremiumNag = document.getElementById('togglePremiumNag');
 	const toggleSurveys = document.getElementById('toggleSurveys');
 	const toggleSponsor = document.getElementById('toggleSponsor');
@@ -11,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		document.getElementById('toggleShortsHomepageSuggestions');
 	const toggleShortsSessionSuggestions = 
 		document.getElementById('toggleShortsSessionSuggestions');
+	const toggleShortsSearchSuggestions = 
+		document.getElementById('toggleShortsSearchSuggestions');	
 
 	function updateBackground(isDark) {
 		document.body.style.setProperty('--background-color', isDark ? '#202020' : '#f0f0f0');
@@ -32,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	browser.storage.local.get([
 		'blockSearchSuggestions',
 		'blockVoiceSearch',
+		'blockAIrec',
+		'blockPlayables',
 		'blockPremiumNag',
 		'blockSurveys',
 		'blockSponsor',
@@ -39,10 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		'blockComments', 
 		'blockShortsLink',
 		'blockShortsHomepageSuggestions',
-		'blockShortsSessionSuggestions'
+		'blockShortsSessionSuggestions',
+		'blockShortsSearchSuggestions'
 		], (result) => {
 		toggleSearchSuggestions.checked = result.blockSearchSuggestions !== false;
 		toggleVoiceSearch.checked = result.blockVoiceSearch !== false;
+		toggleAIrec.checked = result.blockAIrec !== false;
+		togglePlayables.checked = result.blockPlayables !== false;
 		togglePremiumNag.checked = result.blockPremiumNag !== false;
 		toggleSurveys.checked = result.blockSurveys !== false;
 		toggleSponsor.checked = result.blockSponsor !== false;
@@ -51,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		toggleShortsLink.checked = result.blockShortsLink !== false;
 		toggleShortsHomepageSuggestions.checked = result.blockShortsHomepageSuggestions !== false;
 		toggleShortsSessionSuggestions.checked = result.blockShortsSessionSuggestions !== false;
+		toggleShortsSearchSuggestions.checked = result.blockShortsSearchSuggestions !== false;
 
 		setTimeout(() => {
 			document.body.classList.remove('no-transition');
@@ -60,6 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	function saveAndApplySettings() {
 		const blockSearchSuggestions = toggleSearchSuggestions.checked;
 		const blockVoiceSearch = toggleVoiceSearch.checked;
+		const blockAIrec = toggleAIrec.checked;
+		const blockPlayables = togglePlayables.checked;
 		const blockPremiumNag = togglePremiumNag.checked;
 		const blockSurveys = toggleSurveys.checked;
 		const blockSponsor = toggleSponsor.checked;
@@ -68,10 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		const blockShortsLink = toggleShortsLink.checked;
 		const blockShortsHomepageSuggestions = toggleShortsHomepageSuggestions.checked;
 		const blockShortsSessionSuggestions = toggleShortsSessionSuggestions.checked;
+		const blockShortsSearchSuggestions = toggleShortsSearchSuggestions.checked;
 
 		browser.storage.local.set({
 			blockSearchSuggestions,
 			blockVoiceSearch,
+			blockAIrec,
+			blockPlayables,
 			blockPremiumNag,
 			blockSurveys,
 			blockSponsor,
@@ -79,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			blockComments,
 			blockShortsLink,
 			blockShortsHomepageSuggestions,
-			blockShortsSessionSuggestions
+			blockShortsSessionSuggestions,
+			blockShortsSearchSuggestions
 			}, () => {
 			browser.tabs.query({url: "*://*.youtube.com/*"}, (tabs) => {
 				tabs.forEach((tab) => {
@@ -87,6 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						action: "updateCSS",
 						blockSearchSuggestions: blockSearchSuggestions,
 						blockVoiceSearch: blockVoiceSearch,
+						blockAIrec: blockAIrec,
+						blockPlayables: blockPlayables,
 						blockPremiumNag: blockPremiumNag,
 						blockSurveys: blockSurveys,
 						blockSponsor: blockSponsor,
@@ -94,7 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						blockComments: blockComments,
 						blockShortsLink: blockShortsLink,
 						blockShortsHomepageSuggestions: blockShortsHomepageSuggestions,
-						blockShortsSessionSuggestions: blockShortsSessionSuggestions
+						blockShortsSessionSuggestions: blockShortsSessionSuggestions,
+						blockShortsSearchSuggestions: blockShortsSearchSuggestions
 					});
 				});
 			});
@@ -103,6 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	toggleSearchSuggestions.addEventListener('change', saveAndApplySettings);
 	toggleVoiceSearch.addEventListener('change', saveAndApplySettings);
+	toggleAIrec.addEventListener('change', saveAndApplySettings);
+	togglePlayables.addEventListener('change', saveAndApplySettings);
 	togglePremiumNag.addEventListener('change', saveAndApplySettings);
 	toggleSurveys.addEventListener('change', saveAndApplySettings);
 	toggleSponsor.addEventListener('change', saveAndApplySettings);
@@ -111,4 +132,5 @@ document.addEventListener('DOMContentLoaded', () => {
 	toggleShortsLink.addEventListener('change', saveAndApplySettings);
 	toggleShortsHomepageSuggestions.addEventListener('change', saveAndApplySettings);
 	toggleShortsSessionSuggestions.addEventListener('change', saveAndApplySettings);
+	toggleShortsSearchSuggestions.addEventListener('change', saveAndApplySettings);
 });

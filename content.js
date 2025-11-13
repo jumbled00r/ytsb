@@ -1,5 +1,7 @@
 const SEARCH_SUGGESTIONS_STYLE_ID = 'yt-search-suggestions-block-style';
 const VOICE_SEARCH_STYLE_ID = 'yt-voice-search-block-style';
+const AI_REC_STYLE_ID = 'yt-ai-rec-block-style';
+const PLAYABLES_STYLE_ID = 'yt-playables-block-style';
 const PREMIUM_NAG_STYLE_ID = 'yt-premium-nag-block-style';
 const SURVEYS_STYLE_ID = 'yt-surveys-block-style';
 const SPONSOR_STYLE_ID = 'yt-sponsor-block-style';
@@ -8,6 +10,7 @@ const COMMENTS_STYLE_ID = 'yt-comments-block-style';
 const SHORTS_LINK_STYLE_ID = 'yt-shorts-link-block-style';
 const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'yt-shorts-homepage-suggestions-block-style';
 const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'yt-shorts-session-suggestions-block-style';
+const SHORTS_SEARCH_SUGGESTIONS_STYLE_ID = 'yt-shorts-search-suggestions-blocker-style';
 
 const SEARCH_SUGGESTIONS_CSS = `
 div.ytSearchboxComponentSuggestionsContainer {
@@ -21,10 +24,22 @@ const VOICE_SEARCH_CSS = `
 }
 `;
 
+const AI_REC_CSS = `
+ytd-rich-section-renderer:has(ytd-talk-to-recs-flow-renderer) {
+    display: none !important;
+}
+`
+
+const PLAYABLES_CSS = `
+ytd-rich-shelf-renderer:has(a[href="/playables"]) {
+	display: none !important;
+}
+`;
+
 const PREMIUM_NAG_CSS = `
 yt-mealbar-promo-renderer,
 tp-yt-paper-toast#toast.toast-button.style-scope.yt-notification-action-renderer {
-    display: none !important;
+	display: none !important;
 }
 `;
 
@@ -45,13 +60,13 @@ yt-live-chat-paid-sticker-button-renderer,
 #ticket-shelf,
 #purchase-button,
 #sponsor-button {
-    display: none !important;
+	display: none !important;
 }
 `;
 
 const CLIP_CSS = `
 button-view-model:has(button[aria-label="Clip"]) {
-    display: none !important;
+	display: none !important;
 }
 `;
 
@@ -79,6 +94,12 @@ ytd-reel-shelf-renderer {
 }
 `;
 
+const SHORTS_SEARCH_SUGGESTIONS_CSS = `
+grid-shelf-view-model:has(ytm-shorts-lockup-view-model) {
+    display: none !important;
+}
+`;
+
 function applyCSS(css, styleId) {
 	let style = document.getElementById(styleId);
 	if (!style) {
@@ -99,6 +120,8 @@ function removeCSS(styleId) {
 function updateBlocking(
 	blockSearchSuggestions,
 	blockVoiceSearch,
+	blockAIrec,
+	blockPlayables,
 	blockPremiumNag,
 	blockSurveys,
 	blockSponsor,
@@ -106,7 +129,8 @@ function updateBlocking(
 	blockComments,
 	blockShortsLink,
 	blockShortsHomepageSuggestions,
-	blockShortsSessionSuggestions) {
+	blockShortsSessionSuggestions,
+	blockShortsSearchSuggestions) {
 
 	if (blockSearchSuggestions) {
 		applyCSS(SEARCH_SUGGESTIONS_CSS, SEARCH_SUGGESTIONS_STYLE_ID);
@@ -120,6 +144,18 @@ function updateBlocking(
 		removeCSS(VOICE_SEARCH_STYLE_ID);
 	}
 	
+	if (blockAIrec) {
+		applyCSS(AI_REC_CSS, AI_REC_STYLE_ID);
+	} else {
+		removeCSS(AI_REC_STYLE_ID);
+	}
+	
+	if (blockPlayables) {
+		applyCSS(PLAYABLES_CSS, PLAYABLES_STYLE_ID);
+	} else {
+		removeCSS(PLAYABLES_STYLE_ID);
+	}
+
 	if (blockPremiumNag) {
 		applyCSS(PREMIUM_NAG_CSS, PREMIUM_NAG_STYLE_ID);
 	} else {
@@ -167,6 +203,12 @@ function updateBlocking(
 	} else {
 		removeCSS(SHORTS_SESSION_SUGGESTIONS_STYLE_ID);
 	}
+
+	if (blockShortsSearchSuggestions) {
+		applyCSS(SHORTS_SEARCH_SUGGESTIONS_CSS, SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
+	} else {
+		removeCSS(SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
+	}
 }
 
 browser.runtime.onMessage.addListener((request) => {
@@ -174,6 +216,8 @@ browser.runtime.onMessage.addListener((request) => {
 		updateBlocking(
 			request.blockSearchSuggestions,
 			request.blockVoiceSearch,
+			request.blockAIrec,
+			request.blockPlayables,
 			request.blockPremiumNag,
 			request.blockSurveys,
 			request.blockSponsor,
@@ -181,13 +225,16 @@ browser.runtime.onMessage.addListener((request) => {
 			request.blockComments,
 			request.blockShortsLink,
 			request.blockShortsHomepageSuggestions,
-			request.blockShortsSessionSuggestions);
+			request.blockShortsSessionSuggestions,
+			request.blockShortsSearchSuggestions);
 	}
 });
 
 browser.storage.local.get([
 	'blockSearchSuggestions', 
 	'blockVoiceSearch',
+	'blockAIrec',
+	'blockPlayables',
 	'blockPremiumNag',
 	'blockSurveys',
 	'blockSponsor',
@@ -195,10 +242,13 @@ browser.storage.local.get([
 	'blockComments',
 	'blockShortsLink', 
 	'blockShortsHomepageSuggestions',
-	'blockShortsSessionSuggestions'
+	'blockShortsSessionSuggestions',
+	'blockShortsSearchSuggestions'
 	], (result) => {
 	const blockSearchSuggestions = result.blockSearchSuggestions !== false;
 	const blockVoiceSearch = result.blockVoiceSearch !== false;
+	const blockPlayables = result.blockPlayables !== false;
+	const blockAIrec = result.blockAIrec !== false;
 	const blockPremiumNag = result.blockPremiumNag !== false;
 	const blockSurveys = result.blockSurveys !== false;
 	const blockSponsor = result.blockSponsor !== false;
@@ -207,9 +257,12 @@ browser.storage.local.get([
 	const blockShortsLink = result.blockShortsLink !== false;
 	const blockShortsHomepageSuggestions = result.blockShortsHomepageSuggestions !== false;
 	const blockShortsSessionSuggestions = result.blockShortsSessionSuggestions !== false;
+	const blockShortsSearchSuggestions = result.blockShortsSearchSuggestions !== false;
 	updateBlocking(
 		blockSearchSuggestions,
 		blockVoiceSearch,
+		blockAIrec,
+		blockPlayables,
 		blockPremiumNag,
 		blockSurveys,
 		blockSponsor,
@@ -217,5 +270,6 @@ browser.storage.local.get([
 		blockComments,
 		blockShortsLink,
 		blockShortsHomepageSuggestions,
-		blockShortsSessionSuggestions);
+		blockShortsSessionSuggestions,
+		blockShortsSearchSuggestions);
 	});
