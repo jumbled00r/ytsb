@@ -26,7 +26,7 @@ const VOICE_SEARCH_CSS = `
 
 const AI_REC_CSS = `
 ytd-rich-section-renderer:has(ytd-talk-to-recs-flow-renderer) {
-    display: none !important;
+	display: none !important;
 }
 `
 
@@ -78,7 +78,7 @@ ytd-comments {
 
 const SHORTS_LINK_CSS = `
 a[title="Shorts"] {
-  display: none !important;
+	display: none !important;
 }
 `;
 
@@ -96,7 +96,7 @@ ytd-reel-shelf-renderer {
 
 const SHORTS_SEARCH_SUGGESTIONS_CSS = `
 grid-shelf-view-model:has(ytm-shorts-lockup-view-model) {
-    display: none !important;
+	display: none !important;
 }
 `;
 
