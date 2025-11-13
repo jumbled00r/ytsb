@@ -33,7 +33,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 			'blockShortsLink',
 			'blockShortsHomepageSuggestions',
 			'blockShortsSessionSuggestions',
-			'blockShortsSearchSuggestions
+			'blockShortsSearchSuggestions'
 			], (result) => {
 			browser.tabs.sendMessage(tabId, {
 				action: "updateCSS",
