@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 if [[ "$1" = "firefox" ]]; then
 	cp -v manifests/firefox_manifest.json manifest.json
 elif [[ "$1" = "chrome" ]]; then
