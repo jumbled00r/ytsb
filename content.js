@@ -7,6 +7,7 @@ const SURVEYS_STYLE_ID = 'yt-surveys-block-style';
 const SPONSOR_STYLE_ID = 'yt-sponsor-block-style';
 const CLIP_STYLE_ID = 'yt-clip-block-style';
 const COMMENTS_STYLE_ID = 'yt-comments-block-style';
+const RELATED_SESSION_SUGGESTIONS_STYLE_ID = 'yt-related-session-suggestions-blocker-style'
 const SHORTS_LINK_STYLE_ID = 'yt-shorts-link-block-style';
 const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'yt-shorts-homepage-suggestions-block-style';
 const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'yt-shorts-session-suggestions-block-style';
@@ -76,6 +77,12 @@ ytd-comments {
 }
 `;
 
+const RELATED_SESSION_SUGGESTIONS_CSS = `
+#secondary.style-scope.ytd-watch-flexy {
+	display: none !important;
+}
+`;
+
 const SHORTS_LINK_CSS = `
 a[title="Shorts"] {
 	display: none !important;
@@ -127,6 +134,7 @@ function updateBlocking(
 	blockSponsor,
 	blockClip,
 	blockComments,
+	blockRelatedSessionSuggestions,
 	blockShortsLink,
 	blockShortsHomepageSuggestions,
 	blockShortsSessionSuggestions,
@@ -185,6 +193,12 @@ function updateBlocking(
 	} else {
 		removeCSS(COMMENTS_STYLE_ID);
 	}
+	
+	if (blockRelatedSessionSuggestions) {
+		applyCSS(RELATED_SESSION_SUGGESTIONS_CSS, RELATED_SESSION_SUGGESTIONS_STYLE_ID);
+	} else {
+		removeCSS(RELATED_SESSION_SUGGESTIONS_STYLE_ID);
+	}
 
 	if (blockShortsLink) {
 		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
@@ -223,6 +237,7 @@ browser.runtime.onMessage.addListener((request) => {
 			request.blockSponsor,
 			request.blockClip,
 			request.blockComments,
+			request.blockRelatedSessionSuggestions,
 			request.blockShortsLink,
 			request.blockShortsHomepageSuggestions,
 			request.blockShortsSessionSuggestions,
@@ -240,6 +255,7 @@ browser.storage.local.get([
 	'blockSponsor',
 	'blockClip',
 	'blockComments',
+	'blockRelatedSessionSuggestions',
 	'blockShortsLink', 
 	'blockShortsHomepageSuggestions',
 	'blockShortsSessionSuggestions',
@@ -254,6 +270,7 @@ browser.storage.local.get([
 	const blockSponsor = result.blockSponsor !== false;
 	const blockClip = result.blockClip !== false;
 	const blockComments = result.blockComments === true;
+	const blockRelatedSessionSuggestions = result.blockRelatedSessionSuggestions === true;
 	const blockShortsLink = result.blockShortsLink !== false;
 	const blockShortsHomepageSuggestions = result.blockShortsHomepageSuggestions !== false;
 	const blockShortsSessionSuggestions = result.blockShortsSessionSuggestions !== false;
@@ -268,6 +285,7 @@ browser.storage.local.get([
 		blockSponsor,
 		blockClip,
 		blockComments,
+		blockRelatedSessionSuggestions,
 		blockShortsLink,
 		blockShortsHomepageSuggestions,
 		blockShortsSessionSuggestions,

@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const toggleSponsor = document.getElementById('toggleSponsor');
 	const toggleClip = document.getElementById('toggleClip');
 	const toggleComments = document.getElementById('toggleComments');
+	const toggleRelatedSessionSuggestions = 
+		document.getElementById('toggleRelatedSessionSuggestions');
 	const toggleShortsLink = document.getElementById('toggleShortsLink');
 	const toggleShortsHomepageSuggestions = 
 		document.getElementById('toggleShortsHomepageSuggestions');
@@ -42,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		'blockSurveys',
 		'blockSponsor',
 		'blockClip', 
-		'blockComments', 
+		'blockComments',
+		'blockRelatedSessionSuggestions',
 		'blockShortsLink',
 		'blockShortsHomepageSuggestions',
 		'blockShortsSessionSuggestions',
@@ -57,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		toggleSponsor.checked = result.blockSponsor !== false;
 		toggleClip.checked = result.blockClip !== false;
 		toggleComments.checked = result.blockComments === true;
+		toggleRelatedSessionSuggestions.checked = result.blockRelatedSessionSuggestions === true;
 		toggleShortsLink.checked = result.blockShortsLink !== false;
 		toggleShortsHomepageSuggestions.checked = result.blockShortsHomepageSuggestions !== false;
 		toggleShortsSessionSuggestions.checked = result.blockShortsSessionSuggestions !== false;
@@ -77,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const blockSponsor = toggleSponsor.checked;
 		const blockClip = toggleClip.checked;
 		const blockComments = toggleComments.checked;
+		const blockRelatedSessionSuggestions = toggleRelatedSessionSuggestions.checked;
 		const blockShortsLink = toggleShortsLink.checked;
 		const blockShortsHomepageSuggestions = toggleShortsHomepageSuggestions.checked;
 		const blockShortsSessionSuggestions = toggleShortsSessionSuggestions.checked;
@@ -92,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			blockSponsor,
 			blockClip,
 			blockComments,
+			blockRelatedSessionSuggestions,
 			blockShortsLink,
 			blockShortsHomepageSuggestions,
 			blockShortsSessionSuggestions,
@@ -110,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						blockSponsor: blockSponsor,
 						blockClip: blockClip,
 						blockComments: blockComments,
+						blockRelatedSessionSuggestions: blockRelatedSessionSuggestions,
 						blockShortsLink: blockShortsLink,
 						blockShortsHomepageSuggestions: blockShortsHomepageSuggestions,
 						blockShortsSessionSuggestions: blockShortsSessionSuggestions,
@@ -129,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	toggleSponsor.addEventListener('change', saveAndApplySettings);
 	toggleClip.addEventListener('change', saveAndApplySettings);
 	toggleComments.addEventListener('change', saveAndApplySettings);
+	toggleRelatedSessionSuggestions.addEventListener('change', saveAndApplySettings);
 	toggleShortsLink.addEventListener('change', saveAndApplySettings);
 	toggleShortsHomepageSuggestions.addEventListener('change', saveAndApplySettings);
 	toggleShortsSessionSuggestions.addEventListener('change', saveAndApplySettings);
