@@ -1,13 +1,15 @@
 const SEARCH_SUGGESTIONS_STYLE_ID = 'yt-search-suggestions-block-style';
 const VOICE_SEARCH_STYLE_ID = 'yt-voice-search-block-style';
 const AI_REC_STYLE_ID = 'yt-ai-rec-block-style';
+const AI_SESSION_ASK_STYLE_ID = 'yt-ai-session-ask-block-style';
+const AI_SESSION_VIDEO_SUMMARY_STYLE_ID = 'yt-ai-session-video-summary-block-style';
 const PLAYABLES_STYLE_ID = 'yt-playables-block-style';
 const PREMIUM_NAG_STYLE_ID = 'yt-premium-nag-block-style';
 const SURVEYS_STYLE_ID = 'yt-surveys-block-style';
 const SPONSOR_STYLE_ID = 'yt-sponsor-block-style';
 const CLIP_STYLE_ID = 'yt-clip-block-style';
 const COMMENTS_STYLE_ID = 'yt-comments-block-style';
-const RELATED_SESSION_SUGGESTIONS_STYLE_ID = 'yt-related-session-suggestions-block-style'
+const RELATED_SESSION_SUGGESTIONS_STYLE_ID = 'yt-related-session-suggestions-block-style';
 const SHORTS_LINK_STYLE_ID = 'yt-shorts-link-block-style';
 const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'yt-shorts-homepage-suggestions-block-style';
 const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'yt-shorts-session-suggestions-block-style';
@@ -29,6 +31,18 @@ const AI_REC_CSS = `
 yt-talk-to-recs-view-model,
 ytd-rich-section-renderer:has(ytd-talk-to-recs-flow-renderer) {
 	display: none !important;
+}
+`
+
+const AI_SESSION_ASK_CSS = `
+yt-button-view-model:has(button[aria-label="Ask"]) {
+	display: none !important;
+}
+`;
+
+const AI_SESSION_VIDEO_SUMMARY_CSS = `
+ytd-expandable-metadata-renderer[has-video-summary] {
+    display: none !important;
 }
 `
 
@@ -129,6 +143,8 @@ function updateBlocking(
 	blockSearchSuggestions,
 	blockVoiceSearch,
 	blockAIrec,
+	blockAIsessionAsk,
+	blockAIsessionVideoSummary,
 	blockPlayables,
 	blockPremiumNag,
 	blockSurveys,
@@ -158,7 +174,19 @@ function updateBlocking(
 	} else {
 		removeCSS(AI_REC_STYLE_ID);
 	}
+
+	if (blockAIsessionAsk) {
+		applyCSS(AI_SESSION_ASK_CSS, AI_SESSION_ASK_STYLE_ID);
+	} else {
+		removeCSS(AI_SESSION_ASK_STYLE_ID);
+	}
 	
+	if (blockAIsessionVideoSummary) {
+		applyCSS(AI_SESSION_VIDEO_SUMMARY_CSS, AI_SESSION_VIDEO_SUMMARY_STYLE_ID);
+	} else {
+		removeCSS(AI_SESSION_VIDEO_SUMMARY_STYLE_ID);
+	}
+
 	if (blockPlayables) {
 		applyCSS(PLAYABLES_CSS, PLAYABLES_STYLE_ID);
 	} else {
@@ -232,6 +260,8 @@ browser.runtime.onMessage.addListener((request) => {
 			request.blockSearchSuggestions,
 			request.blockVoiceSearch,
 			request.blockAIrec,
+			request.blockAIsessionAsk,
+			request.blockAIsessionVideoSummary,
 			request.blockPlayables,
 			request.blockPremiumNag,
 			request.blockSurveys,
@@ -250,6 +280,8 @@ browser.storage.local.get([
 	'blockSearchSuggestions', 
 	'blockVoiceSearch',
 	'blockAIrec',
+	'blockAIsessionAsk',
+	'blockAIsessionVideoSummary',
 	'blockPlayables',
 	'blockPremiumNag',
 	'blockSurveys',
@@ -266,6 +298,8 @@ browser.storage.local.get([
 	const blockVoiceSearch = result.blockVoiceSearch !== false;
 	const blockPlayables = result.blockPlayables !== false;
 	const blockAIrec = result.blockAIrec !== false;
+	const blockAIsessionAsk = result.blockAIsessionAsk !== false;
+	const blockAIsessionVideoSummary = result.blockAIsessionVideoSummary !== false;
 	const blockPremiumNag = result.blockPremiumNag !== false;
 	const blockSurveys = result.blockSurveys !== false;
 	const blockSponsor = result.blockSponsor !== false;
@@ -280,6 +314,8 @@ browser.storage.local.get([
 		blockSearchSuggestions,
 		blockVoiceSearch,
 		blockAIrec,
+		blockAIsessionAsk,
+		blockAIsessionVideoSummary,
 		blockPlayables,
 		blockPremiumNag,
 		blockSurveys,

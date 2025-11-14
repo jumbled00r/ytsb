@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const toggleSearchSuggestions = document.getElementById('toggleSearchSuggestions');
 	const toggleVoiceSearch = document.getElementById('toggleVoiceSearch');
 	const toggleAIrec = document.getElementById('toggleAIrec');
+	const toggleAIsessionAsk = document.getElementById('toggleAIsessionAsk');
+	const toggleAIsessionVideoSummary = document.getElementById('toggleAIsessionVideoSummary');
 	const togglePlayables = document.getElementById('togglePlayables');
 	const togglePremiumNag = document.getElementById('togglePremiumNag');
 	const toggleSurveys = document.getElementById('toggleSurveys');
@@ -39,11 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		'blockSearchSuggestions',
 		'blockVoiceSearch',
 		'blockAIrec',
+		'blockAIsessionAsk',
+		'blockAIsessionVideoSummary',
 		'blockPlayables',
 		'blockPremiumNag',
 		'blockSurveys',
 		'blockSponsor',
-		'blockClip', 
+		'blockClip',
 		'blockComments',
 		'blockRelatedSessionSuggestions',
 		'blockShortsLink',
@@ -54,6 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		toggleSearchSuggestions.checked = result.blockSearchSuggestions !== false;
 		toggleVoiceSearch.checked = result.blockVoiceSearch !== false;
 		toggleAIrec.checked = result.blockAIrec !== false;
+		toggleAIsessionAsk.checked = result.blockAIsessionAsk !== false;
+		toggleAIsessionVideoSummary.checked = result.blockAIsessionVideoSummary !== false;
 		togglePlayables.checked = result.blockPlayables !== false;
 		togglePremiumNag.checked = result.blockPremiumNag !== false;
 		toggleSurveys.checked = result.blockSurveys !== false;
@@ -75,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		const blockSearchSuggestions = toggleSearchSuggestions.checked;
 		const blockVoiceSearch = toggleVoiceSearch.checked;
 		const blockAIrec = toggleAIrec.checked;
+		const blockAIsessionAsk = toggleAIsessionAsk.checked;
+		const blockAIsessionVideoSummary = toggleAIsessionVideoSummary.checked;
 		const blockPlayables = togglePlayables.checked;
 		const blockPremiumNag = togglePremiumNag.checked;
 		const blockSurveys = toggleSurveys.checked;
@@ -91,6 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			blockSearchSuggestions,
 			blockVoiceSearch,
 			blockAIrec,
+			blockAIsessionAsk,
+			blockAIsessionVideoSummary,
 			blockPlayables,
 			blockPremiumNag,
 			blockSurveys,
@@ -110,6 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						blockSearchSuggestions: blockSearchSuggestions,
 						blockVoiceSearch: blockVoiceSearch,
 						blockAIrec: blockAIrec,
+						blockAIsessionAsk: blockAIsessionAsk,
+						blockAIsessionVideoSummary: blockAIsessionVideoSummary,
 						blockPlayables: blockPlayables,
 						blockPremiumNag: blockPremiumNag,
 						blockSurveys: blockSurveys,
@@ -130,6 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	toggleSearchSuggestions.addEventListener('change', saveAndApplySettings);
 	toggleVoiceSearch.addEventListener('change', saveAndApplySettings);
 	toggleAIrec.addEventListener('change', saveAndApplySettings);
+	toggleAIsessionAsk.addEventListener('change', saveAndApplySettings);
+	toggleAIsessionVideoSummary.addEventListener('change', saveAndApplySettings);
 	togglePlayables.addEventListener('change', saveAndApplySettings);
 	togglePremiumNag.addEventListener('change', saveAndApplySettings);
 	toggleSurveys.addEventListener('change', saveAndApplySettings);
