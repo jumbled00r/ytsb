@@ -7,7 +7,7 @@ const SURVEYS_STYLE_ID = 'yt-surveys-block-style';
 const SPONSOR_STYLE_ID = 'yt-sponsor-block-style';
 const CLIP_STYLE_ID = 'yt-clip-block-style';
 const COMMENTS_STYLE_ID = 'yt-comments-block-style';
-const RELATED_SESSION_SUGGESTIONS_STYLE_ID = 'yt-related-session-suggestions-blocker-style'
+const RELATED_SESSION_SUGGESTIONS_STYLE_ID = 'yt-related-session-suggestions-block-style'
 const SHORTS_LINK_STYLE_ID = 'yt-shorts-link-block-style';
 const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'yt-shorts-homepage-suggestions-block-style';
 const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'yt-shorts-session-suggestions-block-style';
@@ -26,6 +26,7 @@ const VOICE_SEARCH_CSS = `
 `;
 
 const AI_REC_CSS = `
+yt-talk-to-recs-view-model,
 ytd-rich-section-renderer:has(ytd-talk-to-recs-flow-renderer) {
 	display: none !important;
 }
