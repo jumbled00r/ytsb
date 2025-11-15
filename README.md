@@ -1,5 +1,5 @@
 # ytsb
-YouTube Search Suggestions Blocker
+YouTube Suggestion Blocker
 
 Firefox Addon:
 https://addons.mozilla.org/en-US/firefox/addon/ytsb/
