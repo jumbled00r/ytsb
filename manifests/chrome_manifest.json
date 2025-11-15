@@ -1,8 +1,8 @@
 {
 	"manifest_version": 3,
-	"name": "YouTube Search Suggestions Blocker",
-	"version": "1.34",
-	"description": "Blocks YouTube search suggestions.",
+	"name": "YouTube Suggestion Blocker",
+	"version": "1.35",
+	"description": "Block YouTube suggestions.",
 	"homepage_url": "https://github.com/jumbled00r/ytsb",
 	"permissions": [
 		"storage"
@@ -31,7 +31,7 @@
 		"512": "icons/sx-512.png"
 	},
 	"action": {
-		"default_title": "YouTube Suggestions Blocker",
+		"default_title": "YouTube Suggestion Blocker",
 		"default_popup": "popup.html",
 		"default_icon": {
 			"16": "icons/sx-16.png",
