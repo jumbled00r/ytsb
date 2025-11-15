@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 	const toggleSearchSuggestions = document.getElementById('toggleSearchSuggestions');
 	const toggleVoiceSearch = document.getElementById('toggleVoiceSearch');
+	const toggleProgressFocus = document.getElementById('toggleProgressFocus');
 	const toggleAIrec = document.getElementById('toggleAIrec');
 	const toggleAIsessionAsk = document.getElementById('toggleAIsessionAsk');
 	const toggleAIsessionVideoSummary = document.getElementById('toggleAIsessionVideoSummary');
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	browser.storage.local.get([
 		'blockSearchSuggestions',
 		'blockVoiceSearch',
+		'blockProgressFocus',
 		'blockAIrec',
 		'blockAIsessionAsk',
 		'blockAIsessionVideoSummary',
@@ -61,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		], (result) => {
 		toggleSearchSuggestions.checked = result.blockSearchSuggestions !== false;
 		toggleVoiceSearch.checked = result.blockVoiceSearch !== false;
+		toggleProgressFocus.checked = result.blockProgressFocus !== false;
 		toggleAIrec.checked = result.blockAIrec !== false;
 		toggleAIsessionAsk.checked = result.blockAIsessionAsk !== false;
 		toggleAIsessionVideoSummary.checked = result.blockAIsessionVideoSummary !== false;
@@ -86,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function saveAndApplySettings() {
 		const blockSearchSuggestions = toggleSearchSuggestions.checked;
 		const blockVoiceSearch = toggleVoiceSearch.checked;
+		const blockProgressFocus = toggleProgressFocus.checked;
 		const blockAIrec = toggleAIrec.checked;
 		const blockAIsessionAsk = toggleAIsessionAsk.checked;
 		const blockAIsessionVideoSummary = toggleAIsessionVideoSummary.checked;
@@ -106,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		browser.storage.local.set({
 			blockSearchSuggestions,
 			blockVoiceSearch,
+			blockProgressFocus,
 			blockAIrec,
 			blockAIsessionAsk,
 			blockAIsessionVideoSummary,
@@ -129,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						action: "updateCSS",
 						blockSearchSuggestions: blockSearchSuggestions,
 						blockVoiceSearch: blockVoiceSearch,
+						blockProgressFocus: blockProgressFocus,
 						blockAIrec: blockAIrec,
 						blockAIsessionAsk: blockAIsessionAsk,
 						blockAIsessionVideoSummary: blockAIsessionVideoSummary,
@@ -153,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	toggleSearchSuggestions.addEventListener('change', saveAndApplySettings);
 	toggleVoiceSearch.addEventListener('change', saveAndApplySettings);
+	toggleProgressFocus.addEventListener('change', saveAndApplySettings);
 	toggleAIrec.addEventListener('change', saveAndApplySettings);
 	toggleAIsessionAsk.addEventListener('change', saveAndApplySettings);
 	toggleAIsessionVideoSummary.addEventListener('change', saveAndApplySettings);

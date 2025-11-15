@@ -155,9 +155,35 @@ function removeCSS(styleId) {
 	}
 }
 
+let progressFocusListener = null;
+
+function toggleProgressFocus(enable) {
+	const player = document.querySelector('#movie_player');
+	const videoElement = document.querySelector('.html5-main-video');
+
+	if (progressFocusListener && player) {
+		player.removeEventListener('focusin', progressFocusListener);
+		progressFocusListener = null;
+	}
+
+	if (enable && videoElement && player) {
+		progressFocusListener = (event) => {
+			const focusedElement = event.target;
+			const isProgressBarControl = focusedElement.closest('.ytp-progress-bar-container') || focusedElement.closest('.ytp-volume-slider-container');
+			
+			if (isProgressBarControl) {
+				videoElement.focus();
+			}
+		};
+		
+		player.addEventListener('focusin', progressFocusListener);
+	}
+}
+
 function updateBlocking(
 	blockSearchSuggestions,
 	blockVoiceSearch,
+	blockProgressFocus,
 	blockAIrec,
 	blockAIsessionAsk,
 	blockAIsessionVideoSummary,
@@ -186,6 +212,8 @@ function updateBlocking(
 	} else {
 		removeCSS(VOICE_SEARCH_STYLE_ID);
 	}
+
+	toggleProgressFocus(blockProgressFocus);
 	
 	if (blockAIrec) {
 		applyCSS(AI_REC_CSS, AI_REC_STYLE_ID);
@@ -289,6 +317,7 @@ browser.runtime.onMessage.addListener((request) => {
 		updateBlocking(
 			request.blockSearchSuggestions,
 			request.blockVoiceSearch,
+			request.blockProgressFocus,
 			request.blockAIrec,
 			request.blockAIsessionAsk,
 			request.blockAIsessionVideoSummary,
@@ -311,6 +340,7 @@ browser.runtime.onMessage.addListener((request) => {
 browser.storage.local.get([
 	'blockSearchSuggestions', 
 	'blockVoiceSearch',
+	'blockProgressFocus',
 	'blockAIrec',
 	'blockAIsessionAsk',
 	'blockAIsessionVideoSummary',
@@ -330,6 +360,7 @@ browser.storage.local.get([
 	], (result) => {
 	const blockSearchSuggestions = result.blockSearchSuggestions !== false;
 	const blockVoiceSearch = result.blockVoiceSearch !== false;
+	const blockProgressFocus = result.blockProgressFocus !== false;
 	const blockPlayables = result.blockPlayables !== false;
 	const blockAIrec = result.blockAIrec !== false;
 	const blockAIsessionAsk = result.blockAIsessionAsk !== false;
@@ -349,6 +380,7 @@ browser.storage.local.get([
 	updateBlocking(
 		blockSearchSuggestions,
 		blockVoiceSearch,
+		blockProgressFocus,
 		blockAIrec,
 		blockAIsessionAsk,
 		blockAIsessionVideoSummary,

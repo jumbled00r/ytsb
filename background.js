@@ -4,6 +4,7 @@ browser.runtime.onInstalled.addListener(() => {
 	browser.storage.local.set({
 		blockSearchSuggestions: true,
 		blockVoiceSearch: true,
+		blockProgressFocus: true,
 		blockAIrec: true,
 		blockAIsessionAsk: true,
 		blockAIsessionVideoSummary: true,
@@ -28,6 +29,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 		browser.storage.local.get([
 			'blockSearchSuggestions',
 			'blockVoiceSearch',
+			'blockProgressFocus',
 			'blockAIrec',
 			'blockAIsessionAsk',
 			'blockAIsessionVideoSummary',
@@ -49,6 +51,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 				action: "updateCSS",
 				blockSearchSuggestions: result.blockSearchSuggestions !== false,
 				blockVoiceSearch: result.blockVoiceSearch !== false,
+				blockProgressFocus: result.blockProgressFocus !== false,
 				blockAIrec: result.blockAIrec !== false,
 				blockAIsessionAsk: result.blockAIsessionAsk !== false,
 				blockAIsessionVideoSummary: result.blockAIsessionVideoSummary !== false,
