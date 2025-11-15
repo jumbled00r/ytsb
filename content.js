@@ -93,6 +93,7 @@ ytd-comments {
 `;
 
 const RELATED_SESSION_SUGGESTIONS_CSS = `
+#items.style-scope.ytd-watch-next-secondary-results-renderer,
 #secondary.style-scope.ytd-watch-flexy {
 	display: none !important;
 }
