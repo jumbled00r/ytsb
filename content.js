@@ -8,12 +8,14 @@ const PREMIUM_NAG_STYLE_ID = 'yt-premium-nag-block-style';
 const SURVEYS_STYLE_ID = 'yt-surveys-block-style';
 const SPONSOR_STYLE_ID = 'yt-sponsor-block-style';
 const CLIP_STYLE_ID = 'yt-clip-block-style';
+const CHIP_BAR_STYLE_ID = 'yt-chip-bar-block-style';
 const COMMENTS_STYLE_ID = 'yt-comments-block-style';
 const RELATED_SESSION_SUGGESTIONS_STYLE_ID = 'yt-related-session-suggestions-block-style';
+const DOWNLOADS_LINK_STYLE_ID = 'yt-downloads-link-block-style';
 const SHORTS_LINK_STYLE_ID = 'yt-shorts-link-block-style';
 const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'yt-shorts-homepage-suggestions-block-style';
 const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'yt-shorts-session-suggestions-block-style';
-const SHORTS_SEARCH_SUGGESTIONS_STYLE_ID = 'yt-shorts-search-suggestions-blocker-style';
+const SHORTS_SEARCH_SUGGESTIONS_STYLE_ID = 'yt-shorts-search-suggestions-block-style';
 
 const SEARCH_SUGGESTIONS_CSS = `
 div.ytSearchboxComponentSuggestionsContainer {
@@ -32,7 +34,7 @@ yt-talk-to-recs-view-model,
 ytd-rich-section-renderer:has(ytd-talk-to-recs-flow-renderer) {
 	display: none !important;
 }
-`
+`;
 
 const AI_SESSION_ASK_CSS = `
 yt-button-view-model:has(button[aria-label="Ask"]) {
@@ -44,7 +46,7 @@ const AI_SESSION_VIDEO_SUMMARY_CSS = `
 ytd-expandable-metadata-renderer[has-video-summary] {
     display: none !important;
 }
-`
+`;
 
 const PLAYABLES_CSS = `
 ytd-rich-shelf-renderer:has(a[href="/playables"]) {
@@ -86,6 +88,12 @@ button-view-model:has(button[aria-label="Clip"]) {
 }
 `;
 
+const CHIP_BAR_CSS = `
+ytd-feed-filter-chip-bar-renderer {
+    display: none !important;
+}
+`;
+
 const COMMENTS_CSS = `
 ytd-comments {
 	display: none !important;
@@ -96,6 +104,12 @@ const RELATED_SESSION_SUGGESTIONS_CSS = `
 #items.style-scope.ytd-watch-next-secondary-results-renderer,
 #secondary.style-scope.ytd-watch-flexy {
 	display: none !important;
+}
+`;
+
+const DOWNLOADS_LINK_CSS = `
+ytd-guide-downloads-entry-renderer {
+    display: none !important;
 }
 `;
 
@@ -118,6 +132,7 @@ ytd-reel-shelf-renderer {
 `;
 
 const SHORTS_SEARCH_SUGGESTIONS_CSS = `
+ytd-video-renderer:has(ytd-thumbnail-overlay-time-status-renderer[overlay-style="SHORTS"]),
 grid-shelf-view-model:has(ytm-shorts-lockup-view-model) {
 	display: none !important;
 }
@@ -151,8 +166,10 @@ function updateBlocking(
 	blockSurveys,
 	blockSponsor,
 	blockClip,
+	blockChipBar,
 	blockComments,
 	blockRelatedSessionSuggestions,
+	blockDownloadsLink,
 	blockShortsLink,
 	blockShortsHomepageSuggestions,
 	blockShortsSessionSuggestions,
@@ -217,6 +234,12 @@ function updateBlocking(
 	} else {
 		removeCSS(CLIP_STYLE_ID);
 	}
+	
+	if (blockChipBar) {
+		applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
+	} else {
+		removeCSS(CHIP_BAR_STYLE_ID);
+	}
 
 	if (blockComments) {
 		applyCSS(COMMENTS_CSS, COMMENTS_STYLE_ID);
@@ -228,6 +251,12 @@ function updateBlocking(
 		applyCSS(RELATED_SESSION_SUGGESTIONS_CSS, RELATED_SESSION_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(RELATED_SESSION_SUGGESTIONS_STYLE_ID);
+	}
+	
+	if (blockDownloadsLink) {
+		applyCSS(DOWNLOADS_LINK_CSS, DOWNLOADS_LINK_STYLE_ID);
+	} else {
+		removeCSS(DOWNLOADS_LINK_STYLE_ID);
 	}
 
 	if (blockShortsLink) {
@@ -268,8 +297,10 @@ browser.runtime.onMessage.addListener((request) => {
 			request.blockSurveys,
 			request.blockSponsor,
 			request.blockClip,
+			request.blockChipBar,
 			request.blockComments,
 			request.blockRelatedSessionSuggestions,
+			request.blockDownloadsLink,
 			request.blockShortsLink,
 			request.blockShortsHomepageSuggestions,
 			request.blockShortsSessionSuggestions,
@@ -288,8 +319,10 @@ browser.storage.local.get([
 	'blockSurveys',
 	'blockSponsor',
 	'blockClip',
+	'blockChipBar',
 	'blockComments',
 	'blockRelatedSessionSuggestions',
+	'blockDownloadsLink',
 	'blockShortsLink', 
 	'blockShortsHomepageSuggestions',
 	'blockShortsSessionSuggestions',
@@ -305,8 +338,10 @@ browser.storage.local.get([
 	const blockSurveys = result.blockSurveys !== false;
 	const blockSponsor = result.blockSponsor !== false;
 	const blockClip = result.blockClip !== false;
+	const blockChipBar = result.blockChipBar === true;
 	const blockComments = result.blockComments === true;
 	const blockRelatedSessionSuggestions = result.blockRelatedSessionSuggestions === true;
+	const blockDownloadsLink = result.blockDownloadsLink !== false;
 	const blockShortsLink = result.blockShortsLink !== false;
 	const blockShortsHomepageSuggestions = result.blockShortsHomepageSuggestions !== false;
 	const blockShortsSessionSuggestions = result.blockShortsSessionSuggestions !== false;
@@ -322,8 +357,10 @@ browser.storage.local.get([
 		blockSurveys,
 		blockSponsor,
 		blockClip,
+		blockChipBar,
 		blockComments,
 		blockRelatedSessionSuggestions,
+		blockDownloadsLink,
 		blockShortsLink,
 		blockShortsHomepageSuggestions,
 		blockShortsSessionSuggestions,

@@ -9,9 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	const toggleSurveys = document.getElementById('toggleSurveys');
 	const toggleSponsor = document.getElementById('toggleSponsor');
 	const toggleClip = document.getElementById('toggleClip');
+	const toggleChipBar = document.getElementById('toggleChipBar');
 	const toggleComments = document.getElementById('toggleComments');
 	const toggleRelatedSessionSuggestions = 
 		document.getElementById('toggleRelatedSessionSuggestions');
+	const toggleDownloadsLink = document.getElementById('toggleDownloadsLink');
 	const toggleShortsLink = document.getElementById('toggleShortsLink');
 	const toggleShortsHomepageSuggestions = 
 		document.getElementById('toggleShortsHomepageSuggestions');
@@ -48,8 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		'blockSurveys',
 		'blockSponsor',
 		'blockClip',
+		'blockChipBar',
 		'blockComments',
 		'blockRelatedSessionSuggestions',
+		'blockDownloadsLink',
 		'blockShortsLink',
 		'blockShortsHomepageSuggestions',
 		'blockShortsSessionSuggestions',
@@ -65,8 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		toggleSurveys.checked = result.blockSurveys !== false;
 		toggleSponsor.checked = result.blockSponsor !== false;
 		toggleClip.checked = result.blockClip !== false;
+		toggleChipBar.checked = result.blockChipBar === true;
 		toggleComments.checked = result.blockComments === true;
 		toggleRelatedSessionSuggestions.checked = result.blockRelatedSessionSuggestions === true;
+		toggleDownloadsLink.checked = result.blockDownloadsLink !== false;
 		toggleShortsLink.checked = result.blockShortsLink !== false;
 		toggleShortsHomepageSuggestions.checked = result.blockShortsHomepageSuggestions !== false;
 		toggleShortsSessionSuggestions.checked = result.blockShortsSessionSuggestions !== false;
@@ -88,8 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		const blockSurveys = toggleSurveys.checked;
 		const blockSponsor = toggleSponsor.checked;
 		const blockClip = toggleClip.checked;
+		const blockChipBar = toggleChipBar.checked;
 		const blockComments = toggleComments.checked;
 		const blockRelatedSessionSuggestions = toggleRelatedSessionSuggestions.checked;
+		const blockDownloadsLink = toggleDownloadsLink.checked;
 		const blockShortsLink = toggleShortsLink.checked;
 		const blockShortsHomepageSuggestions = toggleShortsHomepageSuggestions.checked;
 		const blockShortsSessionSuggestions = toggleShortsSessionSuggestions.checked;
@@ -106,8 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			blockSurveys,
 			blockSponsor,
 			blockClip,
+			blockChipBar,
 			blockComments,
 			blockRelatedSessionSuggestions,
+			blockDownloadsLink,
 			blockShortsLink,
 			blockShortsHomepageSuggestions,
 			blockShortsSessionSuggestions,
@@ -127,8 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
 						blockSurveys: blockSurveys,
 						blockSponsor: blockSponsor,
 						blockClip: blockClip,
+						blockChipBar: blockChipBar,
 						blockComments: blockComments,
 						blockRelatedSessionSuggestions: blockRelatedSessionSuggestions,
+						blockDownloadsLink: blockDownloadsLink,
 						blockShortsLink: blockShortsLink,
 						blockShortsHomepageSuggestions: blockShortsHomepageSuggestions,
 						blockShortsSessionSuggestions: blockShortsSessionSuggestions,
@@ -149,8 +161,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	toggleSurveys.addEventListener('change', saveAndApplySettings);
 	toggleSponsor.addEventListener('change', saveAndApplySettings);
 	toggleClip.addEventListener('change', saveAndApplySettings);
+	toggleChipBar.addEventListener('change', saveAndApplySettings);
 	toggleComments.addEventListener('change', saveAndApplySettings);
 	toggleRelatedSessionSuggestions.addEventListener('change', saveAndApplySettings);
+	toggleDownloadsLink.addEventListener('change', saveAndApplySettings);
 	toggleShortsLink.addEventListener('change', saveAndApplySettings);
 	toggleShortsHomepageSuggestions.addEventListener('change', saveAndApplySettings);
 	toggleShortsSessionSuggestions.addEventListener('change', saveAndApplySettings);
