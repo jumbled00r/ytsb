@@ -15,4 +15,4 @@ fi
 web-ext build \
 	--overwrite-dest \
 	--ignore-files \
-		"build" "LICENSE" "README.md" "manifests"
+		"build" "LICENSE" "README.md" "manifests" "icon-attributes.html"
