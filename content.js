@@ -128,7 +128,7 @@ a[title="Shorts"] {
 `;
 
 const SHORTS_HOMEPAGE_SUGGESTIONS_CSS = `
-ytd-rich-shelf-renderer[is-shorts] {	
+ytd-rich-shelf-renderer[is-shorts] {
 	display: none !important;
 }
 `;
