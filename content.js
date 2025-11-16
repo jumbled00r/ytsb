@@ -176,7 +176,7 @@ function toggleProgressFocus(enable) {
         }
 
         const focusedElement = event.target;
-        const isProgressBarControl = focusedElement.closest('.ytp-progress-bar-container') || focusedElement.closest('.ytp-volume-slider-container');
+        const isProgressBarControl = focusedElement.closest('.ytp-progress-bar-container') || focusedElement.closest('.ytp-volume-control-hover');
         
         if (isProgressBarControl) {
             setTimeout(() => {
