@@ -317,7 +317,7 @@ function updateBlocking(
 		applyCSS(SHORTS_SEARCH_SUGGESTIONS_CSS, SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
-	}	
+	}
 }
 
 browser.runtime.onMessage.addListener((request) => {
