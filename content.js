@@ -158,26 +158,34 @@ function removeCSS(styleId) {
 let progressFocusListener = null;
 
 function toggleProgressFocus(enable) {
-	const player = document.querySelector('#movie_player');
-	const videoElement = document.querySelector('.html5-main-video');
+    
+    if (progressFocusListener) {
+        document.removeEventListener('focusin', progressFocusListener, true); 
+        progressFocusListener = null;
+    }
 
-	if (progressFocusListener && player) {
-		player.removeEventListener('focusin', progressFocusListener);
-		progressFocusListener = null;
-	}
+    if (!enable) {
+        return;
+    }
 
-	if (enable && videoElement && player) {
-		progressFocusListener = (event) => {
-			const focusedElement = event.target;
-			const isProgressBarControl = focusedElement.closest('.ytp-progress-bar-container') || focusedElement.closest('.ytp-volume-slider-container');
-			
-			if (isProgressBarControl) {
-				videoElement.focus();
-			}
-		};
-		
-		player.addEventListener('focusin', progressFocusListener);
-	}
+    progressFocusListener = (event) => {
+        const videoElement = document.querySelector('.html5-main-video');
+        
+        if (!window.location.pathname.startsWith('/watch') || !videoElement) {
+            return;
+        }
+
+        const focusedElement = event.target;
+        const isProgressBarControl = focusedElement.closest('.ytp-progress-bar-container') || focusedElement.closest('.ytp-volume-slider-container');
+        
+        if (isProgressBarControl) {
+            setTimeout(() => {
+                videoElement.focus();
+            }, 0);
+        }
+    };
+    
+    document.addEventListener('focusin', progressFocusListener, true);
 }
 
 function updateBlocking(
@@ -212,7 +220,7 @@ function updateBlocking(
 	} else {
 		removeCSS(VOICE_SEARCH_STYLE_ID);
 	}
-
+	
 	toggleProgressFocus(blockProgressFocus);
 	
 	if (blockAIrec) {
@@ -309,7 +317,7 @@ function updateBlocking(
 		applyCSS(SHORTS_SEARCH_SUGGESTIONS_CSS, SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
-	}
+	}	
 }
 
 browser.runtime.onMessage.addListener((request) => {
