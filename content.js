@@ -11,6 +11,7 @@ const CLIP_STYLE_ID = 'yt-clip-block-style';
 const CHIP_BAR_STYLE_ID = 'yt-chip-bar-block-style';
 const COMMENTS_STYLE_ID = 'yt-comments-block-style';
 const RELATED_SESSION_SUGGESTIONS_STYLE_ID = 'yt-related-session-suggestions-block-style';
+const RELATED_SESSION_END_CARDS_STYLE_ID = 'yt-related-session-end-cards-block-style';
 const DOWNLOADS_LINK_STYLE_ID = 'yt-downloads-link-block-style';
 const SHORTS_LINK_STYLE_ID = 'yt-shorts-link-block-style';
 const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'yt-shorts-homepage-suggestions-block-style';
@@ -44,7 +45,7 @@ yt-button-view-model:has(button[aria-label="Ask"]) {
 
 const AI_SESSION_VIDEO_SUMMARY_CSS = `
 ytd-expandable-metadata-renderer[has-video-summary] {
-    display: none !important;
+	display: none !important;
 }
 `;
 
@@ -72,6 +73,7 @@ button-view-model:has(button[aria-label="Thanks"]),
 ytd-creator-store-chip-bar-renderer,
 ytd-commerce-button-renderer,
 ytd-membership-item-renderer,
+ytd-rich-item-renderer:has(.badge-style-type-members-only),
 yt-live-chat-paid-sticker-button-renderer,
 #chips-and-icon-grid,
 #merch-shelf,
@@ -90,7 +92,7 @@ button-view-model:has(button[aria-label="Clip"]) {
 
 const CHIP_BAR_CSS = `
 ytd-feed-filter-chip-bar-renderer {
-    display: none !important;
+	display: none !important;
 }
 `;
 
@@ -107,9 +109,15 @@ const RELATED_SESSION_SUGGESTIONS_CSS = `
 }
 `;
 
+const RELATED_SESSION_END_CARDS_CSS = `
+.ytp-fullscreen-grid-stills-container > .ytp-modern-videowall-still {
+	display: none !important;
+}
+`;
+
 const DOWNLOADS_LINK_CSS = `
 ytd-guide-downloads-entry-renderer {
-    display: none !important;
+	display: none !important;
 }
 `;
 
@@ -120,7 +128,7 @@ a[title="Shorts"] {
 `;
 
 const SHORTS_HOMEPAGE_SUGGESTIONS_CSS = `
-ytd-rich-shelf-renderer[is-shorts] {
+ytd-rich-shelf-renderer[is-shorts] {	
 	display: none !important;
 }
 `;
@@ -137,6 +145,41 @@ grid-shelf-view-model:has(ytm-shorts-lockup-view-model) {
 	display: none !important;
 }
 `;
+
+let progressFocusListener = null;
+
+function toggleProgressFocus(enable) {
+
+	if (progressFocusListener) {
+		document.removeEventListener('focusin', progressFocusListener, true); 
+		progressFocusListener = null;
+	}
+
+	if (!enable) {
+		return;
+	}
+
+	progressFocusListener = (event) => {
+		const videoElement = document.querySelector('.html5-main-video');
+
+		if (!window.location.pathname.startsWith('/watch') || !videoElement) {
+			return;
+		}
+
+		const focusedElement = event.target;
+		const isProgressBarControl =
+			focusedElement.closest('.ytp-progress-bar-container') ||
+			focusedElement.closest('.ytp-volume-control-hover');
+
+		if (isProgressBarControl) {
+			setTimeout(() => {
+				videoElement.focus();
+			}, 0);
+		}
+	};
+    
+	document.addEventListener('focusin', progressFocusListener, true);
+}
 
 function applyCSS(css, styleId) {
 	let style = document.getElementById(styleId);
@@ -155,39 +198,6 @@ function removeCSS(styleId) {
 	}
 }
 
-let progressFocusListener = null;
-
-function toggleProgressFocus(enable) {
-    
-    if (progressFocusListener) {
-        document.removeEventListener('focusin', progressFocusListener, true); 
-        progressFocusListener = null;
-    }
-
-    if (!enable) {
-        return;
-    }
-
-    progressFocusListener = (event) => {
-        const videoElement = document.querySelector('.html5-main-video');
-        
-        if (!window.location.pathname.startsWith('/watch') || !videoElement) {
-            return;
-        }
-
-        const focusedElement = event.target;
-        const isProgressBarControl = focusedElement.closest('.ytp-progress-bar-container') || focusedElement.closest('.ytp-volume-control-hover');
-        
-        if (isProgressBarControl) {
-            setTimeout(() => {
-                videoElement.focus();
-            }, 0);
-        }
-    };
-    
-    document.addEventListener('focusin', progressFocusListener, true);
-}
-
 function updateBlocking(
 	blockSearchSuggestions,
 	blockVoiceSearch,
@@ -203,6 +213,7 @@ function updateBlocking(
 	blockChipBar,
 	blockComments,
 	blockRelatedSessionSuggestions,
+	blockRelatedSessionEndCards,
 	blockDownloadsLink,
 	blockShortsLink,
 	blockShortsHomepageSuggestions,
@@ -288,6 +299,12 @@ function updateBlocking(
 	} else {
 		removeCSS(RELATED_SESSION_SUGGESTIONS_STYLE_ID);
 	}
+
+	if (blockRelatedSessionEndCards) {
+		applyCSS(RELATED_SESSION_END_CARDS_CSS, RELATED_SESSION_END_CARDS_STYLE_ID);
+	} else {
+		removeCSS(RELATED_SESSION_END_CARDS_STYLE_ID);
+	}
 	
 	if (blockDownloadsLink) {
 		applyCSS(DOWNLOADS_LINK_CSS, DOWNLOADS_LINK_STYLE_ID);
@@ -337,6 +354,7 @@ browser.runtime.onMessage.addListener((request) => {
 			request.blockChipBar,
 			request.blockComments,
 			request.blockRelatedSessionSuggestions,
+			request.blockRelatedSessionEndCards,
 			request.blockDownloadsLink,
 			request.blockShortsLink,
 			request.blockShortsHomepageSuggestions,
@@ -360,6 +378,7 @@ browser.storage.local.get([
 	'blockChipBar',
 	'blockComments',
 	'blockRelatedSessionSuggestions',
+	'blockRelatedSessionEndCards',
 	'blockDownloadsLink',
 	'blockShortsLink', 
 	'blockShortsHomepageSuggestions',
@@ -380,6 +399,7 @@ browser.storage.local.get([
 	const blockChipBar = result.blockChipBar === true;
 	const blockComments = result.blockComments === true;
 	const blockRelatedSessionSuggestions = result.blockRelatedSessionSuggestions === true;
+	const blockRelatedSessionEndCards = result.blockRelatedSessionEndCards === true;
 	const blockDownloadsLink = result.blockDownloadsLink !== false;
 	const blockShortsLink = result.blockShortsLink !== false;
 	const blockShortsHomepageSuggestions = result.blockShortsHomepageSuggestions !== false;
@@ -400,6 +420,7 @@ browser.storage.local.get([
 		blockChipBar,
 		blockComments,
 		blockRelatedSessionSuggestions,
+		blockRelatedSessionEndCards,
 		blockDownloadsLink,
 		blockShortsLink,
 		blockShortsHomepageSuggestions,

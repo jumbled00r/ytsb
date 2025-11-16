@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const toggleComments = document.getElementById('toggleComments');
 	const toggleRelatedSessionSuggestions = 
 		document.getElementById('toggleRelatedSessionSuggestions');
+	const toggleRelatedSessionEndCards = 
+		document.getElementById('toggleRelatedSessionEndCards');
 	const toggleDownloadsLink = document.getElementById('toggleDownloadsLink');
 	const toggleShortsLink = document.getElementById('toggleShortsLink');
 	const toggleShortsHomepageSuggestions = 
@@ -55,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		'blockChipBar',
 		'blockComments',
 		'blockRelatedSessionSuggestions',
+		'blockRelatedSessionEndCards',
 		'blockDownloadsLink',
 		'blockShortsLink',
 		'blockShortsHomepageSuggestions',
@@ -75,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		toggleChipBar.checked = result.blockChipBar === true;
 		toggleComments.checked = result.blockComments === true;
 		toggleRelatedSessionSuggestions.checked = result.blockRelatedSessionSuggestions === true;
+		toggleRelatedSessionEndCards.checked = result.blockRelatedSessionEndCards === true;
 		toggleDownloadsLink.checked = result.blockDownloadsLink !== false;
 		toggleShortsLink.checked = result.blockShortsLink !== false;
 		toggleShortsHomepageSuggestions.checked = result.blockShortsHomepageSuggestions !== false;
@@ -101,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const blockChipBar = toggleChipBar.checked;
 		const blockComments = toggleComments.checked;
 		const blockRelatedSessionSuggestions = toggleRelatedSessionSuggestions.checked;
+		const blockRelatedSessionEndCards = toggleRelatedSessionEndCards.checked;
 		const blockDownloadsLink = toggleDownloadsLink.checked;
 		const blockShortsLink = toggleShortsLink.checked;
 		const blockShortsHomepageSuggestions = toggleShortsHomepageSuggestions.checked;
@@ -122,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			blockChipBar,
 			blockComments,
 			blockRelatedSessionSuggestions,
+			blockRelatedSessionEndCards,
 			blockDownloadsLink,
 			blockShortsLink,
 			blockShortsHomepageSuggestions,
@@ -146,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						blockChipBar: blockChipBar,
 						blockComments: blockComments,
 						blockRelatedSessionSuggestions: blockRelatedSessionSuggestions,
+						blockRelatedSessionEndCards: blockRelatedSessionEndCards,
 						blockDownloadsLink: blockDownloadsLink,
 						blockShortsLink: blockShortsLink,
 						blockShortsHomepageSuggestions: blockShortsHomepageSuggestions,
@@ -171,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	toggleChipBar.addEventListener('change', saveAndApplySettings);
 	toggleComments.addEventListener('change', saveAndApplySettings);
 	toggleRelatedSessionSuggestions.addEventListener('change', saveAndApplySettings);
+	toggleRelatedSessionEndCards.addEventListener('change', saveAndApplySettings);
 	toggleDownloadsLink.addEventListener('change', saveAndApplySettings);
 	toggleShortsLink.addEventListener('change', saveAndApplySettings);
 	toggleShortsHomepageSuggestions.addEventListener('change', saveAndApplySettings);
