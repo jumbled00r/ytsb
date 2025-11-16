@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const toggleRelatedSessionEndCards = 
 		document.getElementById('toggleRelatedSessionEndCards');
 	const toggleDownloadsLink = document.getElementById('toggleDownloadsLink');
+	const toggleExploreSection = document.getElementById('toggleExploreSection');
+	const toggleMoreSection = document.getElementById('toggleMoreSection');
 	const toggleShortsLink = document.getElementById('toggleShortsLink');
 	const toggleShortsHomepageSuggestions = 
 		document.getElementById('toggleShortsHomepageSuggestions');
@@ -59,6 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		'blockRelatedSessionSuggestions',
 		'blockRelatedSessionEndCards',
 		'blockDownloadsLink',
+		'blockExploreSection',
+		'blockMoreSection',
 		'blockShortsLink',
 		'blockShortsHomepageSuggestions',
 		'blockShortsSessionSuggestions',
@@ -78,8 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		toggleChipBar.checked = result.blockChipBar === true;
 		toggleComments.checked = result.blockComments === true;
 		toggleRelatedSessionSuggestions.checked = result.blockRelatedSessionSuggestions === true;
-		toggleRelatedSessionEndCards.checked = result.blockRelatedSessionEndCards === true;
+		toggleRelatedSessionEndCards.checked = result.blockRelatedSessionEndCards !== false;
 		toggleDownloadsLink.checked = result.blockDownloadsLink !== false;
+		toggleExploreSection.checked = result.blockExploreSection !== false;
+		toggleMoreSection.checked = result.blockMoreSection !== false;
 		toggleShortsLink.checked = result.blockShortsLink !== false;
 		toggleShortsHomepageSuggestions.checked = result.blockShortsHomepageSuggestions !== false;
 		toggleShortsSessionSuggestions.checked = result.blockShortsSessionSuggestions !== false;
@@ -107,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		const blockRelatedSessionSuggestions = toggleRelatedSessionSuggestions.checked;
 		const blockRelatedSessionEndCards = toggleRelatedSessionEndCards.checked;
 		const blockDownloadsLink = toggleDownloadsLink.checked;
+		const blockExploreSection = toggleExploreSection.checked;
+		const blockMoreSection = toggleMoreSection.checked;
 		const blockShortsLink = toggleShortsLink.checked;
 		const blockShortsHomepageSuggestions = toggleShortsHomepageSuggestions.checked;
 		const blockShortsSessionSuggestions = toggleShortsSessionSuggestions.checked;
@@ -129,6 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			blockRelatedSessionSuggestions,
 			blockRelatedSessionEndCards,
 			blockDownloadsLink,
+			blockExploreSection,
+			blockMoreSection,
 			blockShortsLink,
 			blockShortsHomepageSuggestions,
 			blockShortsSessionSuggestions,
@@ -154,6 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						blockRelatedSessionSuggestions: blockRelatedSessionSuggestions,
 						blockRelatedSessionEndCards: blockRelatedSessionEndCards,
 						blockDownloadsLink: blockDownloadsLink,
+						blockExploreSection: blockExploreSection,
+						blockMoreSection: blockMoreSection,
 						blockShortsLink: blockShortsLink,
 						blockShortsHomepageSuggestions: blockShortsHomepageSuggestions,
 						blockShortsSessionSuggestions: blockShortsSessionSuggestions,
@@ -180,6 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	toggleRelatedSessionSuggestions.addEventListener('change', saveAndApplySettings);
 	toggleRelatedSessionEndCards.addEventListener('change', saveAndApplySettings);
 	toggleDownloadsLink.addEventListener('change', saveAndApplySettings);
+	toggleExploreSection.addEventListener('change', saveAndApplySettings);
+	toggleMoreSection.addEventListener('change', saveAndApplySettings);
 	toggleShortsLink.addEventListener('change', saveAndApplySettings);
 	toggleShortsHomepageSuggestions.addEventListener('change', saveAndApplySettings);
 	toggleShortsSessionSuggestions.addEventListener('change', saveAndApplySettings);

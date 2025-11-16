@@ -116,6 +116,7 @@ const RELATED_SESSION_END_CARDS_CSS = `
 `;
 
 const DOWNLOADS_LINK_CSS = `
+ytd-mini-guide-entry-renderer a[title="Downloads"],
 ytd-guide-downloads-entry-renderer {
 	display: none !important;
 }
@@ -145,6 +146,33 @@ grid-shelf-view-model:has(ytm-shorts-lockup-view-model) {
 	display: none !important;
 }
 `;
+
+function blockSideBarSections(explore, more) {
+	const sections = document.querySelectorAll('ytd-guide-section-renderer');
+
+	Array.from(sections).forEach(section => {
+		const titleElement = section.querySelector('#guide-section-title');
+
+		if (titleElement) {
+			const searchText = titleElement.textContent.trim();
+			let shouldBlock = false;
+
+			if (searchText === 'More from YouTube') {
+				shouldBlock = more;
+			} else if (searchText === 'Explore') {
+				shouldBlock = explore;
+			} else {
+				return;
+			}
+
+			if (shouldBlock) {
+				section.style.setProperty('display', 'none', 'important');
+			} else {
+				section.style.removeProperty('display');
+			}
+		}
+	});
+}
 
 let progressFocusListener = null;
 
@@ -215,6 +243,8 @@ function updateBlocking(
 	blockRelatedSessionSuggestions,
 	blockRelatedSessionEndCards,
 	blockDownloadsLink,
+	blockExploreSection,
+	blockMoreSection,
 	blockShortsLink,
 	blockShortsHomepageSuggestions,
 	blockShortsSessionSuggestions,
@@ -312,6 +342,8 @@ function updateBlocking(
 		removeCSS(DOWNLOADS_LINK_STYLE_ID);
 	}
 
+	blockSideBarSections(blockExploreSection, blockMoreSection);
+
 	if (blockShortsLink) {
 		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
 	} else {
@@ -356,6 +388,8 @@ browser.runtime.onMessage.addListener((request) => {
 			request.blockRelatedSessionSuggestions,
 			request.blockRelatedSessionEndCards,
 			request.blockDownloadsLink,
+			request.blockExploreSection,
+			request.blockMoreSection,
 			request.blockShortsLink,
 			request.blockShortsHomepageSuggestions,
 			request.blockShortsSessionSuggestions,
@@ -380,6 +414,8 @@ browser.storage.local.get([
 	'blockRelatedSessionSuggestions',
 	'blockRelatedSessionEndCards',
 	'blockDownloadsLink',
+	'blockExploreSection',
+	'blockMoreSection',
 	'blockShortsLink', 
 	'blockShortsHomepageSuggestions',
 	'blockShortsSessionSuggestions',
@@ -399,8 +435,10 @@ browser.storage.local.get([
 	const blockChipBar = result.blockChipBar === true;
 	const blockComments = result.blockComments === true;
 	const blockRelatedSessionSuggestions = result.blockRelatedSessionSuggestions === true;
-	const blockRelatedSessionEndCards = result.blockRelatedSessionEndCards === true;
+	const blockRelatedSessionEndCards = result.blockRelatedSessionEndCards !== false;
 	const blockDownloadsLink = result.blockDownloadsLink !== false;
+	const blockExploreSection = result.blockExploreSection !== false;
+	const blockMoreSection = result.blockMoreSection !== false;
 	const blockShortsLink = result.blockShortsLink !== false;
 	const blockShortsHomepageSuggestions = result.blockShortsHomepageSuggestions !== false;
 	const blockShortsSessionSuggestions = result.blockShortsSessionSuggestions !== false;
@@ -422,6 +460,8 @@ browser.storage.local.get([
 		blockRelatedSessionSuggestions,
 		blockRelatedSessionEndCards,
 		blockDownloadsLink,
+		blockExploreSection,
+		blockMoreSection,
 		blockShortsLink,
 		blockShortsHomepageSuggestions,
 		blockShortsSessionSuggestions,
