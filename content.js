@@ -192,9 +192,8 @@ function blockSideBarSections() {
 	return sectionsFound;
 }
 
-function attemptBlockSideBarSections() {
+function attemptBlockSideBarSections(max_attempts) {
 	let attempts = 0;
-	let max_attempts = 30;
 	const intervalId = setInterval(() => {
 		const success = blockSideBarSections();
 		if (success) {
@@ -217,7 +216,7 @@ function setupGuideButtonListener() {
 	setTimeout(() => {
 		const guideButton = document.querySelector('#button[aria-label="Guide"]');
 		if (guideButton) {
-			guideButton.addEventListener('click', blockSideBarSections); 
+			guideButton.addEventListener('click', attemptBlockSideBarSections(15)); 
 			isGuideListenerAttached = true;
 		}
 	}, 75); 
@@ -380,7 +379,7 @@ function updateBlocking(
 	}
 	blockExploreSectionGlobal = blockExploreSection;
 	blockMoreSectionGlobal = blockMoreSection;
-	attemptBlockSideBarSections();
+	attemptBlockSideBarSections(30);
 	if (blockShortsLink) {
 		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
 	} else {
