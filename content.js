@@ -152,11 +152,9 @@ grid-shelf-view-model:has(ytm-shorts-lockup-view-model) {
 
 function throttle(func, delay) {
 	let timeoutId = null;
-
 	return function() {
 		if (!timeoutId) {
 			func.apply(this, arguments);
-
 			timeoutId = setTimeout(() => {
 				timeoutId = null;
 			}, delay);
@@ -165,16 +163,16 @@ function throttle(func, delay) {
 }
 
 function blockSideBarSections() {
-	let sectionsFound = false;
 	const sections = document.querySelectorAll('ytd-guide-section-renderer');
-
+	if (sections.length === 0) {
+		return false
+	}
+	let sectionsFound = false;
 	Array.from(sections).forEach(section => {
 		const titleElement = section.querySelector('#guide-section-title');
-
 		if (titleElement) {
 			const searchText = titleElement.textContent.trim();
 			let shouldBlock = false;
-
 			if (searchText === 'Explore') {
 				sectionsFound = true;
 				shouldBlock = blockExploreSectionGlobal;
@@ -182,7 +180,6 @@ function blockSideBarSections() {
 				sectionsFound = true;
 				shouldBlock = blockMoreSectionGlobal;
 			}
-
 			if (shouldBlock) {
 				section.style.setProperty('display', 'none', 'important');
 			} else {
@@ -195,20 +192,16 @@ function blockSideBarSections() {
 
 function attemptBlockSideBarSections() {
 	let attempts = 0;
-	let max_attempts = 30;
+	let max_attempts = 40;
 	const intervalId = setInterval(() => {
 		const success = blockSideBarSections();
-		
 		if (success) {
 			clearInterval(intervalId);
-			//console.log(`ytsb: Sidebar sections successfully found after ${attempts + 1} attempt(s).`);
 			return;
 		}
-
 		attempts++;
 		if (attempts >= max_attempts) { 
 			clearInterval(intervalId);
-			//console.log(`ytsb: Sidebar section polling timed out after ${max_attempts} attempts.`);
 		}
 	}, 100);
 }
@@ -219,14 +212,13 @@ function setupGuideButtonListener() {
 	if (isGuideListenerAttached) {
 		return;
 	}
-
 	setTimeout(() => {
 		const guideButton = document.querySelector('#button[aria-label="Guide"]');
 		if (guideButton) {
 			guideButton.addEventListener('click', blockSideBarSections); 
 			isGuideListenerAttached = true;
 		}
-	}, 100); 
+	}, 50); 
 }
 
 let isResizeListenerAttached = false;
@@ -236,7 +228,6 @@ function setupResizeListener() {
 	if (isResizeListenerAttached) {
 		return;
 	}
-
 	window.addEventListener('resize', throttledBlockSideBarSections);
 	isResizeListenerAttached = true;
 }
@@ -249,30 +240,24 @@ function toggleProgressFocus(enable) {
 		document.removeEventListener('focusin', progressFocusListener, true); 
 		progressFocusListener = null;
 	}
-
 	if (!enable) {
 		return;
 	}
-
 	progressFocusListener = (event) => {
 		const videoElement = document.querySelector('.html5-main-video');
-
 		if (!window.location.pathname.startsWith('/watch') || !videoElement) {
 			return;
 		}
-
 		const focusedElement = event.target;
 		const isProgressBarControl =
 			focusedElement.closest('.ytp-progress-bar-container') ||
 			focusedElement.closest('.ytp-volume-control-hover');
-
 		if (isProgressBarControl) {
 			setTimeout(() => {
 				videoElement.focus();
 			}, 0);
 		}
 	};
-
 	document.addEventListener('focusin', progressFocusListener, true);
 }
 
@@ -316,122 +301,100 @@ function updateBlocking(
 	blockShortsHomepageSuggestions,
 	blockShortsSessionSuggestions,
 	blockShortsSearchSuggestions) {
-
 	if (blockSearchSuggestions) {
 		applyCSS(SEARCH_SUGGESTIONS_CSS, SEARCH_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(SEARCH_SUGGESTIONS_STYLE_ID);
 	}
-
 	if (blockVoiceSearch) {
 		applyCSS(VOICE_SEARCH_CSS, VOICE_SEARCH_STYLE_ID);
 	} else {
 		removeCSS(VOICE_SEARCH_STYLE_ID);
 	}
-	
 	toggleProgressFocus(blockProgressFocus);
-	
 	if (blockAIrec) {
 		applyCSS(AI_REC_CSS, AI_REC_STYLE_ID);
 	} else {
 		removeCSS(AI_REC_STYLE_ID);
 	}
-
 	if (blockAIsessionAsk) {
 		applyCSS(AI_SESSION_ASK_CSS, AI_SESSION_ASK_STYLE_ID);
 	} else {
 		removeCSS(AI_SESSION_ASK_STYLE_ID);
 	}
-	
 	if (blockAIsessionVideoSummary) {
 		applyCSS(AI_SESSION_VIDEO_SUMMARY_CSS, AI_SESSION_VIDEO_SUMMARY_STYLE_ID);
 	} else {
 		removeCSS(AI_SESSION_VIDEO_SUMMARY_STYLE_ID);
 	}
-
 	if (blockPlayables) {
 		applyCSS(PLAYABLES_CSS, PLAYABLES_STYLE_ID);
 	} else {
 		removeCSS(PLAYABLES_STYLE_ID);
 	}
-
 	if (blockPremiumNag) {
 		applyCSS(PREMIUM_NAG_CSS, PREMIUM_NAG_STYLE_ID);
 	} else {
 		removeCSS(PREMIUM_NAG_STYLE_ID);
 	}
-
 	if (blockSurveys) {
 		applyCSS(SURVEYS_CSS, SURVEYS_STYLE_ID);
 	} else {
 		removeCSS(SURVEYS_STYLE_ID);
 	}
-
 	if (blockSponsor) {
 		applyCSS(SPONSOR_CSS, SPONSOR_STYLE_ID);
 	} else {
 		removeCSS(SPONSOR_STYLE_ID);
 	}
-
 	if (blockClip) {
 		applyCSS(CLIP_CSS, CLIP_STYLE_ID);
 	} else {
 		removeCSS(CLIP_STYLE_ID);
 	}
-	
 	if (blockChipBar) {
 		applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
 	} else {
 		removeCSS(CHIP_BAR_STYLE_ID);
 	}
-
 	if (blockComments) {
 		applyCSS(COMMENTS_CSS, COMMENTS_STYLE_ID);
 	} else {
 		removeCSS(COMMENTS_STYLE_ID);
 	}
-	
 	if (blockRelatedSessionSuggestions) {
 		applyCSS(RELATED_SESSION_SUGGESTIONS_CSS, RELATED_SESSION_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(RELATED_SESSION_SUGGESTIONS_STYLE_ID);
 	}
-
 	if (blockRelatedSessionEndCards) {
 		applyCSS(RELATED_SESSION_END_CARDS_CSS, RELATED_SESSION_END_CARDS_STYLE_ID);
 	} else {
 		removeCSS(RELATED_SESSION_END_CARDS_STYLE_ID);
 	}
-	
 	if (blockDownloadsLink) {
 		applyCSS(DOWNLOADS_LINK_CSS, DOWNLOADS_LINK_STYLE_ID);
 	} else {
 		removeCSS(DOWNLOADS_LINK_STYLE_ID);
 	}
-
-
 	blockExploreSectionGlobal = blockExploreSection;
 	blockMoreSectionGlobal = blockMoreSection;
 	attemptBlockSideBarSections();
-
 	if (blockShortsLink) {
 		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
 	} else {
 		removeCSS(SHORTS_LINK_STYLE_ID);
 	}
-
 	if (blockShortsHomepageSuggestions) {
 		applyCSS(SHORTS_HOMEPAGE_SUGGESTIONS_CSS, SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID);
 	}
-
 	if (blockShortsSessionSuggestions) {
 		applyCSS(SHORTS_SESSION_SUGGESTIONS_CSS, SHORTS_SESSION_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(SHORTS_SESSION_SUGGESTIONS_STYLE_ID);
 	}
-
 	if (blockShortsSearchSuggestions) {
 		applyCSS(SHORTS_SEARCH_SUGGESTIONS_CSS, SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
 	} else {
@@ -467,75 +430,35 @@ browser.runtime.onMessage.addListener((request) => {
 	}
 });
 
-browser.storage.local.get([
-	'blockSearchSuggestions', 
-	'blockVoiceSearch',
-	'blockProgressFocus',
-	'blockAIrec',
-	'blockAIsessionAsk',
-	'blockAIsessionVideoSummary',
-	'blockPlayables',
-	'blockPremiumNag',
-	'blockSurveys',
-	'blockSponsor',
-	'blockClip',
-	'blockChipBar',
-	'blockComments',
-	'blockRelatedSessionSuggestions',
-	'blockRelatedSessionEndCards',
-	'blockDownloadsLink',
-	'blockExploreSection',
-	'blockMoreSection',
-	'blockShortsLink', 
-	'blockShortsHomepageSuggestions',
-	'blockShortsSessionSuggestions',
-	'blockShortsSearchSuggestions'
-	], (result) => {
-	const blockSearchSuggestions = result.blockSearchSuggestions !== false;
-	const blockVoiceSearch = result.blockVoiceSearch !== false;
-	const blockProgressFocus = result.blockProgressFocus !== false;
-	const blockPlayables = result.blockPlayables !== false;
-	const blockAIrec = result.blockAIrec !== false;
-	const blockAIsessionAsk = result.blockAIsessionAsk !== false;
-	const blockAIsessionVideoSummary = result.blockAIsessionVideoSummary !== false;
-	const blockPremiumNag = result.blockPremiumNag !== false;
-	const blockSurveys = result.blockSurveys !== false;
-	const blockSponsor = result.blockSponsor !== false;
-	const blockClip = result.blockClip !== false;
-	const blockChipBar = result.blockChipBar === true;
-	const blockComments = result.blockComments === true;
-	const blockRelatedSessionSuggestions = result.blockRelatedSessionSuggestions === true;
-	const blockRelatedSessionEndCards = result.blockRelatedSessionEndCards !== false;
-	const blockDownloadsLink = result.blockDownloadsLink !== false;
-	const blockExploreSection = result.blockExploreSection !== false;
-	const blockMoreSection = result.blockMoreSection !== false;
-	const blockShortsLink = result.blockShortsLink !== false;
-	const blockShortsHomepageSuggestions = result.blockShortsHomepageSuggestions !== false;
-	const blockShortsSessionSuggestions = result.blockShortsSessionSuggestions !== false;
-	const blockShortsSearchSuggestions = result.blockShortsSearchSuggestions !== false;
+browser.storage.local.get(ALL_SETTING_KEYS, (result) => {
+	const settings = {};
+	const keys = ALL_SETTING_KEYS;
+	keys.forEach(key => {
+		settings[key] = resolveSetting(key, result);
+	});
 	updateBlocking(
-		blockSearchSuggestions,
-		blockVoiceSearch,
-		blockProgressFocus,
-		blockAIrec,
-		blockAIsessionAsk,
-		blockAIsessionVideoSummary,
-		blockPlayables,
-		blockPremiumNag,
-		blockSurveys,
-		blockSponsor,
-		blockClip,
-		blockChipBar,
-		blockComments,
-		blockRelatedSessionSuggestions,
-		blockRelatedSessionEndCards,
-		blockDownloadsLink,
-		blockExploreSection,
-		blockMoreSection,
-		blockShortsLink,
-		blockShortsHomepageSuggestions,
-		blockShortsSessionSuggestions,
-		blockShortsSearchSuggestions);
+		settings.blockSearchSuggestions,
+		settings.blockVoiceSearch,
+		settings.blockProgressFocus,
+		settings.blockAIrec,
+		settings.blockAIsessionAsk,
+		settings.blockAIsessionVideoSummary,
+		settings.blockPlayables,
+		settings.blockPremiumNag,
+		settings.blockSurveys,
+		settings.blockSponsor,
+		settings.blockClip,
+		settings.blockChipBar,
+		settings.blockComments,
+		settings.blockRelatedSessionSuggestions,
+		settings.blockRelatedSessionEndCards,
+		settings.blockDownloadsLink,
+		settings.blockExploreSection,
+		settings.blockMoreSection,
+		settings.blockShortsLink,
+		settings.blockShortsHomepageSuggestions,
+		settings.blockShortsSessionSuggestions,
+		settings.blockShortsSearchSuggestions);
 	setupGuideButtonListener();
 	setupResizeListener();
 });
