@@ -1,31 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
-	const toggleSearchSuggestions = document.getElementById('toggleSearchSuggestions');
-	const toggleVoiceSearch = document.getElementById('toggleVoiceSearch');
-	const toggleProgressFocus = document.getElementById('toggleProgressFocus');
-	const toggleAIrec = document.getElementById('toggleAIrec');
-	const toggleAIsessionAsk = document.getElementById('toggleAIsessionAsk');
-	const toggleAIsessionVideoSummary = document.getElementById('toggleAIsessionVideoSummary');
-	const togglePlayables = document.getElementById('togglePlayables');
-	const togglePremiumNag = document.getElementById('togglePremiumNag');
-	const toggleSurveys = document.getElementById('toggleSurveys');
-	const toggleSponsor = document.getElementById('toggleSponsor');
-	const toggleClip = document.getElementById('toggleClip');
-	const toggleChipBar = document.getElementById('toggleChipBar');
-	const toggleComments = document.getElementById('toggleComments');
-	const toggleRelatedSessionSuggestions = 
-		document.getElementById('toggleRelatedSessionSuggestions');
-	const toggleRelatedSessionEndCards = 
-		document.getElementById('toggleRelatedSessionEndCards');
-	const toggleDownloadsLink = document.getElementById('toggleDownloadsLink');
-	const toggleExploreSection = document.getElementById('toggleExploreSection');
-	const toggleMoreSection = document.getElementById('toggleMoreSection');
-	const toggleShortsLink = document.getElementById('toggleShortsLink');
-	const toggleShortsHomepageSuggestions = 
-		document.getElementById('toggleShortsHomepageSuggestions');
-	const toggleShortsSessionSuggestions = 
-		document.getElementById('toggleShortsSessionSuggestions');
-	const toggleShortsSearchSuggestions = 
-		document.getElementById('toggleShortsSearchSuggestions');	
+	const allToggles = {
+		'toggleSearchSuggestions': 'blockSearchSuggestions',
+		'toggleVoiceSearch': 'blockVoiceSearch',
+		'toggleProgressFocus': 'blockProgressFocus',
+		'toggleAIrec': 'blockAIrec',
+		'toggleAIsessionAsk': 'blockAIsessionAsk',
+		'toggleAIsessionVideoSummary': 'blockAIsessionVideoSummary',
+		'togglePlayables': 'blockPlayables',
+		'togglePremiumNag': 'blockPremiumNag',
+		'toggleSurveys': 'blockSurveys',
+		'toggleSponsor': 'blockSponsor',
+		'toggleClip': 'blockClip',
+		'toggleChipBar': 'blockChipBar',
+		'toggleComments': 'blockComments',
+		'toggleRelatedSessionSuggestions': 'blockRelatedSessionSuggestions',
+		'toggleRelatedSessionEndCards': 'blockRelatedSessionEndCards',
+		'toggleDownloadsLink': 'blockDownloadsLink',
+		'toggleExploreSection': 'blockExploreSection',
+		'toggleMoreSection': 'blockMoreSection',
+		'toggleShortsLink': 'blockShortsLink',
+		'toggleShortsHomepageSuggestions': 'blockShortsHomepageSuggestions',
+		'toggleShortsSessionSuggestions': 'blockShortsSessionSuggestions',
+		'toggleShortsSearchSuggestions': 'blockShortsSearchSuggestions',
+	};
+
+	const storageKeys = Object.values(allToggles);
 
 	function updateBackground(isDark) {
 		document.body.style.setProperty('--background-color', isDark ? '#202020' : '#f0f0f0');
@@ -44,158 +43,76 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 	document.body.classList.add('no-transition');
 
-	browser.storage.local.get([
-		'blockSearchSuggestions',
-		'blockVoiceSearch',
-		'blockProgressFocus',
-		'blockAIrec',
-		'blockAIsessionAsk',
-		'blockAIsessionVideoSummary',
-		'blockPlayables',
-		'blockPremiumNag',
-		'blockSurveys',
-		'blockSponsor',
-		'blockClip',
-		'blockChipBar',
-		'blockComments',
-		'blockRelatedSessionSuggestions',
-		'blockRelatedSessionEndCards',
-		'blockDownloadsLink',
-		'blockExploreSection',
-		'blockMoreSection',
-		'blockShortsLink',
-		'blockShortsHomepageSuggestions',
-		'blockShortsSessionSuggestions',
-		'blockShortsSearchSuggestions'
-		], (result) => {
-		toggleSearchSuggestions.checked = result.blockSearchSuggestions !== false;
-		toggleVoiceSearch.checked = result.blockVoiceSearch !== false;
-		toggleProgressFocus.checked = result.blockProgressFocus !== false;
-		toggleAIrec.checked = result.blockAIrec !== false;
-		toggleAIsessionAsk.checked = result.blockAIsessionAsk !== false;
-		toggleAIsessionVideoSummary.checked = result.blockAIsessionVideoSummary !== false;
-		togglePlayables.checked = result.blockPlayables !== false;
-		togglePremiumNag.checked = result.blockPremiumNag !== false;
-		toggleSurveys.checked = result.blockSurveys !== false;
-		toggleSponsor.checked = result.blockSponsor !== false;
-		toggleClip.checked = result.blockClip !== false;
-		toggleChipBar.checked = result.blockChipBar === true;
-		toggleComments.checked = result.blockComments === true;
-		toggleRelatedSessionSuggestions.checked = result.blockRelatedSessionSuggestions === true;
-		toggleRelatedSessionEndCards.checked = result.blockRelatedSessionEndCards !== false;
-		toggleDownloadsLink.checked = result.blockDownloadsLink !== false;
-		toggleExploreSection.checked = result.blockExploreSection !== false;
-		toggleMoreSection.checked = result.blockMoreSection !== false;
-		toggleShortsLink.checked = result.blockShortsLink !== false;
-		toggleShortsHomepageSuggestions.checked = result.blockShortsHomepageSuggestions !== false;
-		toggleShortsSessionSuggestions.checked = result.blockShortsSessionSuggestions !== false;
-		toggleShortsSearchSuggestions.checked = result.blockShortsSearchSuggestions !== false;
+	function broadcastAllSettings() {
+		browser.storage.local.get(storageKeys, (result) => {
+			browser.tabs.query({url: "*://*.youtube.com/*"}, (tabs) => {
+				tabs.forEach((tab) => {
+					browser.tabs.sendMessage(tab.id, {
+						action: "updateCSS",
+						blockSearchSuggestions: result.blockSearchSuggestions !== false,
+						blockVoiceSearch: result.blockVoiceSearch !== false,
+						blockProgressFocus: result.blockProgressFocus !== false,
+						blockAIrec: result.blockAIrec !== false,
+						blockAIsessionAsk: result.blockAIsessionAsk !== false,
+						blockAIsessionVideoSummary: result.blockAIsessionVideoSummary !== false,
+						blockPlayables: result.blockPlayables !== false,
+						blockPremiumNag: result.blockPremiumNag !== false,
+						blockSurveys: result.blockSurveys !== false,
+						blockSponsor: result.blockSponsor !== false,
+						blockClip: result.blockClip !== false,
+						blockChipBar: result.blockChipBar === true,
+						blockComments: result.blockComments === true,
+						blockRelatedSessionSuggestions: result.blockRelatedSessionSuggestions === true,
+						blockRelatedSessionEndCards: result.blockRelatedSessionEndCards !== false,
+						blockDownloadsLink: result.blockDownloadsLink !== false,
+						blockExploreSection: result.blockExploreSection !== false,
+						blockMoreSection: result.blockMoreSection !== false,
+						blockShortsLink: result.blockShortsLink !== false,
+						blockShortsHomepageSuggestions: result.blockShortsHomepageSuggestions !== false,
+						blockShortsSessionSuggestions: result.blockShortsSessionSuggestions !== false,
+						blockShortsSearchSuggestions: result.blockShortsSearchSuggestions !== false
+					}).catch(() => {});
+				});
+			});
+		});
+	}
+
+	browser.storage.local.get(storageKeys, (result) => {
+		for (const [toggleId, storageKey] of Object.entries(allToggles)) {
+			const toggleElement = document.getElementById(toggleId);
+			if (toggleElement) {
+				if (storageKey === 'blockChipBar' || storageKey === 'blockComments' || 
+					storageKey === 'blockRelatedSessionSuggestions') {
+					toggleElement.checked = result[storageKey] === true;
+				} else {
+					toggleElement.checked = result[storageKey] !== false;
+				}
+			}
+		}
 
 		setTimeout(() => {
 			document.body.classList.remove('no-transition');
 		}, 100);
 	});
 
-	function saveAndApplySettings() {
-		const blockSearchSuggestions = toggleSearchSuggestions.checked;
-		const blockVoiceSearch = toggleVoiceSearch.checked;
-		const blockProgressFocus = toggleProgressFocus.checked;
-		const blockAIrec = toggleAIrec.checked;
-		const blockAIsessionAsk = toggleAIsessionAsk.checked;
-		const blockAIsessionVideoSummary = toggleAIsessionVideoSummary.checked;
-		const blockPlayables = togglePlayables.checked;
-		const blockPremiumNag = togglePremiumNag.checked;
-		const blockSurveys = toggleSurveys.checked;
-		const blockSponsor = toggleSponsor.checked;
-		const blockClip = toggleClip.checked;
-		const blockChipBar = toggleChipBar.checked;
-		const blockComments = toggleComments.checked;
-		const blockRelatedSessionSuggestions = toggleRelatedSessionSuggestions.checked;
-		const blockRelatedSessionEndCards = toggleRelatedSessionEndCards.checked;
-		const blockDownloadsLink = toggleDownloadsLink.checked;
-		const blockExploreSection = toggleExploreSection.checked;
-		const blockMoreSection = toggleMoreSection.checked;
-		const blockShortsLink = toggleShortsLink.checked;
-		const blockShortsHomepageSuggestions = toggleShortsHomepageSuggestions.checked;
-		const blockShortsSessionSuggestions = toggleShortsSessionSuggestions.checked;
-		const blockShortsSearchSuggestions = toggleShortsSearchSuggestions.checked;
+	function saveAndApplySettings(event) {
+		const element = event.target;
+		if (!element || !element.id) return;
 
-		browser.storage.local.set({
-			blockSearchSuggestions,
-			blockVoiceSearch,
-			blockProgressFocus,
-			blockAIrec,
-			blockAIsessionAsk,
-			blockAIsessionVideoSummary,
-			blockPlayables,
-			blockPremiumNag,
-			blockSurveys,
-			blockSponsor,
-			blockClip,
-			blockChipBar,
-			blockComments,
-			blockRelatedSessionSuggestions,
-			blockRelatedSessionEndCards,
-			blockDownloadsLink,
-			blockExploreSection,
-			blockMoreSection,
-			blockShortsLink,
-			blockShortsHomepageSuggestions,
-			blockShortsSessionSuggestions,
-			blockShortsSearchSuggestions
-			}, () => {
-			browser.tabs.query({url: "*://*.youtube.com/*"}, (tabs) => {
-				tabs.forEach((tab) => {
-					browser.tabs.sendMessage(tab.id, {
-						action: "updateCSS",
-						blockSearchSuggestions: blockSearchSuggestions,
-						blockVoiceSearch: blockVoiceSearch,
-						blockProgressFocus: blockProgressFocus,
-						blockAIrec: blockAIrec,
-						blockAIsessionAsk: blockAIsessionAsk,
-						blockAIsessionVideoSummary: blockAIsessionVideoSummary,
-						blockPlayables: blockPlayables,
-						blockPremiumNag: blockPremiumNag,
-						blockSurveys: blockSurveys,
-						blockSponsor: blockSponsor,
-						blockClip: blockClip,
-						blockChipBar: blockChipBar,
-						blockComments: blockComments,
-						blockRelatedSessionSuggestions: blockRelatedSessionSuggestions,
-						blockRelatedSessionEndCards: blockRelatedSessionEndCards,
-						blockDownloadsLink: blockDownloadsLink,
-						blockExploreSection: blockExploreSection,
-						blockMoreSection: blockMoreSection,
-						blockShortsLink: blockShortsLink,
-						blockShortsHomepageSuggestions: blockShortsHomepageSuggestions,
-						blockShortsSessionSuggestions: blockShortsSessionSuggestions,
-						blockShortsSearchSuggestions: blockShortsSearchSuggestions
-					});
-				});
-			});
-		});
+		const storageKey = allToggles[element.id];
+		const newValue = element.checked;
+
+		if (storageKey) {
+			browser.storage.local.set({
+				[storageKey]: newValue
+			}, broadcastAllSettings);
+		}
 	}
 
-	toggleSearchSuggestions.addEventListener('change', saveAndApplySettings);
-	toggleVoiceSearch.addEventListener('change', saveAndApplySettings);
-	toggleProgressFocus.addEventListener('change', saveAndApplySettings);
-	toggleAIrec.addEventListener('change', saveAndApplySettings);
-	toggleAIsessionAsk.addEventListener('change', saveAndApplySettings);
-	toggleAIsessionVideoSummary.addEventListener('change', saveAndApplySettings);
-	togglePlayables.addEventListener('change', saveAndApplySettings);
-	togglePremiumNag.addEventListener('change', saveAndApplySettings);
-	toggleSurveys.addEventListener('change', saveAndApplySettings);
-	toggleSponsor.addEventListener('change', saveAndApplySettings);
-	toggleClip.addEventListener('change', saveAndApplySettings);
-	toggleChipBar.addEventListener('change', saveAndApplySettings);
-	toggleComments.addEventListener('change', saveAndApplySettings);
-	toggleRelatedSessionSuggestions.addEventListener('change', saveAndApplySettings);
-	toggleRelatedSessionEndCards.addEventListener('change', saveAndApplySettings);
-	toggleDownloadsLink.addEventListener('change', saveAndApplySettings);
-	toggleExploreSection.addEventListener('change', saveAndApplySettings);
-	toggleMoreSection.addEventListener('change', saveAndApplySettings);
-	toggleShortsLink.addEventListener('change', saveAndApplySettings);
-	toggleShortsHomepageSuggestions.addEventListener('change', saveAndApplySettings);
-	toggleShortsSessionSuggestions.addEventListener('change', saveAndApplySettings);
-	toggleShortsSearchSuggestions.addEventListener('change', saveAndApplySettings);
+	for (const toggleId of Object.keys(allToggles)) {
+		const toggleElement = document.getElementById(toggleId);
+		if (toggleElement) {
+			toggleElement.addEventListener('change', saveAndApplySettings);
+		}
+	}
 });

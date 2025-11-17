@@ -18,6 +18,9 @@ const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'yt-shorts-homepage-suggestions-blo
 const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'yt-shorts-session-suggestions-block-style';
 const SHORTS_SEARCH_SUGGESTIONS_STYLE_ID = 'yt-shorts-search-suggestions-block-style';
 
+let blockExploreSectionGlobal = false;
+let blockMoreSectionGlobal = false;
+
 const SEARCH_SUGGESTIONS_CSS = `
 div.ytSearchboxComponentSuggestionsContainer {
 	display: none !important;
@@ -147,7 +150,22 @@ grid-shelf-view-model:has(ytm-shorts-lockup-view-model) {
 }
 `;
 
-function blockSideBarSections(explore, more) {
+function throttle(func, delay) {
+	let timeoutId = null;
+
+	return function() {
+		if (!timeoutId) {
+			func.apply(this, arguments);
+
+			timeoutId = setTimeout(() => {
+				timeoutId = null;
+			}, delay);
+		}
+	};
+}
+
+function blockSideBarSections() {
+	let sectionsFound = false;
 	const sections = document.querySelectorAll('ytd-guide-section-renderer');
 
 	Array.from(sections).forEach(section => {
@@ -157,12 +175,12 @@ function blockSideBarSections(explore, more) {
 			const searchText = titleElement.textContent.trim();
 			let shouldBlock = false;
 
-			if (searchText === 'More from YouTube') {
-				shouldBlock = more;
-			} else if (searchText === 'Explore') {
-				shouldBlock = explore;
-			} else {
-				return;
+			if (searchText === 'Explore') {
+				sectionsFound = true;
+				shouldBlock = blockExploreSectionGlobal;
+			} else if (searchText === 'More from YouTube') {
+				sectionsFound = true;
+				shouldBlock = blockMoreSectionGlobal;
 			}
 
 			if (shouldBlock) {
@@ -172,6 +190,55 @@ function blockSideBarSections(explore, more) {
 			}
 		}
 	});
+	return sectionsFound;
+}
+
+function attemptBlockSideBarSections() {
+	let attempts = 0;
+	let max_attempts = 30;
+	const intervalId = setInterval(() => {
+		const success = blockSideBarSections();
+		
+		if (success) {
+			clearInterval(intervalId);
+			console.log(`ytsb: Sidebar sections successfully found after ${attempts + 1} attempt(s).`);
+			return;
+		}
+
+		attempts++;
+		if (attempts >= max_attempts) { 
+			clearInterval(intervalId);
+			console.log(`ytsb: Sidebar section polling timed out after ${max_attempts} attempts.`);
+		}
+	}, 100);
+}
+
+let isGuideListenerAttached = false;
+
+function setupGuideButtonListener() {
+	if (isGuideListenerAttached) {
+		return;
+	}
+
+	setTimeout(() => {
+		const guideButton = document.querySelector('#button[aria-label="Guide"]');
+		if (guideButton) {
+			guideButton.addEventListener('click', blockSideBarSections); 
+			isGuideListenerAttached = true;
+		}
+	}, 100); 
+}
+
+let isResizeListenerAttached = false;
+const throttledBlockSideBarSections = throttle(blockSideBarSections, 100);
+
+function setupResizeListener() {
+	if (isResizeListenerAttached) {
+		return;
+	}
+
+	window.addEventListener('resize', throttledBlockSideBarSections);
+	isResizeListenerAttached = true;
 }
 
 let progressFocusListener = null;
@@ -205,7 +272,7 @@ function toggleProgressFocus(enable) {
 			}, 0);
 		}
 	};
-    
+	
 	document.addEventListener('focusin', progressFocusListener, true);
 }
 
@@ -342,7 +409,10 @@ function updateBlocking(
 		removeCSS(DOWNLOADS_LINK_STYLE_ID);
 	}
 
-	blockSideBarSections(blockExploreSection, blockMoreSection);
+
+	blockExploreSectionGlobal = blockExploreSection;
+	blockMoreSectionGlobal = blockMoreSection;
+	attemptBlockSideBarSections();
 
 	if (blockShortsLink) {
 		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
@@ -466,4 +536,6 @@ browser.storage.local.get([
 		blockShortsHomepageSuggestions,
 		blockShortsSessionSuggestions,
 		blockShortsSearchSuggestions);
-	});
+	setupGuideButtonListener();
+	setupResizeListener()
+});
