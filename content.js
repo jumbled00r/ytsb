@@ -197,11 +197,13 @@ function attemptBlockSideBarSections(max_attempts) {
 	const intervalId = setInterval(() => {
 		const success = blockSideBarSections();
 		if (success) {
+			console.log(`[attemptBlockSideBarSections] Success on attempt ${attempts + 1}. Clearing interval.`);
 			clearInterval(intervalId);
 			return;
 		}
 		attempts++;
-		if (attempts >= max_attempts) { 
+		if (attempts >= max_attempts) {
+			console.log(`[attemptBlockSideBarSections] Failed to block sidebar sections after ${attempts} attempts. Clearing interval.`);
 			clearInterval(intervalId);
 		}
 	}, 75);
@@ -210,16 +212,27 @@ function attemptBlockSideBarSections(max_attempts) {
 let isGuideListenerAttached = false;
 
 function setupGuideButtonListener() {
-	if (isGuideListenerAttached) {
-		return;
-	}
-	setTimeout(() => {
-		const guideButton = document.querySelector('#button[aria-label="Guide"]');
-		if (guideButton) {
-			guideButton.addEventListener('click', attemptBlockSideBarSections(15)); 
-			isGuideListenerAttached = true;
-		}
-	}, 75); 
+    if (isGuideListenerAttached) {
+        return;
+    }
+
+    let attempts = 0;
+    const max_attempts = 30;
+    const intervalId = setInterval(() => {
+        const guideButton = document.querySelector('#button[aria-label="Guide"]');
+        if (guideButton) {
+            guideButton.addEventListener('click', () => {
+                attemptBlockSideBarSections(15);
+            });
+            isGuideListenerAttached = true;
+            clearInterval(intervalId);
+            return;
+        }
+        attempts++;
+        if (attempts >= max_attempts) {
+            clearInterval(intervalId);
+        }
+    }, 75);
 }
 
 let isResizeListenerAttached = false;
