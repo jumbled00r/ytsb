@@ -165,7 +165,7 @@ function throttle(func, delay) {
 function blockSideBarSections() {
 	const sections = document.querySelectorAll('ytd-guide-section-renderer');
 	if (sections.length === 0) {
-		return false
+		return false;
 	}
 	let sectionsFound = false;
 	Array.from(sections).forEach(section => {
@@ -235,7 +235,6 @@ function setupResizeListener() {
 let progressFocusListener = null;
 
 function toggleProgressFocus(enable) {
-
 	if (progressFocusListener) {
 		document.removeEventListener('focusin', progressFocusListener, true); 
 		progressFocusListener = null;

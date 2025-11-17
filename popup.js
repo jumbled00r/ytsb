@@ -23,26 +23,20 @@ document.addEventListener('DOMContentLoaded', () => {
 		'toggleShortsSessionSuggestions': 'blockShortsSessionSuggestions',
 		'toggleShortsSearchSuggestions': 'blockShortsSearchSuggestions',
 	};
-
 	const storageKeys = Object.values(allToggles);
-
 	function updateBackground(isDark) {
 		document.body.style.setProperty('--background-color', isDark ? '#202020' : '#f0f0f0');
 		document.body.style.setProperty('--text-color', isDark ? '#ffffff' : '#000000');
 	}
-
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		updateBackground(true);
 	} else {
 		updateBackground(false);
 	}
-
 	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
 		updateBackground(event.matches);
 	});
-
 	document.body.classList.add('no-transition');
-
 	function broadcastAllSettings() {
 		browser.storage.local.get(storageKeys, (result) => {
 			const settingsToSend = {
@@ -58,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 	}
-
 	browser.storage.local.get(storageKeys, (result) => {
 		for (const [toggleId, storageKey] of Object.entries(allToggles)) {
 			const toggleElement = document.getElementById(toggleId);
@@ -70,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			document.body.classList.remove('no-transition');
 		}, 100);
 	});
-
 	function saveAndApplySettings(event) {
 		const element = event.target;
 		if (!element || !element.id) return;
@@ -82,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			}, broadcastAllSettings);
 		}
 	}
-
 	for (const toggleId of Object.keys(allToggles)) {
 		const toggleElement = document.getElementById(toggleId);
 		if (toggleElement) {

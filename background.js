@@ -13,7 +13,6 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             keys.forEach(key => {
                 settingsToSend[key] = resolveSetting(key, result);
             });
-            
             browser.tabs.sendMessage(tabId, {
                 action: "updateCSS",
                 ...settingsToSend
