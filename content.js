@@ -153,9 +153,11 @@ grid-shelf-view-model:has(ytm-shorts-lockup-view-model) {
 function throttle(func, delay) {
 	let timeoutId = null;
 	return function() {
+		const context = this;
+		const args = arguments;
 		if (!timeoutId) {
-			func.apply(this, arguments);
 			timeoutId = setTimeout(() => {
+				func.apply(context, args);
 				timeoutId = null;
 			}, delay);
 		}
@@ -192,7 +194,7 @@ function blockSideBarSections() {
 
 function attemptBlockSideBarSections() {
 	let attempts = 0;
-	let max_attempts = 40;
+	let max_attempts = 50;
 	const intervalId = setInterval(() => {
 		const success = blockSideBarSections();
 		if (success) {
@@ -203,7 +205,7 @@ function attemptBlockSideBarSections() {
 		if (attempts >= max_attempts) { 
 			clearInterval(intervalId);
 		}
-	}, 100);
+	}, 50);
 }
 
 let isGuideListenerAttached = false;
@@ -222,7 +224,7 @@ function setupGuideButtonListener() {
 }
 
 let isResizeListenerAttached = false;
-const throttledBlockSideBarSections = throttle(blockSideBarSections, 100);
+const throttledBlockSideBarSections = throttle(blockSideBarSections, 50);
 
 function setupResizeListener() {
 	if (isResizeListenerAttached) {

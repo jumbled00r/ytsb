@@ -7,8 +7,8 @@ browser.runtime.onInstalled.addListener(() => {
 
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('youtube.com')) {
-        const keys = getKeys();
-        browser.storage.local.get(keys, (result) => {
+        const keys = ALL_SETTING_KEYS;
+		browser.storage.local.get(keys, (result) => {
             const settingsToSend = {};
             keys.forEach(key => {
                 settingsToSend[key] = resolveSetting(key, result);
