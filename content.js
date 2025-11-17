@@ -194,7 +194,7 @@ function blockSideBarSections() {
 
 function attemptBlockSideBarSections() {
 	let attempts = 0;
-	let max_attempts = 50;
+	let max_attempts = 30;
 	const intervalId = setInterval(() => {
 		const success = blockSideBarSections();
 		if (success) {
@@ -205,7 +205,7 @@ function attemptBlockSideBarSections() {
 		if (attempts >= max_attempts) { 
 			clearInterval(intervalId);
 		}
-	}, 50);
+	}, 75);
 }
 
 let isGuideListenerAttached = false;
@@ -220,11 +220,11 @@ function setupGuideButtonListener() {
 			guideButton.addEventListener('click', blockSideBarSections); 
 			isGuideListenerAttached = true;
 		}
-	}, 50); 
+	}, 75); 
 }
 
 let isResizeListenerAttached = false;
-const throttledBlockSideBarSections = throttle(blockSideBarSections, 50);
+const throttledBlockSideBarSections = throttle(blockSideBarSections, 75);
 
 function setupResizeListener() {
 	if (isResizeListenerAttached) {
