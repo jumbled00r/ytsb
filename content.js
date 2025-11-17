@@ -201,14 +201,14 @@ function attemptBlockSideBarSections() {
 		
 		if (success) {
 			clearInterval(intervalId);
-			console.log(`ytsb: Sidebar sections successfully found after ${attempts + 1} attempt(s).`);
+			//console.log(`ytsb: Sidebar sections successfully found after ${attempts + 1} attempt(s).`);
 			return;
 		}
 
 		attempts++;
 		if (attempts >= max_attempts) { 
 			clearInterval(intervalId);
-			console.log(`ytsb: Sidebar section polling timed out after ${max_attempts} attempts.`);
+			//console.log(`ytsb: Sidebar section polling timed out after ${max_attempts} attempts.`);
 		}
 	}, 100);
 }
@@ -272,7 +272,7 @@ function toggleProgressFocus(enable) {
 			}, 0);
 		}
 	};
-	
+
 	document.addEventListener('focusin', progressFocusListener, true);
 }
 
@@ -537,5 +537,5 @@ browser.storage.local.get([
 		blockShortsSessionSuggestions,
 		blockShortsSearchSuggestions);
 	setupGuideButtonListener();
-	setupResizeListener()
+	setupResizeListener();
 });
