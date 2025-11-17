@@ -40,9 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
 		updateBackground(event.matches);
 	});
-	
+
 	document.body.classList.add('no-transition');
-	
+
 	function broadcastAllSettings() {
 		browser.storage.local.get(storageKeys, (result) => {
 			const settingsToSend = {
