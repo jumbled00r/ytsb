@@ -219,7 +219,7 @@ function setupGuideButtonListener() {
     let attempts = 0;
     const max_attempts = 30;
     const intervalId = setInterval(() => {
-        const guideButton = document.querySelector('#button[aria-label="Guide"]');
+        const guideButton = document.querySelector('#guide-button');
         if (guideButton) {
             guideButton.addEventListener('click', () => {
                 attemptBlockSideBarSections(15);
