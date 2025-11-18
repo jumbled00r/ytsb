@@ -119,6 +119,7 @@ const RELATED_SESSION_END_CARDS_CSS = `
 `;
 
 const DOWNLOADS_LINK_CSS = `
+ytd-download-button-renderer,
 ytd-mini-guide-entry-renderer a[title="Downloads"],
 ytd-guide-downloads-entry-renderer {
 	display: none !important;
@@ -169,18 +170,20 @@ function blockSideBarSections() {
 	if (sections.length === 0) {
 		return false;
 	}
-	let sectionsFound = false;
-	Array.from(sections).forEach(section => {
+	let sectionFound = false;
+	for (const section of sections) {
 		const titleElement = section.querySelector('#guide-section-title');
 		if (titleElement) {
 			const searchText = titleElement.textContent.trim();
 			let shouldBlock = false;
 			if (searchText === 'Explore') {
-				sectionsFound = true;
+				sectionFound = true;
 				shouldBlock = blockExploreSectionGlobal;
 			} else if (searchText === 'More from YouTube') {
-				sectionsFound = true;
+				sectionFound = true;
 				shouldBlock = blockMoreSectionGlobal;
+			} else {
+				continue;
 			}
 			if (shouldBlock) {
 				section.style.setProperty('display', 'none', 'important');
@@ -188,8 +191,8 @@ function blockSideBarSections() {
 				section.style.removeProperty('display');
 			}
 		}
-	});
-	return sectionsFound;
+	}
+	return sectionFound;
 }
 
 function attemptBlockSideBarSections(max_attempts) {
