@@ -167,7 +167,7 @@ function throttle(func, delay) {
 
 function blockSideBarSections() {
 	const sections = document.querySelectorAll('ytd-guide-section-renderer');
-	if (sections.length === 0) {
+	if (sections.length < 6) {
 		return false;
 	}
 	let sectionFound = false;
@@ -222,7 +222,7 @@ function setupGuideButtonListener() {
         const guideButton = document.querySelector('#guide-button');
         if (guideButton) {
             guideButton.addEventListener('click', () => {
-                attemptBlockSideBarSections(15);
+                attemptBlockSideBarSections(30);
             });
             isGuideListenerAttached = true;
             clearInterval(intervalId);
