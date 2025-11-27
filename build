@@ -1,16 +1,21 @@
 #!/bin/bash
-if [[ "$1" = "firefox" ]]; then
-	cp -v manifests/firefox_manifest.json manifest.json
-elif [[ "$1" = "chrome" ]]; then
-	cp -v manifests/chrome_manifest.json manifest.json
-elif [[ "$1" = "clean" ]]; then
-	rm -rf web-ext-artifacts
-	rm -f manifest.json
-	exit 0
-else
-	echo "No build target."
-	exit 1
-fi
+case "$1" in
+	firefox)
+		cp -v manifests/firefox_manifest.json manifest.json
+		;;
+	chrome)
+		cp -v manifests/chrome_manifest.json manifest.json
+		;;
+	clean)
+		rm -rf web-ext-artifacts
+		rm -f manifest.json
+		exit 0
+		;;
+	*)
+		echo "No build target."
+		exit 1
+		;;
+esac
 
 web-ext build \
 	--overwrite-dest \
