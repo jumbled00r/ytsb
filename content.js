@@ -215,26 +215,26 @@ function attemptBlockSideBarSections(max_attempts) {
 let isGuideListenerAttached = false;
 
 function setupGuideButtonListener() {
-    if (isGuideListenerAttached) {
-        return;
-    }
-    let attempts = 0;
-    const max_attempts = 30;
-    const intervalId = setInterval(() => {
-        const guideButton = document.querySelector('#guide-button');
-        if (guideButton) {
-            guideButton.addEventListener('click', () => {
-                attemptBlockSideBarSections(30);
-            });
-            isGuideListenerAttached = true;
-            clearInterval(intervalId);
-            return;
-        }
-        attempts++;
-        if (attempts >= max_attempts) {
-            clearInterval(intervalId);
-        }
-    }, 75);
+	if (isGuideListenerAttached) {
+		return;
+	}
+	let attempts = 0;
+	const max_attempts = 30;
+	const intervalId = setInterval(() => {
+		const guideButton = document.querySelector('#guide-button');
+		if (guideButton) {
+			guideButton.addEventListener('click', () => {
+				attemptBlockSideBarSections(30);
+			});
+			isGuideListenerAttached = true;
+			clearInterval(intervalId);
+			return;
+		}
+		attempts++;
+		if (attempts >= max_attempts) {
+			clearInterval(intervalId);
+		}
+	}, 75);
 }
 
 let isResizeListenerAttached = false;
