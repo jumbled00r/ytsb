@@ -34,6 +34,7 @@ const VOICE_SEARCH_CSS = `
 `;
 
 const AI_REC_CSS = `
+ytd-feed-nudge-renderer,
 yt-talk-to-recs-view-model,
 ytd-rich-section-renderer:has(ytd-talk-to-recs-flow-renderer) {
 	display: none !important;
