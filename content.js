@@ -22,7 +22,7 @@ let blockExploreSectionGlobal = false;
 let blockMoreSectionGlobal = false;
 
 const SEARCH_SUGGESTIONS_CSS = `
-div.ytSearchboxComponentSuggestionsContainer {
+.ytSearchboxComponentSuggestionsContainer {
 	display: none !important;
 }
 `;
