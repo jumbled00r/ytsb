@@ -99,7 +99,7 @@ const CHIP_BAR_CSS = `
 ytd-feed-filter-chip-bar-renderer {
 	display: none !important;
 }
-#frosted-glass.with-chipbar.ytd-app {
+#frosted-glass.with-chipbar {
 	height: 56px !important;
 }
 `;
@@ -175,29 +175,33 @@ function blockSideBarSections() {
 	if (sections.length < 6) {
 		return false;
 	}
-	let sectionFound = false;
 	for (const section of sections) {
-		const titleElement = section.querySelector('#guide-section-title');
-		if (titleElement) {
-			const searchText = titleElement.textContent.trim();
-			let shouldBlock = false;
-			if (searchText === 'Explore') {
-				sectionFound = true;
+		const element = section.querySelector('#guide-section-title');
+		if (!element) {
+			continue;
+		}
+		const title = element.textContent.trim();
+		if (!title) {
+			continue;
+		}
+		let shouldBlock = false;
+		switch (title) {
+			case 'Explore':
 				shouldBlock = blockExploreSectionGlobal;
-			} else if (searchText === 'More from YouTube') {
-				sectionFound = true;
+				break;
+			case 'More from YouTube':
 				shouldBlock = blockMoreSectionGlobal;
-			} else {
+				break;
+			default:
 				continue;
-			}
-			if (shouldBlock) {
-				section.style.setProperty('display', 'none', 'important');
-			} else {
-				section.style.removeProperty('display');
-			}
+		}
+		if (shouldBlock) {
+			section.style.setProperty('display', 'none', 'important');
+		} else {
+			section.style.removeProperty('display');
 		}
 	}
-	return sectionFound;
+	return true;
 }
 
 function attemptBlockSideBarSections(max_attempts) {
