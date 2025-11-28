@@ -99,6 +99,9 @@ const CHIP_BAR_CSS = `
 ytd-feed-filter-chip-bar-renderer {
 	display: none !important;
 }
+#frosted-glass.with-chipbar.ytd-app {
+	height: 56px !important;
+}
 `;
 
 const COMMENTS_CSS = `
