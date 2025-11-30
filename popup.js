@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		'toggleShortsHomepageSuggestions': 'blockShortsHomepageSuggestions',
 		'toggleShortsSessionSuggestions': 'blockShortsSessionSuggestions',
 		'toggleShortsSearchSuggestions': 'blockShortsSearchSuggestions',
+		'toggleDebug': 'debug'
 	};
 	const storageKeys = Object.values(allToggles);
 	function updateBackground(isDark) {

@@ -24,6 +24,7 @@ let blockExploreSectionGlobal = false;
 let blockMoreSectionGlobal = false;
 let blockPlaybackOnNavGlobal = false;
 let blockHomepageGlobal = false;
+let debugGlobal = false;
 
 const SEARCH_SUGGESTIONS_CSS = `
 .ytSearchboxComponentSuggestionsContainer {
@@ -169,8 +170,13 @@ function throttle(func, delay) {
 		if (!timeoutId) {
 			timeoutId = setTimeout(() => {
 				func.apply(context, args);
+				if (debugGlobal) {
+					console.log(`[ytsb] ${func.name}() not throttled.`)
+				}
 				timeoutId = null;
 			}, delay);
+		} else if (debugGlobal) {
+			console.log(`[ytsb] ${func.name}() throttled.`);
 		}
 	};
 }
@@ -179,12 +185,18 @@ function attempt(func, max_attempts, delay) {
 	let attempts = 0;
 	const intervalId = setInterval(() => {
 		const success = func();
+		attempts++;
 		if (success) {
+			if (debugGlobal) {
+				console.log(`[ytsb] ${func.name}() attempt ${attempts} succeeded.`);
+			}
 			clearInterval(intervalId);
 			return;
 		}
-		attempts++;
 		if (attempts >= max_attempts) {
+			if (debugGlobal) {
+				console.log(`[ytsb] ${func.name}() max_attempts (${attempts}) reached.`);
+			}
 			clearInterval(intervalId);
 		}
 	}, delay);
@@ -226,10 +238,8 @@ function blockSideBarSections() {
 
 function togglePlayback() {
 	if (blockPlaybackOnNavGlobal) {
-		if (currentPathName === '/watch') {
-			if (videoElement && !videoElement.paused) {
-				videoElement.pause();
-			}
+		if (videoElement && !videoElement.paused) {
+			videoElement.pause();
 		}
 	}
 }
@@ -257,15 +267,18 @@ function setupNavigationListener() {
 		return;
 	}
 	document.addEventListener('yt-navigate-start', function(event) {
-		togglePlayback();
+		if (currentPathName === '/watch') {
+			togglePlayback();
+		}
 		redirectHomepage();
 	});
 	document.addEventListener('yt-navigate-finish', function(event) {
 		currentPathName = location.pathname;
-		attempt(setVideoElement, 30, 75);
+		if (currentPathName === '/watch') {
+			attempt(setVideoElement, 30, 75);
+		}
 		attempt(blockSideBarSections, 30, 75);
 	});
-	attempt(setVideoElement, 30, 75);
 	redirectHomepage();
 	isNavigationListenerAttached = true;
 }
@@ -366,7 +379,8 @@ function updateBlocking(
 	blockShortsLink,
 	blockShortsHomepageSuggestions,
 	blockShortsSessionSuggestions,
-	blockShortsSearchSuggestions) {
+	blockShortsSearchSuggestions,
+	debug) {
 	if (blockSearchSuggestions) {
 		applyCSS(SEARCH_SUGGESTIONS_CSS, SEARCH_SUGGESTIONS_STYLE_ID);
 	} else {
@@ -380,6 +394,7 @@ function updateBlocking(
 	toggleProgressFocus(blockProgressFocus);
 	blockPlaybackOnNavGlobal = blockPlaybackOnNav;
 	blockHomepageGlobal = blockHomepage;
+	redirectHomepage();
 	if (blockAIrec) {
 		applyCSS(AI_REC_CSS, AI_REC_STYLE_ID);
 	} else {
@@ -468,6 +483,7 @@ function updateBlocking(
 	} else {
 		removeCSS(SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
 	}
+	debugGlobal = debug;
 }
 
 browser.runtime.onMessage.addListener((request) => {
@@ -496,7 +512,8 @@ browser.runtime.onMessage.addListener((request) => {
 			request.blockShortsLink,
 			request.blockShortsHomepageSuggestions,
 			request.blockShortsSessionSuggestions,
-			request.blockShortsSearchSuggestions);
+			request.blockShortsSearchSuggestions,
+			request.debug);
 	}
 });
 
@@ -530,7 +547,8 @@ browser.storage.local.get(ALL_SETTING_KEYS, (result) => {
 		settings.blockShortsLink,
 		settings.blockShortsHomepageSuggestions,
 		settings.blockShortsSessionSuggestions,
-		settings.blockShortsSearchSuggestions);
+		settings.blockShortsSearchSuggestions,
+		settings.debug);
 	setupNavigationListener();
 	attempt(setupGuideButtonListener, 30, 75);
 	setupResizeListener();

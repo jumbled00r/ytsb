@@ -30,6 +30,16 @@
 			font-size: 1.1em;
 			color: inherit;
 		}
+		hr {
+			border: none;
+			margin: 0 0;
+			height: 1px;
+			background-color: var(--text-color, #ffffff);
+			width: calc(100% - 16px);
+			box-shadow: 
+				0 1px 0 0 rgba(255, 255, 255, 0.5),
+				0 -1px 0 0 rgba(255, 255, 255, 0.5);
+		}
 		.switch {
 			position: relative;
 			display: inline-block;
@@ -242,6 +252,14 @@
 			<span>Block shorts search suggestions</span>
 			<label class="switch">
 				<input type="checkbox" id="toggleShortsSearchSuggestions">
+				<span class="slider"></span>
+			</label>
+		</div>
+		<hr>
+		<div class="toggle-group">
+			<span>Enable debug console messages</span>
+			<label class="switch">
+				<input type="checkbox" id="toggleDebug">
 				<span class="slider"></span>
 			</label>
 		</div>

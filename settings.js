@@ -22,7 +22,8 @@ const DEFAULT_SETTINGS = {
 	'blockShortsLink': true,
 	'blockShortsHomepageSuggestions': true,
 	'blockShortsSessionSuggestions': true,
-	'blockShortsSearchSuggestions': true
+	'blockShortsSearchSuggestions': true,
+	'debug': false
 };
 
 function resolveSetting(key, result) {
