@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		'toggleSearchSuggestions': 'blockSearchSuggestions',
 		'toggleVoiceSearch': 'blockVoiceSearch',
 		'toggleProgressFocus': 'blockProgressFocus',
+		'togglePlaybackOnNav': 'blockPlaybackOnNav',
+		'toggleHomepage': 'blockHomepage',
 		'toggleAIrec': 'blockAIrec',
 		'toggleAIsessionAsk': 'blockAIsessionAsk',
 		'toggleAIsessionVideoSummary': 'blockAIsessionVideoSummary',

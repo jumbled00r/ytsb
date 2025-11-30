@@ -2,6 +2,8 @@ const DEFAULT_SETTINGS = {
 	'blockSearchSuggestions': true,
 	'blockVoiceSearch': true,
 	'blockProgressFocus': true,
+	'blockPlaybackOnNav': true,
+	'blockHomepage': false,
 	'blockAIrec': true,
 	'blockAIsessionAsk': true,
 	'blockAIsessionVideoSummary': true,

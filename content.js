@@ -18,8 +18,12 @@ const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'yt-shorts-homepage-suggestions-blo
 const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'yt-shorts-session-suggestions-block-style';
 const SHORTS_SEARCH_SUGGESTIONS_STYLE_ID = 'yt-shorts-search-suggestions-block-style';
 
+let currentPathName = location.pathname;
+let videoElement = null;
 let blockExploreSectionGlobal = false;
 let blockMoreSectionGlobal = false;
+let blockPlaybackOnNavGlobal = false;
+let blockHomepageGlobal = false;
 
 const SEARCH_SUGGESTIONS_CSS = `
 .ytSearchboxComponentSuggestionsContainer {
@@ -35,6 +39,7 @@ const VOICE_SEARCH_CSS = `
 
 const AI_REC_CSS = `
 ytd-feed-nudge-renderer,
+ytd-statement-banner-renderer,
 yt-talk-to-recs-view-model,
 ytd-rich-section-renderer:has(ytd-talk-to-recs-flow-renderer) {
 	display: none !important;
@@ -170,6 +175,21 @@ function throttle(func, delay) {
 	};
 }
 
+function attempt(func, max_attempts, delay) {
+	let attempts = 0;
+	const intervalId = setInterval(() => {
+		const success = func();
+		if (success) {
+			clearInterval(intervalId);
+			return;
+		}
+		attempts++;
+		if (attempts >= max_attempts) {
+			clearInterval(intervalId);
+		}
+	}, delay);
+}
+
 function blockSideBarSections() {
 	const sections = document.querySelectorAll('ytd-guide-section-renderer');
 	if (sections.length < 6) {
@@ -204,19 +224,50 @@ function blockSideBarSections() {
 	return true;
 }
 
-function attemptBlockSideBarSections(max_attempts) {
-	let attempts = 0;
-	const intervalId = setInterval(() => {
-		const success = blockSideBarSections();
-		if (success) {
-			clearInterval(intervalId);
-			return;
+function togglePlayback() {
+	if (blockPlaybackOnNavGlobal) {
+		if (currentPathName === '/watch') {
+			if (videoElement && !videoElement.paused) {
+				videoElement.pause();
+			}
 		}
-		attempts++;
-		if (attempts >= max_attempts) {
-			clearInterval(intervalId);
+	}
+}
+
+function redirectHomepage() {
+	if (blockHomepageGlobal) {
+		if (location.pathname === '/') {
+			location.href = '/feed/subscriptions';
 		}
-	}, 75);
+	}
+}
+
+function setVideoElement() {
+	videoElement = document.querySelector('.html5-main-video');
+	if (videoElement) {
+		return true;
+	}
+	return false;
+}
+
+let isNavigationListenerAttached = false;
+
+function setupNavigationListener() {
+	if (isNavigationListenerAttached) {
+		return;
+	}
+	document.addEventListener('yt-navigate-start', function(event) {
+		togglePlayback();
+		redirectHomepage();
+	});
+	document.addEventListener('yt-navigate-finish', function(event) {
+		currentPathName = location.pathname;
+		attempt(setVideoElement, 30, 75);
+		attempt(blockSideBarSections, 30, 75);
+	});
+	attempt(setVideoElement, 30, 75);
+	redirectHomepage();
+	isNavigationListenerAttached = true;
 }
 
 let isGuideListenerAttached = false;
@@ -225,23 +276,15 @@ function setupGuideButtonListener() {
 	if (isGuideListenerAttached) {
 		return;
 	}
-	let attempts = 0;
-	const max_attempts = 30;
-	const intervalId = setInterval(() => {
-		const guideButton = document.querySelector('#guide-button');
-		if (guideButton) {
-			guideButton.addEventListener('click', () => {
-				attemptBlockSideBarSections(30);
-			});
-			isGuideListenerAttached = true;
-			clearInterval(intervalId);
-			return;
-		}
-		attempts++;
-		if (attempts >= max_attempts) {
-			clearInterval(intervalId);
-		}
-	}, 75);
+	const guideButton = document.querySelector('#guide-button');
+	if (guideButton) {
+		guideButton.addEventListener('click', () => {
+			attempt(blockSideBarSections, 30, 75);
+		});
+		isGuideListenerAttached = true;
+		return true;
+	}
+	return false;
 }
 
 let isResizeListenerAttached = false;
@@ -266,7 +309,6 @@ function toggleProgressFocus(enable) {
 		return;
 	}
 	progressFocusListener = (event) => {
-		const videoElement = document.querySelector('.html5-main-video');
 		if (!window.location.pathname.startsWith('/watch') || !videoElement) {
 			return;
 		}
@@ -304,6 +346,8 @@ function updateBlocking(
 	blockSearchSuggestions,
 	blockVoiceSearch,
 	blockProgressFocus,
+	blockPlaybackOnNav,
+	blockHomepage,
 	blockAIrec,
 	blockAIsessionAsk,
 	blockAIsessionVideoSummary,
@@ -334,6 +378,8 @@ function updateBlocking(
 		removeCSS(VOICE_SEARCH_STYLE_ID);
 	}
 	toggleProgressFocus(blockProgressFocus);
+	blockPlaybackOnNavGlobal = blockPlaybackOnNav;
+	blockHomepageGlobal = blockHomepage;
 	if (blockAIrec) {
 		applyCSS(AI_REC_CSS, AI_REC_STYLE_ID);
 	} else {
@@ -401,7 +447,7 @@ function updateBlocking(
 	}
 	blockExploreSectionGlobal = blockExploreSection;
 	blockMoreSectionGlobal = blockMoreSection;
-	attemptBlockSideBarSections(30);
+	attempt(blockSideBarSections, 30, 75);
 	if (blockShortsLink) {
 		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
 	} else {
@@ -430,6 +476,8 @@ browser.runtime.onMessage.addListener((request) => {
 			request.blockSearchSuggestions,
 			request.blockVoiceSearch,
 			request.blockProgressFocus,
+			request.blockPlaybackOnNav,
+			request.blockHomepage,
 			request.blockAIrec,
 			request.blockAIsessionAsk,
 			request.blockAIsessionVideoSummary,
@@ -462,6 +510,8 @@ browser.storage.local.get(ALL_SETTING_KEYS, (result) => {
 		settings.blockSearchSuggestions,
 		settings.blockVoiceSearch,
 		settings.blockProgressFocus,
+		settings.blockPlaybackOnNav,
+		settings.blockHomepage,
 		settings.blockAIrec,
 		settings.blockAIsessionAsk,
 		settings.blockAIsessionVideoSummary,
@@ -481,6 +531,7 @@ browser.storage.local.get(ALL_SETTING_KEYS, (result) => {
 		settings.blockShortsHomepageSuggestions,
 		settings.blockShortsSessionSuggestions,
 		settings.blockShortsSearchSuggestions);
-	setupGuideButtonListener();
+	setupNavigationListener();
+	attempt(setupGuideButtonListener, 30, 75);
 	setupResizeListener();
 });
