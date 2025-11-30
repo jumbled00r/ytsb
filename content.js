@@ -274,7 +274,7 @@ let isGuideListenerAttached = false;
 
 function setupGuideButtonListener() {
 	if (isGuideListenerAttached) {
-		return;
+		return true;
 	}
 	const guideButton = document.querySelector('#guide-button');
 	if (guideButton) {
