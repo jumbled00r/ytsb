@@ -162,68 +162,42 @@ grid-shelf-view-model:has(ytm-shorts-lockup-view-model) {
 }
 `;
 
-lockedFunctions = [];
-
 function throttle(func, delay) {
-	const funcName = func.name;	
 	let timeoutId = null;
 	return function() {
-		if (lockedFunctions.includes(funcName)) {
-			if (debugGlobal) {
-				console.log(`[ytsb] ${funcName}() is locked.`);
-			}
-			return;
-		}
 		const context = this;
 		const args = arguments;
 		if (!timeoutId) {
 			timeoutId = setTimeout(() => {
 				func.apply(context, args);
 				if (debugGlobal) {
-					console.log(`[ytsb] ${funcName}() not throttled.`)
+					console.log(`[ytsb] ${func.name}() not throttled.`)
 				}
 				timeoutId = null;
 			}, delay);
 		} else if (debugGlobal) {
-			console.log(`[ytsb] ${funcName}() throttled.`);
+			console.log(`[ytsb] ${func.name}() throttled.`);
 		}
 	};
 }
 
-function attempt(func, max_attempts, delay, overrideLock = false) {
-	const funcName = func.name;
-	if (!overrideLock) {
-		if (lockedFunctions.includes(funcName)) {
-			if (debugGlobal) {
-				console.log(`[ytsb] ${funcName}() is locked.`);
-			}
-			return;
-		}
-		lockedFunctions.push(funcName);
-	}
+function attempt(func, max_attempts, delay) {
 	let attempts = 0;
-	let intervalId;
-	const cleanup = () => {
-		clearInterval(intervalId);
-		if (!overrideLock) {
-			lockedFunctions = lockedFunctions.filter(name => name !== funcName);
-		}
-	};
-	intervalId = setInterval(() => {
+	const intervalId = setInterval(() => {
 		const success = func();
 		attempts++;
 		if (success) {
 			if (debugGlobal) {
-				console.log(`[ytsb] ${funcName}() attempt ${attempts} succeeded.`);
+				console.log(`[ytsb] ${func.name}() attempt ${attempts} succeeded.`);
 			}
-			cleanup();
+			clearInterval(intervalId);
 			return;
 		}
 		if (attempts >= max_attempts) {
 			if (debugGlobal) {
-				console.log(`[ytsb] ${funcName}() max_attempts (${attempts}) reached.`);
+				console.log(`[ytsb] ${func.name}() max_attempts (${attempts}) reached.`);
 			}
-			cleanup();
+			clearInterval(intervalId);
 		}
 	}, delay);
 }
@@ -301,9 +275,9 @@ function setupNavigationListener() {
 	document.addEventListener('yt-navigate-finish', function(event) {
 		currentPathName = location.pathname;
 		if (currentPathName === '/watch') {
-			attempt(setVideoElement, 30, 75, true);
+			attempt(setVideoElement, 30, 75);
 		}
-		attempt(blockSideBarSections, 30, 75, true);
+		attempt(blockSideBarSections, 30, 75);
 	});
 	redirectHomepage();
 	isNavigationListenerAttached = true;
@@ -318,7 +292,7 @@ function setupGuideButtonListener() {
 	const guideButton = document.querySelector('#guide-button');
 	if (guideButton) {
 		guideButton.addEventListener('click', () => {
-			attempt(blockSideBarSections, 30, 75, true);
+			attempt(blockSideBarSections, 30, 75);
 		});
 		isGuideListenerAttached = true;
 		return true;
@@ -576,6 +550,6 @@ browser.storage.local.get(ALL_SETTING_KEYS, (result) => {
 		settings.blockShortsSearchSuggestions,
 		settings.debug);
 	setupNavigationListener();
-	attempt(setupGuideButtonListener, 30, 75, true);
+	attempt(setupGuideButtonListener, 30, 75);
 	setupResizeListener();
 });
