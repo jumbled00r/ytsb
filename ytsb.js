@@ -264,16 +264,12 @@ function togglePlayback() {
 }
 
 function closeMiniplayer() {
-	if (blockMiniplayerGlobal) {
-		const closeButton = document.querySelector('.ytp-miniplayer-close-button');
-		if (closeButton) {
-			closeButton.click();
-			return true;
-		}
-		return false;
-	} else {
-		return true;
+	const closeButton = document.querySelector('.ytp-miniplayer-close-button');
+	if (closeButton) {
+		closeButton.click();
+		return true; 
 	}
+	return false;
 }
 
 function redirectHomepage() {
@@ -306,7 +302,9 @@ function setupNavigationListener() {
 	});
 	document.addEventListener('yt-navigate-finish', function(event) {
 		if (currentPathName === '/watch') {
-			attempt(closeMiniplayer, 30, 75);
+			if (blockMiniplayerGlobal) {
+				attempt(closeMiniplayer, 15, 100);
+			}
 		}
 		currentPathName = location.pathname;
 		if (currentPathName === '/watch') {
