@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "YouTube Suggestion Blocker",
-	"version": "1.59",
+	"version": "1.60",
 	"description": "Block YouTube suggestions.",
 	"homepage_url": "https://github.com/jumbled00r/ytsb",
 	"permissions": [
@@ -13,7 +13,7 @@
 	"content_scripts": [
 		{
 			"matches": ["*://*.youtube.com/*"],
-			"js": ["settings.js", "content.js"],
+			"js": ["settings.js", "ytsb.js"],
 			"run_at": "document_start"
 		}
 	],
