@@ -1,13 +1,13 @@
 #!/bin/bash
 case "$1" in
 	firefox)
-		cp -v manifests/firefox_manifest.json manifest.json
+		cp -f manifests/firefox_manifest.json manifest.json
 		;;
 	chrome)
-		cp -v manifests/chrome_manifest.json manifest.json
+		cp -f manifests/chrome_manifest.json manifest.json
 		;;
 	clean)
-		rm -rf web-ext-artifacts
+		rm -rf packages
 		rm -f manifest.json
 		exit 0
 		;;
@@ -17,7 +17,12 @@ case "$1" in
 		;;
 esac
 
-web-ext build \
-	--overwrite-dest \
-	--ignore-files \
-		"build" "LICENSE" "README.md" "manifests" "icon-attributes.html"
+VERSION=$(jq -r '.version' manifest.json)
+PACKAGE="ytsb-$1-v$VERSION.zip"
+
+mkdir -p packages
+
+zip -rq "packages/$PACKAGE" . \
+	-x "packages/*" "build" "LICENSE" "README.md" "manifests/*" "icon-attributes.html"
+
+[[ $? = 0 ]] && echo "$PACKAGE"
