@@ -4,7 +4,7 @@ const MINIPLAYER_STYLE_ID = 'yt-miniplayer-block-style';
 const AI_REC_STYLE_ID = 'yt-ai-rec-block-style';
 const AI_SESSION_ASK_STYLE_ID = 'yt-ai-session-ask-block-style';
 const AI_SESSION_VIDEO_SUMMARY_STYLE_ID = 'yt-ai-session-video-summary-block-style';
-const AI_SESSION_PLAYLISTS_STYLE_ID = 'yt-ai-session-playlists-block-style'
+const AI_SESSION_PLAYLISTS_STYLE_ID = 'yt-ai-session-playlists-block-style';
 const PLAYABLES_STYLE_ID = 'yt-playables-block-style';
 const PREMIUM_NAG_STYLE_ID = 'yt-premium-nag-block-style';
 const SURVEYS_STYLE_ID = 'yt-surveys-block-style';
@@ -46,7 +46,7 @@ const MINIPLAYER_CSS = `
 ytd-miniplayer {
 	display: none !important;
 }
-`
+`;
 
 const AI_REC_CSS = `
 ytd-feed-nudge-renderer,
