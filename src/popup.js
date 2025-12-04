@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		'toggleAIplaylists': 'blockAIplaylists',
 		'toggleAIsessionAsk': 'blockAIsessionAsk',
 		'toggleAIsessionVideoSummary': 'blockAIsessionVideoSummary',
+		'toggleMovies': 'blockMovies',
 		'togglePlayables': 'blockPlayables',
 		'togglePremiumNag': 'blockPremiumNag',
 		'toggleSurveys': 'blockSurveys',

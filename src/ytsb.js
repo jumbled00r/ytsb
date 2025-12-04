@@ -1,24 +1,25 @@
-const SEARCH_SUGGESTIONS_STYLE_ID = 'yt-search-suggestions-block-style';
-const VOICE_SEARCH_STYLE_ID = 'yt-voice-search-block-style';
-const MINIPLAYER_STYLE_ID = 'yt-miniplayer-block-style';
-const AI_REC_STYLE_ID = 'yt-ai-rec-block-style';
-const AI_PLAYLISTS_STYLE_ID = 'yt-ai-playlists-block-style';
-const AI_SESSION_ASK_STYLE_ID = 'yt-ai-session-ask-block-style';
-const AI_SESSION_VIDEO_SUMMARY_STYLE_ID = 'yt-ai-session-video-summary-block-style';
-const PLAYABLES_STYLE_ID = 'yt-playables-block-style';
-const PREMIUM_NAG_STYLE_ID = 'yt-premium-nag-block-style';
-const SURVEYS_STYLE_ID = 'yt-surveys-block-style';
-const SPONSOR_STYLE_ID = 'yt-sponsor-block-style';
-const CLIP_STYLE_ID = 'yt-clip-block-style';
-const CHIP_BAR_STYLE_ID = 'yt-chip-bar-block-style';
-const COMMENTS_STYLE_ID = 'yt-comments-block-style';
-const RELATED_SESSION_SUGGESTIONS_STYLE_ID = 'yt-related-session-suggestions-block-style';
-const RELATED_SESSION_END_CARDS_STYLE_ID = 'yt-related-session-end-cards-block-style';
-const DOWNLOADS_LINK_STYLE_ID = 'yt-downloads-link-block-style';
-const SHORTS_LINK_STYLE_ID = 'yt-shorts-link-block-style';
-const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'yt-shorts-homepage-suggestions-block-style';
-const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'yt-shorts-session-suggestions-block-style';
-const SHORTS_SEARCH_SUGGESTIONS_STYLE_ID = 'yt-shorts-search-suggestions-block-style';
+const SEARCH_SUGGESTIONS_STYLE_ID = 'ytsb-search-suggestions';
+const VOICE_SEARCH_STYLE_ID = 'ytsb-voice-search';
+const MINIPLAYER_STYLE_ID = 'ytsb-miniplayer';
+const AI_REC_STYLE_ID = 'ytsb-ai-rec';
+const AI_PLAYLISTS_STYLE_ID = 'ytsb-ai-playlists';
+const AI_SESSION_ASK_STYLE_ID = 'ytsb-ai-session-ask';
+const AI_SESSION_VIDEO_SUMMARY_STYLE_ID = 'ytsb-ai-session-video-summary';
+const MOVIES_STYLE_ID = 'ytsb-movies';
+const PLAYABLES_STYLE_ID = 'ytsb-playables';
+const PREMIUM_NAG_STYLE_ID = 'ytsb-premium-nag';
+const SURVEYS_STYLE_ID = 'ytsb-surveys';
+const SPONSOR_STYLE_ID = 'ytsb-sponsor';
+const CLIP_STYLE_ID = 'ytsb-clip';
+const CHIP_BAR_STYLE_ID = 'ytsb-chip-bar';
+const COMMENTS_STYLE_ID = 'ytsb-comments';
+const RELATED_SESSION_SUGGESTIONS_STYLE_ID = 'ytsb-related-session-suggestions';
+const RELATED_SESSION_END_CARDS_STYLE_ID = 'ytsb-related-session-end-cards';
+const DOWNLOADS_LINK_STYLE_ID = 'ytsb-downloads-link';
+const SHORTS_LINK_STYLE_ID = 'ytsb-shorts-link';
+const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'ytsb-shorts-homepage-suggestions';
+const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'ytsb-shorts-session-suggestions';
+const SHORTS_SEARCH_SUGGESTIONS_STYLE_ID = 'ytsb-shorts-search-suggestions';
 
 let currentPathName = location.pathname;
 let videoElement = null;
@@ -77,15 +78,26 @@ ytd-playlist-panel-renderer[playlist-type^="RD"] {
 }
 `;
 
+const MOVIES_CSS = `
+ytd-shelf-renderer:has(
+	a[href*="/feed/storefront"]),
+ytd-channel-renderer:has(
+	a[href*="/channel/UClgRkhTL3_hImCAmdLfDE4g"],
+	a[href*="/@youtubetv"]),
+ytd-movie-renderer {
+	display: none !important;
+}
+`;
+
 const PLAYABLES_CSS = `
-ytd-rich-shelf-renderer:has(a[href="/playables"]) {
+ytd-rich-shelf-renderer:has(a[href*="/playables"]) {
 	display: none !important;
 }
 `;
 
 const PREMIUM_NAG_CSS = `
 yt-mealbar-promo-renderer,
-tp-yt-paper-toast#toast.toast-button.style-scope.yt-notification-action-renderer {
+tp-yt-paper-toast#toast {
 	display: none !important;
 }
 `;
@@ -255,7 +267,7 @@ function blockSideBarSections() {
 	return true;
 }
 
-function togglePlayback() {
+function pausePlayback() {
 	if (blockPlaybackOnNavGlobal) {
 		if (videoElement && !videoElement.paused) {
 			videoElement.pause();
@@ -296,12 +308,12 @@ function setupNavigationListener() {
 	}
 	document.addEventListener('yt-navigate-start', function(event) {
 		if (currentPathName === '/watch') {
-			togglePlayback();
+			pausePlayback();
 		}
 		redirectHomepage();
 	});
 	document.addEventListener('yt-navigate-finish', function(event) {
-		if (currentPathName === '/watch') {
+		if (currentPathName === '/watch' && location.pathname !== '/watch') {
 			if (blockMiniplayerGlobal) {
 				attempt(closeMiniplayer, 15, 100);
 			}
@@ -356,7 +368,7 @@ function toggleProgressFocus(enable) {
 		return;
 	}
 	progressFocusListener = (event) => {
-		if (!window.location.pathname.startsWith('/watch') || !videoElement) {
+		if (location.pathname !== '/watch' || !videoElement) {
 			return;
 		}
 		const focusedElement = event.target;
@@ -400,6 +412,7 @@ function updateBlocking(
 	blockAIplaylists,
 	blockAIsessionAsk,
 	blockAIsessionVideoSummary,
+	blockMovies,
 	blockPlayables,
 	blockPremiumNag,
 	blockSurveys,
@@ -457,7 +470,12 @@ function updateBlocking(
 		applyCSS(AI_SESSION_VIDEO_SUMMARY_CSS, AI_SESSION_VIDEO_SUMMARY_STYLE_ID);
 	} else {
 		removeCSS(AI_SESSION_VIDEO_SUMMARY_STYLE_ID);
-	}	
+	}
+	if (blockMovies) {
+		applyCSS(MOVIES_CSS, MOVIES_STYLE_ID);
+	} else {
+		removeCSS(MOVIES_STYLE_ID);
+	}
 	if (blockPlayables) {
 		applyCSS(PLAYABLES_CSS, PLAYABLES_STYLE_ID);
 	} else {
@@ -547,6 +565,7 @@ browser.runtime.onMessage.addListener((request) => {
 			request.blockAIplaylists,
 			request.blockAIsessionAsk,
 			request.blockAIsessionVideoSummary,
+			request.blockMovies,
 			request.blockPlayables,
 			request.blockPremiumNag,
 			request.blockSurveys,
@@ -584,6 +603,7 @@ browser.storage.local.get(ALL_SETTING_KEYS, (result) => {
 		settings.blockAIplaylists,
 		settings.blockAIsessionAsk,
 		settings.blockAIsessionVideoSummary,
+		settings.blockMovies,
 		settings.blockPlayables,
 		settings.blockPremiumNag,
 		settings.blockSurveys,

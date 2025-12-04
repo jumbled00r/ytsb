@@ -9,6 +9,7 @@ const DEFAULT_SETTINGS = {
 	'blockAIplaylists': true,
 	'blockAIsessionAsk': true,
 	'blockAIsessionVideoSummary': true,
+	'blockMovies': true,
 	'blockPlayables': true,
 	'blockPremiumNag': true,
 	'blockSurveys': true,
