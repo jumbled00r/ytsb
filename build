@@ -24,4 +24,5 @@ PACKAGE="ytsb-$1-v$VERSION.zip"
 mkdir -p packages
 zip -rqj "packages/$PACKAGE" src/*
 zip -rqg "packages/$PACKAGE" icons
+rm -f src/manifest.json
 echo "$PACKAGE"
