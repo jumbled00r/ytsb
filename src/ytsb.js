@@ -267,14 +267,6 @@ function blockSideBarSections() {
 	return true;
 }
 
-function pausePlayback() {
-	if (blockPlaybackOnNavGlobal) {
-		if (videoElement && !videoElement.paused) {
-			videoElement.pause();
-		}
-	}
-}
-
 function closeMiniplayer() {
 	const closeButton = document.querySelector('.ytp-miniplayer-close-button');
 	if (closeButton) {
@@ -307,15 +299,17 @@ function setupNavigationListener() {
 		return;
 	}
 	document.addEventListener('yt-navigate-start', function(event) {
-		if (currentPathName === '/watch') {
-			pausePlayback();
+		if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
+			if (videoElement && !videoElement.paused) {
+				videoElement.pause();
+			}
 		}
 		redirectHomepage();
 	});
 	document.addEventListener('yt-navigate-finish', function(event) {
 		if (currentPathName === '/watch' && location.pathname !== '/watch') {
 			if (blockMiniplayerGlobal) {
-				attempt(closeMiniplayer, 15, 100);
+				attempt(closeMiniplayer, 30, 75);
 			}
 		}
 		currentPathName = location.pathname;
