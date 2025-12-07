@@ -24,7 +24,6 @@ const SHORTS_SEARCH_SUGGESTIONS_STYLE_ID = 'ytsb-shorts-search-suggestions';
 
 let currentPathName = location.pathname;
 let videoElement = null;
-let sidebarFound = false;
 let blockExploreSectionGlobal = false;
 let blockMoreSectionGlobal = false;
 let blockPlaybackOnNavGlobal = false;
@@ -32,6 +31,7 @@ let blockMiniplayerGlobal = false;
 let blockHomepageGlobal = false;
 let debugGlobal = false;
 let settingsInitialized = false;
+let settingsApplied = false;
 
 const SEARCH_SUGGESTIONS_CSS = `
 .ytSearchboxComponentSuggestionsContainer {
@@ -302,7 +302,6 @@ function blockSidebarSections() {
 			section.style.removeProperty('display');
 		}
 	}
-	sidebarFound = true;
 	return true;
 }
 
@@ -367,7 +366,7 @@ function setupNavigationListener() {
 			if (currentPathName === '/watch') {
 				attempt(setVideoElement, 30, 75);
 			}
-			if (sidebarFound) {
+			if (settingsApplied) {
 				attempt(blockSidebarSections, 30, 75);
 			}
 		});
@@ -613,6 +612,9 @@ browser.runtime.onMessage.addListener((request) => {
 			setupNavigationListener();
 			attempt(setupGuideButtonListener, 30, 75);
 			setupResizeListener();
+			setTimeout(() => {
+				settingsApplied = true;
+			}, 500);
 		case "updateSettings":
 			updateBlocking(
 				request.blockSearchSuggestions,
