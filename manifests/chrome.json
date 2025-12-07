@@ -5,7 +5,8 @@
 	"description": "Block YouTube suggestions.",
 	"homepage_url": "https://github.com/jumbled00r/ytsb",
 	"permissions": [
-		"storage"
+		"storage",
+		"tabs"
 	],
 	"host_permissions": [
 		"*://*.youtube.com/*"
@@ -18,7 +19,7 @@
 		}
 	],
 	"background": {
-		"service_worker": "background.js"
+		"service_worker": "shim.js", "settings.js", "background.js"
 	},
 	"icons": {
 		"16": "icons/sx-16.png",
@@ -32,7 +33,6 @@
 	},
 	"action": {
 		"default_title": "YouTube Suggestion Blocker",
-		"default_popup": "popup.html",
 		"default_icon": {
 			"16": "icons/sx-16.png",
 			"32": "icons/sx-32.png",

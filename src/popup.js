@@ -30,6 +30,15 @@ document.addEventListener('DOMContentLoaded', () => {
 		'toggleDebug': 'debug'
 	};
 	const storageKeys = Object.values(allToggles);
+	const urlParams = new URLSearchParams(window.location.search);
+	const platform = urlParams.get('platform');
+	if (platform === 'mobile') {
+		let scaleFactor = window.innerWidth / 435;
+		document.body.style.setProperty('min-width', 'unset');
+		document.body.style.transformOrigin = '0 0';
+		document.body.style.transform = `scale(${scaleFactor})`;
+		document.body.style.width = '410px';
+	}
 	function updateBackground(isDark) {
 		document.body.style.setProperty('--background-color', isDark ? '#202020' : '#f0f0f0');
 		document.body.style.setProperty('--text-color', isDark ? '#ffffff' : '#000000');
