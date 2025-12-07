@@ -16,6 +16,7 @@ const COMMENTS_STYLE_ID = 'ytsb-comments';
 const RELATED_SESSION_SUGGESTIONS_STYLE_ID = 'ytsb-related-session-suggestions';
 const RELATED_SESSION_END_CARDS_STYLE_ID = 'ytsb-related-session-end-cards';
 const DOWNLOADS_LINK_STYLE_ID = 'ytsb-downloads-link';
+const EXPLORE_LINK_STYLE_ID = 'ytsb-explore-link';
 const SHORTS_LINK_STYLE_ID = 'ytsb-shorts-link';
 const SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID = 'ytsb-shorts-homepage-suggestions';
 const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'ytsb-shorts-session-suggestions';
@@ -154,6 +155,9 @@ ytm-feed-filter-chip-bar-renderer,
 ytd-feed-filter-chip-bar-renderer {
 	display: none !important;
 }
+ytm-app.sticky-player {
+	padding-top: 0px !important;
+}
 #frosted-glass.with-chipbar {
 	height: 56px !important;
 }
@@ -185,6 +189,12 @@ const DOWNLOADS_LINK_CSS = `
 ytd-download-button-renderer,
 ytd-mini-guide-entry-renderer a[title="Downloads"],
 ytd-guide-downloads-entry-renderer {
+	display: none !important;
+}
+`;
+
+const EXPLORE_LINK_CSS = `
+ytm-chip-cloud-chip-renderer > .chip-container[aria-label="Explore"] {
 	display: none !important;
 }
 `;
@@ -333,7 +343,7 @@ function setupNavigationListener() {
 				redirectHomepage();
 			}
 		}
-		setInterval(checkNavigation, 1500);
+		setInterval(checkNavigation, 2000);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
 			if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
@@ -482,7 +492,7 @@ function updateBlocking(
 		removeCSS(MINIPLAYER_STYLE_ID);
 	}
 	blockHomepageGlobal = blockHomepage;
-	redirectHomepage();
+	setTimeout(redirectHomepage, 500);
 	if (blockAIrec) {
 		applyCSS(AI_REC_CSS, AI_REC_STYLE_ID);
 	} else {
@@ -559,6 +569,11 @@ function updateBlocking(
 		removeCSS(DOWNLOADS_LINK_STYLE_ID);
 	}
 	blockExploreSectionGlobal = blockExploreSection;
+	if (blockExploreSection) {
+		applyCSS(EXPLORE_LINK_CSS, EXPLORE_LINK_STYLE_ID);	
+	} else {
+		removeCSS(EXPLORE_LINK_STYLE_ID);
+	}
 	blockMoreSectionGlobal = blockMoreSection;
 	attempt(blockSideBarSections, 30, 75);
 	if (blockShortsLink) {
