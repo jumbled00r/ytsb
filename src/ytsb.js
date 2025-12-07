@@ -174,8 +174,6 @@ ytd-comments {
 
 const RELATED_SESSION_SUGGESTIONS_CSS = `
 .related-items-container,
-ytm-video-with-context-renderer,
-ytm-compact-playlist-renderer,
 #items.style-scope.ytd-watch-next-secondary-results-renderer,
 #secondary.style-scope.ytd-watch-flexy {
 	display: none !important;
