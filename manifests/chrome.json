@@ -5,8 +5,7 @@
 	"description": "Block YouTube suggestions.",
 	"homepage_url": "https://github.com/jumbled00r/ytsb",
 	"permissions": [
-		"storage",
-		"tabs"
+		"storage"
 	],
 	"host_permissions": [
 		"*://*.youtube.com/*"
