@@ -316,7 +316,9 @@ function closeMiniplayer() {
 function redirectHomepage() {
 	if (blockHomepageGlobal) {
 		if (location.pathname === '/') {
-			location.href = '/feed/subscriptions';
+			setTimeout(() => {
+				location.href = '/feed/subscriptions';
+			}, 1000);
 		}
 	}
 }
@@ -492,7 +494,7 @@ function updateBlocking(
 		removeCSS(MINIPLAYER_STYLE_ID);
 	}
 	blockHomepageGlobal = blockHomepage;
-	setTimeout(redirectHomepage, 500);
+	redirectHomepage();
 	if (blockAIrec) {
 		applyCSS(AI_REC_CSS, AI_REC_STYLE_ID);
 	} else {
