@@ -113,6 +113,7 @@ ytd-rich-shelf-renderer:has(a[href*="/playables"]) {
 
 const PREMIUM_NAG_CSS = `
 ytm-compact-link-renderer:has(a[href="/premium"]),
+a[aria-label="Open App"],
 yt-mealbar-promo-renderer,
 tp-yt-paper-toast#toast {
 	display: none !important;
@@ -173,6 +174,8 @@ ytd-comments {
 
 const RELATED_SESSION_SUGGESTIONS_CSS = `
 .related-items-container,
+ytm-video-with-context-renderer,
+ytm-compact-playlist-renderer,
 #items.style-scope.ytd-watch-next-secondary-results-renderer,
 #secondary.style-scope.ytd-watch-flexy {
 	display: none !important;
