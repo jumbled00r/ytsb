@@ -393,13 +393,13 @@ function setupGuideButtonListener() {
 }
 
 let isResizeListenerAttached = false;
-const throttledBlockSideBarSections = throttle(blockSidebarSections, 25);
+const throttledBlockSidebarSections = throttle(blockSidebarSections, 25);
 
 function setupResizeListener() {
 	if (isResizeListenerAttached) {
 		return;
 	}
-	window.addEventListener('resize', throttledBlockSideBarSections);
+	window.addEventListener('resize', throttledBlockSidebarSections);
 	isResizeListenerAttached = true;
 }
 
