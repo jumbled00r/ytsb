@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function broadcastAllSettings() {
 		browser.storage.local.get(storageKeys, (result) => {
 			const settingsToSend = {
-				action: "updateCSS"
+				action: "updateSettings"
 			};
 			ALL_SETTING_KEYS.forEach(key => {
 				settingsToSend[key] = resolveSetting(key, result);

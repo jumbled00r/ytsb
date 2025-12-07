@@ -11,7 +11,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 				settingsToSend[key] = resolveSetting(key, result);
 			});
 			browser.tabs.sendMessage(tabId, {
-				action: 'updateCSS',
+				action: 'initSettings',
 				...settingsToSend
 			}).catch(() => {});
 		});

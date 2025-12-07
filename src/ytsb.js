@@ -31,6 +31,7 @@ let blockPlaybackOnNavGlobal = false;
 let blockMiniplayerGlobal = false;
 let blockHomepageGlobal = false;
 let debugGlobal = false;
+let settingsInitialized = false;
 
 const SEARCH_SUGGESTIONS_CSS = `
 .ytSearchboxComponentSuggestionsContainer {
@@ -603,75 +604,46 @@ function updateBlocking(
 }
 
 browser.runtime.onMessage.addListener((request) => {
-	if (request.action === "updateCSS") {
-		updateBlocking(
-			request.blockSearchSuggestions,
-			request.blockVoiceSearch,
-			request.blockProgressFocus,
-			request.blockPlaybackOnNav,
-			request.blockMiniplayer,
-			request.blockHomepage,
-			request.blockAIrec,
-			request.blockAIplaylists,
-			request.blockAIsessionAsk,
-			request.blockAIsessionVideoSummary,
-			request.blockMovies,
-			request.blockPlayables,
-			request.blockPremiumNag,
-			request.blockSurveys,
-			request.blockSponsor,
-			request.blockClip,
-			request.blockChipBar,
-			request.blockComments,
-			request.blockRelatedSessionSuggestions,
-			request.blockRelatedSessionEndCards,
-			request.blockDownloadsLink,
-			request.blockExploreSection,
-			request.blockMoreSection,
-			request.blockShortsLink,
-			request.blockShortsHomepageSuggestions,
-			request.blockShortsSessionSuggestions,
-			request.blockShortsSearchSuggestions,
-			request.debug);
+	if (request.action === "initSettings") {
+		if (settingsInitialized) {
+			return;
+		}
+		settingsInitialized = true;
+	} else if (request.action === "updateSettings") { 
+	} else { 
+		return; 
 	}
+	updateBlocking(
+		request.blockSearchSuggestions,
+		request.blockVoiceSearch,
+		request.blockProgressFocus,
+		request.blockPlaybackOnNav,
+		request.blockMiniplayer,
+		request.blockHomepage,
+		request.blockAIrec,
+		request.blockAIplaylists,
+		request.blockAIsessionAsk,
+		request.blockAIsessionVideoSummary,
+		request.blockMovies,
+		request.blockPlayables,
+		request.blockPremiumNag,
+		request.blockSurveys,
+		request.blockSponsor,
+		request.blockClip,
+		request.blockChipBar,
+		request.blockComments,
+		request.blockRelatedSessionSuggestions,
+		request.blockRelatedSessionEndCards,
+		request.blockDownloadsLink,
+		request.blockExploreSection,
+		request.blockMoreSection,
+		request.blockShortsLink,
+		request.blockShortsHomepageSuggestions,
+		request.blockShortsSessionSuggestions,
+		request.blockShortsSearchSuggestions,
+		request.debug);
 });
 
-browser.storage.local.get(ALL_SETTING_KEYS, (result) => {
-	const settings = {};
-	const keys = ALL_SETTING_KEYS;
-	keys.forEach(key => {
-		settings[key] = resolveSetting(key, result);
-	});
-	updateBlocking(
-		settings.blockSearchSuggestions,
-		settings.blockVoiceSearch,
-		settings.blockProgressFocus,
-		settings.blockPlaybackOnNav,
-		settings.blockMiniplayer,
-		settings.blockHomepage,
-		settings.blockAIrec,
-		settings.blockAIplaylists,
-		settings.blockAIsessionAsk,
-		settings.blockAIsessionVideoSummary,
-		settings.blockMovies,
-		settings.blockPlayables,
-		settings.blockPremiumNag,
-		settings.blockSurveys,
-		settings.blockSponsor,
-		settings.blockClip,
-		settings.blockChipBar,
-		settings.blockComments,
-		settings.blockRelatedSessionSuggestions,
-		settings.blockRelatedSessionEndCards,
-		settings.blockDownloadsLink,
-		settings.blockExploreSection,
-		settings.blockMoreSection,
-		settings.blockShortsLink,
-		settings.blockShortsHomepageSuggestions,
-		settings.blockShortsSessionSuggestions,
-		settings.blockShortsSearchSuggestions,
-		settings.debug);
-	setupNavigationListener();
-	attempt(setupGuideButtonListener, 30, 75);
-	setupResizeListener();
-});
+setupNavigationListener();
+attempt(setupGuideButtonListener, 30, 75);
+setupResizeListener();
