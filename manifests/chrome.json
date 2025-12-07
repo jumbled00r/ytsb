@@ -19,7 +19,7 @@
 		}
 	],
 	"background": {
-		"service_worker": "shim.js", "settings.js", "background.js"
+		"service_worker": "background_chrome.js"
 	},
 	"icons": {
 		"16": "icons/sx-16.png",
