@@ -271,7 +271,7 @@ function attempt(func, max_attempts, delay) {
 	}, delay);
 }
 
-function blockSideBarSections() {
+function blockSidebarSections() {
 	const sections = document.querySelectorAll('ytd-guide-section-renderer');
 	if (sections.length < 6) {
 		return false;
@@ -368,7 +368,7 @@ function setupNavigationListener() {
 				attempt(setVideoElement, 30, 75);
 			}
 			if (sidebarFound) {
-				attempt(blockSideBarSections, 30, 75);
+				attempt(blockSidebarSections, 30, 75);
 			}
 		});
 	}
@@ -384,7 +384,7 @@ function setupGuideButtonListener() {
 	const guideButton = document.querySelector('#guide-button');
 	if (guideButton) {
 		guideButton.addEventListener('click', () => {
-			attempt(blockSideBarSections, 30, 75);
+			attempt(blockSidebarSections, 30, 75);
 		});
 		isGuideListenerAttached = true;
 		return true;
@@ -393,7 +393,7 @@ function setupGuideButtonListener() {
 }
 
 let isResizeListenerAttached = false;
-const throttledBlockSideBarSections = throttle(blockSideBarSections, 75);
+const throttledBlockSideBarSections = throttle(blockSidebarSections, 25);
 
 function setupResizeListener() {
 	if (isResizeListenerAttached) {
@@ -579,7 +579,7 @@ function updateBlocking(
 		removeCSS(EXPLORE_LINK_STYLE_ID);
 	}
 	blockMoreSectionGlobal = blockMoreSection;
-	attempt(blockSideBarSections, 30, 75);
+	attempt(blockSidebarSections, 30, 75);
 	if (blockShortsLink) {
 		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
 	} else {
@@ -604,46 +604,48 @@ function updateBlocking(
 }
 
 browser.runtime.onMessage.addListener((request) => {
-	if (request.action === "initSettings") {
-		if (settingsInitialized) {
+	switch (request.action) {
+		case "initSettings":
+			if (settingsInitialized) {
+				return;
+			}
+			settingsInitialized = true;
+			setupNavigationListener();
+			attempt(setupGuideButtonListener, 30, 75);
+			setupResizeListener();
+		case "updateSettings":
+			updateBlocking(
+				request.blockSearchSuggestions,
+				request.blockVoiceSearch,
+				request.blockProgressFocus,
+				request.blockPlaybackOnNav,
+				request.blockMiniplayer,
+				request.blockHomepage,
+				request.blockAIrec,
+				request.blockAIplaylists,
+				request.blockAIsessionAsk,
+				request.blockAIsessionVideoSummary,
+				request.blockMovies,
+				request.blockPlayables,
+				request.blockPremiumNag,
+				request.blockSurveys,
+				request.blockSponsor,
+				request.blockClip,
+				request.blockChipBar,
+				request.blockComments,
+				request.blockRelatedSessionSuggestions,
+				request.blockRelatedSessionEndCards,
+				request.blockDownloadsLink,
+				request.blockExploreSection,
+				request.blockMoreSection,
+				request.blockShortsLink,
+				request.blockShortsHomepageSuggestions,
+				request.blockShortsSessionSuggestions,
+				request.blockShortsSearchSuggestions,
+				request.debug
+			);
+			break;
+		default:
 			return;
-		}
-		settingsInitialized = true;
-	} else if (request.action === "updateSettings") { 
-	} else { 
-		return; 
 	}
-	updateBlocking(
-		request.blockSearchSuggestions,
-		request.blockVoiceSearch,
-		request.blockProgressFocus,
-		request.blockPlaybackOnNav,
-		request.blockMiniplayer,
-		request.blockHomepage,
-		request.blockAIrec,
-		request.blockAIplaylists,
-		request.blockAIsessionAsk,
-		request.blockAIsessionVideoSummary,
-		request.blockMovies,
-		request.blockPlayables,
-		request.blockPremiumNag,
-		request.blockSurveys,
-		request.blockSponsor,
-		request.blockClip,
-		request.blockChipBar,
-		request.blockComments,
-		request.blockRelatedSessionSuggestions,
-		request.blockRelatedSessionEndCards,
-		request.blockDownloadsLink,
-		request.blockExploreSection,
-		request.blockMoreSection,
-		request.blockShortsLink,
-		request.blockShortsHomepageSuggestions,
-		request.blockShortsSessionSuggestions,
-		request.blockShortsSearchSuggestions,
-		request.debug);
 });
-
-setupNavigationListener();
-attempt(setupGuideButtonListener, 30, 75);
-setupResizeListener();
