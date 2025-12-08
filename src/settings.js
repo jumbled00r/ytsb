@@ -2,6 +2,7 @@ const DEFAULT_SETTINGS = {
 	'blockSearchSuggestions': true,
 	'blockVoiceSearch': true,
 	'autoHD': true,
+	'backgroundPlay': true,
 	'blockProgressFocus': true,
 	'blockPlaybackOnNav': true,
 	'blockMiniplayer': true,
