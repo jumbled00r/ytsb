@@ -704,7 +704,6 @@ function setupBackgroundPlay() {
 	}
 	window.addEventListener(
 		'visibilitychange', evt => evt.stopImmediatePropagation(), true);
-
 	startJitteredPolling(sendKeyPress, 60 * 1000, 10 * 1000);
 	(debugGlobal) &&
 		console.log('[ytsb] setup background play.');
