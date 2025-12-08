@@ -29,9 +29,10 @@ let blockMoreSectionGlobal = false;
 let blockPlaybackOnNavGlobal = false;
 let blockMiniplayerGlobal = false;
 let blockHomepageGlobal = false;
-let debugGlobal = false;
 let settingsInitialized = false;
 let settingsApplied = false;
+let mobileDomain = false;
+let debugGlobal = false;
 
 const SEARCH_SUGGESTIONS_CSS = `
 .ytSearchboxComponentSuggestionsContainer {
@@ -107,6 +108,8 @@ ytd-movie-renderer {
 `;
 
 const PLAYABLES_CSS = `
+ytd-horizontal-card-list-renderer:has([href*="/gaming/games"]),
+ytd-item-section-renderer:has(a[href="/playables"]),
 ytd-rich-shelf-renderer:has(a[href*="/playables"]) {
 	display: none !important;
 }
@@ -239,13 +242,13 @@ function throttle(func, delay) {
 		if (!timeoutId) {
 			timeoutId = setTimeout(() => {
 				func.apply(context, args);
-				if (debugGlobal) {
-					console.log(`[ytsb] ${func.name}() not throttled.`)
-				}
+				(debugGlobal) &&
+					console.log(`[ytsb] ${func.name}() not throttled.`);
 				timeoutId = null;
 			}, delay);
-		} else if (debugGlobal) {
-			console.log(`[ytsb] ${func.name}() throttled.`);
+		} else {
+			(debugGlobal) &&
+				console.log(`[ytsb] ${func.name}() throttled.`);
 		}
 	};
 }
@@ -256,16 +259,14 @@ function attempt(func, max_attempts, delay) {
 		const success = func();
 		attempts++;
 		if (success) {
-			if (debugGlobal) {
+			(debugGlobal) &&
 				console.log(`[ytsb] ${func.name}() attempt ${attempts} succeeded.`);
-			}
 			clearInterval(intervalId);
 			return;
 		}
 		if (attempts >= max_attempts) {
-			if (debugGlobal) {
+			(debugGlobal) &&
 				console.log(`[ytsb] ${func.name}() max_attempts (${attempts}) reached.`);
-			}
 			clearInterval(intervalId);
 		}
 	}, delay);
@@ -319,7 +320,7 @@ function redirectHomepage() {
 		if (location.pathname === '/') {
 			setTimeout(() => {
 				location.href = '/feed/subscriptions';
-			}, 750);
+			}, 500);
 		}
 	}
 }
@@ -338,14 +339,14 @@ function setupNavigationListener() {
 	if (isNavigationListenerAttached) {
 		return;
 	}
-	if (window.location.hostname.startsWith('m.')) {
+	if (mobileDomain) {
 		function checkNavigation() {
 			if (location.pathname != currentPathName) {
 				currentPathName = location.pathname;
 				redirectHomepage();
 			}
 		}
-		setInterval(checkNavigation, 2000);
+		setInterval(checkNavigation, 500);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
 			if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
@@ -365,7 +366,7 @@ function setupNavigationListener() {
 			if (currentPathName === '/watch') {
 				attempt(setVideoElement, 30, 75);
 			}
-			if (settingsApplied) {
+			if (!mobileDomain && settingsApplied) {
 				attempt(blockSidebarSections, 30, 75);
 			}
 		});
@@ -577,7 +578,7 @@ function updateBlocking(
 		removeCSS(EXPLORE_LINK_STYLE_ID);
 	}
 	blockMoreSectionGlobal = blockMoreSection;
-	attempt(blockSidebarSections, 30, 75);
+	(!mobileDomain) && attempt(blockSidebarSections, 30, 75);
 	if (blockShortsLink) {
 		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
 	} else {
@@ -607,13 +608,17 @@ browser.runtime.onMessage.addListener((request) => {
 			if (settingsInitialized) {
 				return;
 			}
+			mobileDomain =
+				window.location.hostname.startsWith('m.') ? true : mobileDomain;
 			settingsInitialized = true;
 			setupNavigationListener();
-			attempt(setupGuideButtonListener, 30, 75);
-			setupResizeListener();
+			if (!mobileDomain) {
+				attempt(setupGuideButtonListener, 30, 75);
+				setupResizeListener();
+			}
 			setTimeout(() => {
 				settingsApplied = true;
-			}, 750);
+			}, 500);
 		case "updateSettings":
 			updateBlocking(
 				request.blockSearchSuggestions,
@@ -645,6 +650,7 @@ browser.runtime.onMessage.addListener((request) => {
 				request.blockShortsSearchSuggestions,
 				request.debug
 			);
+			(debugGlobal) && console.log("[ytsb] Settings applied.");
 			break;
 		default:
 			return;
