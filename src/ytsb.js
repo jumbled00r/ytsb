@@ -509,7 +509,9 @@ function setVideoElement() {
 }
 
 function setupResolution() {
-	const minRes = Math.min(screen.width, screen.height);
+	const width = window.screen.width * window.devicePixelRatio;
+	const height = window.screen.height * window.devicePixelRatio;
+	const minRes = Math.min(width, height);
 	let minDiff = Infinity;
 	resolution = stdRes[0];
 	stdResI = 0;
@@ -545,7 +547,8 @@ function setupNavigationListener() {
 				if (currentPathName === '/watch') {
 					const fullURL = new URL(location.href);
 					currentVideoID = extractVideoID(fullURL.search);
-					console.log('[ytsb] currentVideoID = ' + currentVideoID);
+					(debugGlobal) &&
+						console.log('[ytsb] currentVideoID = ' + currentVideoID);
 					attempt(setVideoElement, 30, 75);
 				}
 				if (settingsApplied) {
@@ -556,7 +559,8 @@ function setupNavigationListener() {
 				newVideoID = extractVideoID(fullURL.search);
 				if (newVideoID != currentVideoID) {
 					currentVideoID = newVideoID;
-					console.log('[ytsb] new currentVideoID = ' + currentVideoID);
+					(debugGlobal) &&
+						console.log('[ytsb] new currentVideoID = ' + currentVideoID);
 					attempt(setVideoElement, 30, 75);
 				}
 			}
