@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const allToggles = {
 		'toggleSearchSuggestions': 'blockSearchSuggestions',
 		'toggleVoiceSearch': 'blockVoiceSearch',
+		'toggleAutoHD': 'autoHD',
 		'toggleProgressFocus': 'blockProgressFocus',
 		'togglePlaybackOnNav': 'blockPlaybackOnNav',
 		'toggleMiniplayer': 'blockMiniplayer',

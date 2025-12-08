@@ -23,7 +23,16 @@ const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'ytsb-shorts-session-suggestions';
 const SHORTS_SEARCH_SUGGESTIONS_STYLE_ID = 'ytsb-shorts-search-suggestions';
 
 let currentPathName = location.pathname;
+let currentVideoID = null;
+let resolution = null;
+const stdRes = [
+	144, 240, 360, 480, 720, 1080, 1440, 2160, 4320
+];
+let stdResI = null;
 let videoElement = null;
+let checkPlayedID = null;
+let checkNavigationID = null;
+let autoHDglobal = false;
 let blockExploreSectionGlobal = false;
 let blockMoreSectionGlobal = false;
 let blockPlaybackOnNavGlobal = false;
@@ -253,21 +262,22 @@ function throttle(func, delay) {
 	};
 }
 
-function attempt(func, max_attempts, delay) {
+function attempt(func, max_attempts, delay, callback) {
 	let attempts = 0;
-	const intervalId = setInterval(() => {
+	const intervalID = setInterval(() => {
 		const success = func();
 		attempts++;
 		if (success) {
 			(debugGlobal) &&
 				console.log(`[ytsb] ${func.name}() attempt ${attempts} succeeded.`);
-			clearInterval(intervalId);
-			return;
+			clearInterval(intervalID);
+			if (callback) callback();
 		}
 		if (attempts >= max_attempts) {
 			(debugGlobal) &&
 				console.log(`[ytsb] ${func.name}() max_attempts (${attempts}) reached.`);
-			clearInterval(intervalId);
+			clearInterval(intervalID);
+			if (callback) callback();
 		}
 	}, delay);
 }
@@ -309,10 +319,155 @@ function blockSidebarSections() {
 function closeMiniplayer() {
 	const closeButton = document.querySelector('.ytp-miniplayer-close-button');
 	if (closeButton) {
-		closeButton.click();
+		setTimeout(() => {
+			closeButton.click();
+		}, 0);
 		return true; 
 	}
 	return false;
+}
+
+function setVideoQuality() {
+	if (mobileDomain) {
+		function mvq_settings() {
+			const settingsButton = 
+				document.querySelector('.icon-button.player-settings-icon');
+			if (!settingsButton) return false;
+			setTimeout(() => {
+				settingsButton.click();
+			}, 0);
+			return true;
+		}
+		function mvq_qualityListOption() {
+			const qualityListOption = 
+				Array.from(document.querySelectorAll('yt-list-item-view-model')).find(item => 
+				item.querySelector('.yt-list-item-view-model__title')?.textContent.trim() === 'Quality');
+			if (!qualityListOption) return false;
+			setTimeout(() => {
+				qualityListOption.click();
+			}, 0);
+			return true;
+		}
+		function mvq_qualityOption() {
+			if (Array.from(document.querySelectorAll('yt-list-item-view-model')).length === 0) {
+				return false;
+			}
+			const qualityOption =
+				Array.from(document.querySelectorAll('yt-list-item-view-model')).find(el => {
+					const label = el.querySelector('.yt-list-item-view-model__title')?.textContent;
+					const includesRes = label?.includes(`${resolution}p`);
+					const isPremium = label?.includes('Premium') || label?.includes('Max');
+					return includesRes && !isPremium;
+				});
+			if (qualityOption) {
+				setTimeout(() => {
+					qualityOption.click();
+				}, 0);
+				(debugGlobal) && 
+					console.log(`[ytsb] Successfully set video quality to ${resolution}p`);
+				return true;
+			} else {
+				const firstOptionTitle = document.querySelector('yt-list-item-view-model .yt-list-item-view-model__title')?.textContent;
+				if (firstOptionTitle && !firstOptionTitle.includes('Auto')) {
+					let tResOpt = null;
+					for (let i = stdResI; i >= 0; i--) {
+						const altRes = stdRes[i];
+						tResOpt =
+							Array.from(document.querySelectorAll('yt-list-item-view-model')).find(el => {
+							const label = el.querySelector('.yt-list-item-view-model__title')?.textContent;
+							const includesRes = label?.includes(`${altRes}p`);
+							const isPremium = label?.includes('Premium') || label?.includes('Max');
+							return includesRes && !isPremium;
+						});
+						if (tResOpt) {
+							setTimeout(() => {
+								tResOpt.click();
+							}, 0);
+							(debugGlobal) && 
+								console.log(`[ytsb] ${resolution}p unavailable. Set quality to closest fallback: ${altRes}p`);
+							return true;
+						}
+					}
+				}
+				return false;
+			}
+		}
+		attempt(mvq_settings, 50, 1, () => {
+			attempt(mvq_qualityListOption, 50, 1, () => {
+				attempt(mvq_qualityOption, 50, 1);
+			});
+		});
+	} else {
+		function dvq_settings() {
+			const settingsButton = document.querySelector('.ytp-settings-button');
+			if (!settingsButton) return false;
+			setTimeout(() => {
+				settingsButton.click();
+			}, 0);
+			return true;
+		}
+		function dvq_qualityMenuItem() {
+			const qualityMenuItem = Array.from(document.querySelectorAll('.ytp-menuitem')).find(el => 
+				el.querySelector('.ytp-menuitem-label').textContent === 'Quality'
+			);
+			if (!qualityMenuItem) return false;
+			setTimeout(() => {
+				qualityMenuItem.click();
+			}, 0);
+			return true;
+		}
+		function dvq_qualityOption() {
+			const qualityOption = 
+				Array.from(document.querySelectorAll('.ytp-quality-menu .ytp-menuitem')).find(el => {
+					const label = el.querySelector('.ytp-menuitem-label span')?.textContent;
+					const includesRes = label?.includes(`${resolution}p`);
+					const isPremium = label?.includes('Premium') || label?.includes('Max');
+					return includesRes && !isPremium;
+				});
+			if (qualityOption) {
+				setTimeout(() => {
+					qualityOption.click();
+				}, 0);
+				(debugGlobal) && 
+					console.log(`[ytsb] Successfully set video quality to ${resolution}p`);
+				return true;
+			} else {
+				let tResOpt = null;
+				for (let i = stdResI; i >= 0; i--) {
+					let altRes = stdRes[i];
+					tResOpt =
+						Array.from(document.querySelectorAll('.ytp-quality-menu .ytp-menuitem')).find(el => {
+						const label = el.querySelector('.ytp-menuitem-label span')?.textContent;
+						const includesRes = label?.includes(`${altRes}p`);
+						const isPremium = label?.includes('Premium') || label?.includes('Max');
+						return includesRes && !isPremium;
+					});
+					if (tResOpt) {
+						setTimeout(() => {
+							tResOpt.click();
+						}, 0);
+						(debugGlobal) && 
+							console.log(`[ytsb] ${resolution}p unavailable. Set quality to closest fallback: ${altRes}p`);
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		attempt(dvq_settings, 50, 1, () => {
+			attempt(dvq_qualityMenuItem, 50, 1, () => {
+				attempt(dvq_qualityOption, 50, 1);
+			});
+		});
+		const settingsButton = document.querySelector('.ytp-settings-button');
+		setTimeout(() => {
+			settingsButton.click();
+		}, 0);
+		setTimeout(() => {
+			settingsButton.click();
+		}, 0);
+		return;
+	}
 }
 
 function redirectHomepage() {
@@ -328,9 +483,53 @@ function redirectHomepage() {
 function setVideoElement() {
 	videoElement = document.querySelector('.html5-main-video');
 	if (videoElement) {
+		if(autoHDglobal)
+			if (!mobileDomain) {
+				setVideoQuality();
+			} else {
+				function clearCheckPlayed() {
+					clearInterval(checkPlayedID);
+					checkPlayedID = null;
+				}
+				function checkPlayed() {
+					console.log('[ytsb] checkPlayed() paused = ' + videoElement.paused);
+					if (!videoElement.paused) {
+						setVideoQuality();
+						clearCheckPlayed();
+					}
+					if (currentPathName !== '/watch' || !autoHDglobal) clearCheckPlayed();
+					videoElement = document.querySelector('.html5-main-video');
+				}
+				if(!checkPlayedID) {
+					checkPlayedID = setInterval(checkPlayed, 500);
+				}
+			}
 		return true;
 	}
 	return false;
+}
+
+function setupResolution() {
+	const minRes = Math.min(screen.width, screen.height);
+	let minDiff = Infinity;
+	resolution = stdRes[0];
+	stdResI = 0;
+	for (let i = 0; i < stdRes.length; i++) {
+		const res = stdRes[i];
+		const diff = Math.abs(minRes - res);
+		if (diff > minDiff) break;
+		if (diff <= minDiff) {
+			minDiff = diff;
+			resolution = res;
+			stdResI = i;
+		}
+	}
+	(debugGlobal) && console.log(`[ytsb] Resolution = ${resolution}`);
+}
+
+function extractVideoID(searchString) {
+	const params = new URLSearchParams(searchString);
+	return params.get('v');
 }
 
 let isNavigationListenerAttached = false;
@@ -340,13 +539,30 @@ function setupNavigationListener() {
 		return;
 	}
 	if (mobileDomain) {
+		currentPathName = null;
 		function checkNavigation() {
 			if (location.pathname != currentPathName) {
 				currentPathName = location.pathname;
-				redirectHomepage();
+				if (currentPathName === '/watch') {
+					const fullURL = new URL(location.href);
+					currentVideoID = extractVideoID(fullURL.search);
+					console.log('[ytsb] currentVideoID = ' + currentVideoID);
+					attempt(setVideoElement, 30, 75);
+				}
+				if (settingsApplied) {
+					redirectHomepage();
+				}
+			} else if (currentPathName === '/watch') {
+				const fullURL = new URL(location.href);
+				newVideoID = extractVideoID(fullURL.search);
+				if (newVideoID != currentVideoID) {
+					currentVideoID = newVideoID;
+					console.log('[ytsb] new currentVideoID = ' + currentVideoID);
+					attempt(setVideoElement, 30, 75);
+				}
 			}
 		}
-		setInterval(checkNavigation, 500);
+		checkNavigationID = setInterval(checkNavigation, 500);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
 			if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
@@ -449,6 +665,7 @@ function removeCSS(styleId) {
 function updateBlocking(
 	blockSearchSuggestions,
 	blockVoiceSearch,
+	autoHD,
 	blockProgressFocus,
 	blockPlaybackOnNav,
 	blockMiniplayer,
@@ -485,9 +702,10 @@ function updateBlocking(
 	} else {
 		removeCSS(VOICE_SEARCH_STYLE_ID);
 	}
+	autoHDglobal = autoHD;
 	toggleProgressFocus(blockProgressFocus);
 	blockPlaybackOnNavGlobal = blockPlaybackOnNav;
-	blockMiniplayerGlobal = blockMiniplayer
+	blockMiniplayerGlobal = blockMiniplayer;
 	if (blockMiniplayer) {
 		closeMiniplayer();
 		applyCSS(MINIPLAYER_CSS, MINIPLAYER_STYLE_ID);
@@ -605,12 +823,14 @@ function updateBlocking(
 browser.runtime.onMessage.addListener((request) => {
 	switch (request.action) {
 		case "initSettings":
+			debugGlobal = request.debug;
 			if (settingsInitialized) {
 				return;
 			}
+			settingsInitialized = true;
 			mobileDomain =
 				window.location.hostname.startsWith('m.') ? true : mobileDomain;
-			settingsInitialized = true;
+			setupResolution();
 			setupNavigationListener();
 			if (!mobileDomain) {
 				attempt(setupGuideButtonListener, 30, 75);
@@ -623,6 +843,7 @@ browser.runtime.onMessage.addListener((request) => {
 			updateBlocking(
 				request.blockSearchSuggestions,
 				request.blockVoiceSearch,
+				request.autoHD,
 				request.blockProgressFocus,
 				request.blockPlaybackOnNav,
 				request.blockMiniplayer,
