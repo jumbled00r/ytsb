@@ -319,7 +319,7 @@ function redirectHomepage() {
 		if (location.pathname === '/') {
 			setTimeout(() => {
 				location.href = '/feed/subscriptions';
-			}, 1000);
+			}, 750);
 		}
 	}
 }
@@ -340,13 +340,12 @@ function setupNavigationListener() {
 	}
 	if (window.location.hostname.startsWith('m.')) {
 		function checkNavigation() {
-			if (location.pathname != currentPathName)
-			{
+			if (location.pathname != currentPathName) {
 				currentPathName = location.pathname;
 				redirectHomepage();
 			}
 		}
-		setInterval(checkNavigation, 2000);
+		setInterval(checkNavigation, 2500);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
 			if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
@@ -614,7 +613,7 @@ browser.runtime.onMessage.addListener((request) => {
 			setupResizeListener();
 			setTimeout(() => {
 				settingsApplied = true;
-			}, 500);
+			}, 750);
 		case "updateSettings":
 			updateBlocking(
 				request.blockSearchSuggestions,
