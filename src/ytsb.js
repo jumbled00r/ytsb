@@ -33,6 +33,7 @@ let videoElement = null;
 let checkPlayedID = null;
 let checkNavigationID = null;
 let autoHDglobal = false;
+let backgroundPlayState = false;
 let blockExploreSectionGlobal = false;
 let blockMoreSectionGlobal = false;
 let blockPlaybackOnNavGlobal = false;
@@ -649,7 +650,7 @@ function toggleProgressFocus(enable) {
 }
 
 function setupBackgroundPlay() {
-	const CHROME_VISIBILITY_OVERRIDE = `
+	const VISIBILITY_OVERRIDE = `
 (function() {
 	Object.defineProperties(document, {
 		'hidden': { value: false, writable: false, configurable: true },
@@ -693,20 +694,10 @@ function setupBackgroundPlay() {
 		const max = Math.floor(aMax);
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
-	if (mobileDomain) {
-		if (typeof document.wrappedJSObject !== 'undefined') {
-			Object.defineProperties(document.wrappedJSObject,
-				{ 'hidden': {value: false}, 'visibilityState': {value: 'visible'} }
-			);
-		} else {
-			injectScript(CHROME_VISIBILITY_OVERRIDE);
-		}
-	}
-	window.addEventListener(
-		'visibilitychange', evt => evt.stopImmediatePropagation(), true);
+	injectScript(VISIBILITY_OVERRIDE);
 	startJitteredPolling(sendKeyPress, 60 * 1000, 10 * 1000);
 	(debugGlobal) &&
-		console.log('[ytsb] setup background play.');
+		console.log('[ytsb] background play injected.');
 }
 
 function applyCSS(css, styleId) {
@@ -768,6 +759,16 @@ function updateBlocking(
 		removeCSS(VOICE_SEARCH_STYLE_ID);
 	}
 	autoHDglobal = autoHD;
+	if (backgroundPlay != backgroundPlayState) {
+		if (backgroundPlay && !backgroundPlayState) {
+			setupBackgroundPlay();
+			backgroundPlayState = true;
+		}
+		if (!backgroundPlay && backgroundPlayState) {
+			window.location.reload();
+			backgroundPlayState = false;
+		}
+	}
 	toggleProgressFocus(blockProgressFocus);
 	blockPlaybackOnNavGlobal = blockPlaybackOnNav;
 	blockMiniplayerGlobal = blockMiniplayer;
@@ -901,7 +902,10 @@ browser.runtime.onMessage.addListener((request) => {
 				attempt(setupGuideButtonListener, 30, 75);
 				setupResizeListener();
 			}
-			if (request.backgroundPlay) setupBackgroundPlay();
+			if (request.backgroundPlay) {
+				setupBackgroundPlay();
+				backgroundPlayState = true;
+			}
 			setTimeout(() => {
 				settingsApplied = true;
 			}, 500);
