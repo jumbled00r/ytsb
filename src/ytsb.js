@@ -345,7 +345,7 @@ function setupNavigationListener() {
 				redirectHomepage();
 			}
 		}
-		setInterval(checkNavigation, 2500);
+		setInterval(checkNavigation, 2000);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
 			if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
