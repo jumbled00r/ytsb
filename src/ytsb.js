@@ -492,7 +492,6 @@ function setVideoElement() {
 					checkPlayedID = null;
 				}
 				function checkPlayed() {
-					console.log('[ytsb] checkPlayed() paused = ' + videoElement.paused);
 					if (!videoElement.paused) {
 						setVideoQuality();
 						clearCheckPlayed();
