@@ -455,19 +455,24 @@ function setVideoQuality() {
 			}
 			return false;
 		}
+		function dvq_closeSettings() {
+			const settingsButton = document.querySelector('.ytp-settings-button');
+			if (!settingsButton) return false;
+			setTimeout(() => {
+				settingsButton.click();
+			}, 0);
+			setTimeout(() => {
+				settingsButton.click();
+			}, 0);
+			return true;
+		}
 		attempt(dvq_settings, 50, 1, () => {
 			attempt(dvq_qualityMenuItem, 50, 1, () => {
-				attempt(dvq_qualityOption, 50, 1);
+				attempt(dvq_qualityOption, 50, 1, () => {
+					attempt(dvq_closeSettings, 50, 1);
+				});
 			});
 		});
-		const settingsButton = document.querySelector('.ytp-settings-button');
-		setTimeout(() => {
-			settingsButton.click();
-		}, 0);
-		setTimeout(() => {
-			settingsButton.click();
-		}, 0);
-		return;
 	}
 }
 
@@ -557,7 +562,7 @@ function setupNavigationListener() {
 				}
 			} else if (currentPathName === '/watch') {
 				const fullURL = new URL(location.href);
-				newVideoID = extractVideoID(fullURL.search);
+				const newVideoID = extractVideoID(fullURL.search);
 				if (newVideoID != currentVideoID) {
 					currentVideoID = newVideoID;
 					(debugGlobal) &&
@@ -889,11 +894,11 @@ function updateBlocking(
 browser.runtime.onMessage.addListener((request) => {
 	switch (request.action) {
 		case "initSettings":
-			debugGlobal = request.debug;
 			if (settingsInitialized) {
 				return;
 			}
 			settingsInitialized = true;
+			debugGlobal = request.debug;
 			mobileDomain =
 				window.location.hostname.startsWith('m.') ? true : mobileDomain;
 			setupResolution();
