@@ -515,8 +515,8 @@ function setVideoElement() {
 					checkPlayedID = setInterval(checkPlayed, 500);
 				}
 			}
-			return true;
 		}
+		return true;
 	}
 	return false;
 }
