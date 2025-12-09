@@ -378,12 +378,12 @@ function setVideoQuality() {
 						const altRes = stdRes[i];
 						tResOpt =
 							Array.from(document.querySelectorAll('yt-list-item-view-model')).find(el => {
-							const label = 
-								el.querySelector('.yt-list-item-view-model__title')?.textContent?.toLowerCase();
-							const includesRes = label?.includes(`${altRes}p`);
-							const isPremium = label?.includes('premium');
-							return includesRes && !isPremium;
-						});
+								const label = 
+									el.querySelector('.yt-list-item-view-model__title')?.textContent?.toLowerCase();
+								const includesRes = label?.includes(`${altRes}p`);
+								const isPremium = label?.includes('premium');
+								return includesRes && !isPremium;
+							});
 						if (tResOpt) {
 							setTimeout(() => {
 								tResOpt.click();
@@ -442,13 +442,13 @@ function setVideoQuality() {
 				for (let i = stdResI; i >= 0; i--) {
 					let altRes = stdRes[i];
 					tResOpt =
-					Array.from(document.querySelectorAll('.ytp-quality-menu .ytp-menuitem')).find(el => {
-						const label = 
-							el.querySelector('.ytp-menuitem-label span')?.textContent?.toLowerCase();
-						const includesRes = label?.includes(`${altRes}p`);
-						const isPremium = label?.includes('premium');
-						return includesRes && !isPremium;
-					});
+						Array.from(document.querySelectorAll('.ytp-quality-menu .ytp-menuitem')).find(el => {
+							const label = 
+								el.querySelector('.ytp-menuitem-label span')?.textContent?.toLowerCase();
+							const includesRes = label?.includes(`${altRes}p`);
+							const isPremium = label?.includes('premium');
+							return includesRes && !isPremium;
+						});
 					if (tResOpt) {
 						setTimeout(() => {
 							tResOpt.click();
