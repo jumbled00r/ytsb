@@ -535,7 +535,7 @@ function setupResolution() {
 		if (diff <= minDiff) {
 			minDiff = diff;
 			resolution = res;
-			stdResI = i;
+			stdResI = i - 1;
 		}
 	}
 	(debugGlobal) && console.log(`[ytsb] Resolution = ${resolution}`);
