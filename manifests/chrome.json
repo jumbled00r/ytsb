@@ -10,6 +10,12 @@
 	"host_permissions": [
 		"*://*.youtube.com/*"
 	],
+	"web_accessible_resources": [
+		{
+			"resources": ["backgroundPlay.js"],
+			"matches": ["*://*.youtube.com/*"]
+		}
+	],
 	"content_scripts": [
 		{
 			"matches": ["*://*.youtube.com/*"],
