@@ -189,7 +189,7 @@ ytd-comments {
 
 const RELATED_SESSION_SUGGESTIONS_CSS = `
 .related-items-container,
-ytm-item-section-renderer:has(ytm-related-chip-cloud-renderer),
+ytm-item-section-renderer[section-identifier="related-items"],
 #items.style-scope.ytd-watch-next-secondary-results-renderer,
 #secondary.style-scope.ytd-watch-flexy {
 	display: none !important;
