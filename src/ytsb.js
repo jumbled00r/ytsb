@@ -88,6 +88,7 @@ ytd-expandable-metadata-renderer[has-video-summary] {
 `;
 
 const AI_PLAYLISTS_CSS = `
+ytm-rich-section-renderer:has(a[href*="/feed/history"]),
 ytm-rich-item-renderer:has(a[href*="list=RD"]),
 ytm-universal-watch-card-renderer:has(a[href*="list=RD"]),
 ytd-rich-item-renderer:has(div[class*="content-id-RD"]),
@@ -188,6 +189,7 @@ ytd-comments {
 
 const RELATED_SESSION_SUGGESTIONS_CSS = `
 .related-items-container,
+ytm-item-section-renderer:has(ytm-related-chip-cloud-renderer),
 #items.style-scope.ytd-watch-next-secondary-results-renderer,
 #secondary.style-scope.ytd-watch-flexy {
 	display: none !important;
@@ -506,7 +508,7 @@ function setVideoElement() {
 					videoElement = document.querySelector('.html5-main-video');
 				}
 				if(!checkPlayedID) {
-					checkPlayedID = setInterval(checkPlayed, 750);
+					checkPlayedID = setInterval(checkPlayed, 500);
 				}
 			}
 		return true;
@@ -571,7 +573,7 @@ function setupNavigationListener() {
 				}
 			}
 		}
-		checkNavigationID = setInterval(checkNavigation, 500);
+		checkNavigationID = setInterval(checkNavigation, 1000);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
 			if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
