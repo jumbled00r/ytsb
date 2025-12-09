@@ -32,7 +32,7 @@ Supported on: **Desktop** (`youtube.com`) and **Mobile Web** (`m.youtube.com`).
 
 ### Navigation & Sidebar
 * Removes Downloads, Explore, and More sidebar sections.
-  Redirects the homepage to your Subscriptions feed.
+* Redirects the homepage to your Subscriptions feed.
 
 
 # Build from source
@@ -41,7 +41,7 @@ Supported on: **Desktop** (`youtube.com`) and **Mobile Web** (`m.youtube.com`).
 ``./build chrome``
 
 ``./build clean``
-# Loading
+### Loading the package
 ### Firefox
 Load the packaged `.zip` into `about:debugging` or use the `addons.mozilla.org` link above.
 ### Chrome
