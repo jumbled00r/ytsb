@@ -655,22 +655,10 @@ function toggleProgressFocus(enable) {
 }
 
 function setupBackgroundPlay() {
-	const VISIBILITY_OVERRIDE = `
-(function() {
-	Object.defineProperties(document, {
-		'hidden': { value: false, writable: false, configurable: true },
-		'visibilityState': { value: 'visible', writable: false, configurable: true }
-	});
-	window.addEventListener(
-		'visibilitychange', evt => evt.stopImmediatePropagation(), true
-	);
-})();
-`;
-	function injectScript(code) {
+	function injectScript(path) {
 		const script = document.createElement('script');
-		script.textContent = code;
+		script.src = browser.runtime.getURL(path);
 		(document.head || document.documentElement).appendChild(script);
-		script.remove();
 	}
 	function sendKeyEvent(aEvent, aKey) {
 		document.dispatchEvent(new KeyboardEvent(aEvent, {
@@ -699,10 +687,10 @@ function setupBackgroundPlay() {
 		const max = Math.floor(aMax);
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
-	injectScript(VISIBILITY_OVERRIDE);
+	injectScript("backgroundPlay.js");
 	startJitteredPolling(sendKeyPress, 60 * 1000, 10 * 1000);
 	(debugGlobal) &&
-		console.log('[ytsb] background play injected.');
+		console.log('[ytsb] backgroundPlay.js injected.');
 }
 
 function applyCSS(css, styleId) {
