@@ -357,9 +357,10 @@ function setVideoQuality() {
 			}
 			const qualityOption =
 				Array.from(document.querySelectorAll('yt-list-item-view-model')).find(el => {
-					const label = el.querySelector('.yt-list-item-view-model__title')?.textContent;
+					const label = 
+						el.querySelector('.yt-list-item-view-model__title')?.textContent?.toLowerCase();
 					const includesRes = label?.includes(`${resolution}p`);
-					const isPremium = label?.includes('Premium') || label?.includes('Max');
+					const isPremium = label?.includes('premium');
 					return includesRes && !isPremium;
 				});
 			if (qualityOption) {
@@ -377,9 +378,10 @@ function setVideoQuality() {
 						const altRes = stdRes[i];
 						tResOpt =
 							Array.from(document.querySelectorAll('yt-list-item-view-model')).find(el => {
-							const label = el.querySelector('.yt-list-item-view-model__title')?.textContent;
+							const label = 
+								el.querySelector('.yt-list-item-view-model__title')?.textContent?.toLowerCase();
 							const includesRes = label?.includes(`${altRes}p`);
-							const isPremium = label?.includes('Premium') || label?.includes('Max');
+							const isPremium = label?.includes('premium');
 							return includesRes && !isPremium;
 						});
 						if (tResOpt) {
@@ -422,9 +424,10 @@ function setVideoQuality() {
 		function dvq_qualityOption() {
 			const qualityOption = 
 				Array.from(document.querySelectorAll('.ytp-quality-menu .ytp-menuitem')).find(el => {
-					const label = el.querySelector('.ytp-menuitem-label span')?.textContent;
+					const label = 
+						el.querySelector('.ytp-menuitem-label span')?.textContent?.toLowerCase();
 					const includesRes = label?.includes(`${resolution}p`);
-					const isPremium = label?.includes('Premium') || label?.includes('Max');
+					const isPremium = label?.includes('premium');
 					return includesRes && !isPremium;
 				});
 			if (qualityOption) {
@@ -439,10 +442,11 @@ function setVideoQuality() {
 				for (let i = stdResI; i >= 0; i--) {
 					let altRes = stdRes[i];
 					tResOpt =
-						Array.from(document.querySelectorAll('.ytp-quality-menu .ytp-menuitem')).find(el => {
-						const label = el.querySelector('.ytp-menuitem-label span')?.textContent;
+					Array.from(document.querySelectorAll('.ytp-quality-menu .ytp-menuitem')).find(el => {
+						const label = 
+							el.querySelector('.ytp-menuitem-label span')?.textContent?.toLowerCase();
 						const includesRes = label?.includes(`${altRes}p`);
-						const isPremium = label?.includes('Premium') || label?.includes('Max');
+						const isPremium = label?.includes('premium');
 						return includesRes && !isPremium;
 					});
 					if (tResOpt) {
@@ -491,7 +495,7 @@ function redirectHomepage() {
 function setVideoElement() {
 	videoElement = document.querySelector('.html5-main-video');
 	if (videoElement) {
-		if(autoHDglobal)
+		if (autoHDglobal) {
 			if (!mobileDomain) {
 				setVideoQuality();
 			} else {
@@ -511,7 +515,8 @@ function setVideoElement() {
 					checkPlayedID = setInterval(checkPlayed, 500);
 				}
 			}
-		return true;
+			return true;
+		}
 	}
 	return false;
 }
