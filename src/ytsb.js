@@ -398,6 +398,7 @@ function setVideoQuality() {
 				attempt(mvq_qualityOption, 250, 1);
 			});
 		});
+		videoElement.play();
 	} else {
 		function dvq_settings() {
 			const settingsButton = document.querySelector('.ytp-settings-button');
@@ -458,6 +459,7 @@ function setVideoQuality() {
 				});
 			});
 		});
+		videoElement.play();
 	}
 }
 
@@ -475,6 +477,8 @@ function setVideoElement() {
 	videoElement = document.querySelector('.html5-main-video');
 	if (videoElement) {
 		if (autoHDglobal) {
+			if (videoElement.muted) videoElement.muted = false;
+			if (!videoElement.paused) videoElement.pause();
 			if (!mobileDomain) {
 				setVideoQuality();
 			} else {
@@ -568,7 +572,7 @@ function setupNavigationListener() {
 					currentVideoID = extractVideoID(fullURL.search);
 					(debugGlobal) &&
 						console.log('[ytsb] currentVideoID = ' + currentVideoID);
-					attempt(setVideoElement, 30, 75);
+					attempt(setVideoElement, 225, 10);
 				}
 				if (settingsApplied) {
 					redirectHomepage();
@@ -580,7 +584,7 @@ function setupNavigationListener() {
 					currentVideoID = newVideoID;
 					(debugGlobal) &&
 						console.log('[ytsb] new currentVideoID = ' + currentVideoID);
-					attempt(setVideoElement, 30, 75);
+					attempt(setVideoElement, 225, 10);
 				}
 			}
 		}
@@ -603,7 +607,7 @@ function setupNavigationListener() {
 			}
 			currentPathName = location.pathname;
 			if (currentPathName === '/watch') {
-				attempt(setVideoElement, 30, 75);
+				attempt(setVideoElement, 225, 10);
 			}
 			if (!mobileDomain && settingsApplied) {
 				attempt(blockSidebarSections, 30, 75);
