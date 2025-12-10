@@ -474,6 +474,7 @@ function setVideoElement() {
 		if (autoHDglobal) {
 			if (videoElement.muted) videoElement.muted = false;
 			if (!videoElement.paused) videoElement.pause();
+			videoElement.currentTime = 0;
 			if (!mobileDomain) {
 				setVideoQuality();
 			} else {
