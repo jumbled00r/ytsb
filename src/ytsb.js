@@ -254,13 +254,8 @@ function throttle(func, delay) {
 		if (!timeoutId) {
 			timeoutId = setTimeout(() => {
 				func.apply(context, args);
-				(debugGlobal) &&
-					console.log(`[ytsb] ${func.name}() not throttled.`);
 				timeoutId = null;
 			}, delay);
-		} else {
-			(debugGlobal) &&
-				console.log(`[ytsb] ${func.name}() throttled.`);
 		}
 	};
 }
