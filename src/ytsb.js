@@ -526,7 +526,7 @@ function setupResolution() {
 	(debugGlobal) && console.log(`[ytsb] Resolution = ${resolution}`);
 }
 
-function setupHeaderBarListener() {
+function setupHeaderBarObserver() {
 	if (headerBarObserver) {
 		headerBarObserver.disconnect();
 		headerBarObserver = null;
@@ -583,12 +583,12 @@ function setupNavigationListener() {
 					(debugGlobal) &&
 						console.log('[ytsb] new currentVideoID = ' + currentVideoID);
 					attempt(setVideoElement, 225, 10);
-					attempt(setupHeaderBarListener, 30, 75);
+					attempt(setupHeaderBarObserver, 30, 75);
 				}
 			}
 		}
 		checkNavigationID = setInterval(checkNavigation, 1000);
-		attempt(setupHeaderBarListener, 30, 75);
+		attempt(setupHeaderBarObserver, 30, 75);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
 			if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
