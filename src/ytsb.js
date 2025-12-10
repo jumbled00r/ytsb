@@ -496,7 +496,7 @@ function setVideoElement() {
 					videoElement = document.querySelector('.html5-main-video');
 				}
 				if(!checkPlayedID) {
-					checkPlayedID = setInterval(checkPlayed, 500);
+					checkPlayedID = setInterval(checkPlayed, 100);
 					(debugGlobal) && console.log('[ytsb] checkPlayed() started.');
 				}
 			}
