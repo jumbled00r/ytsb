@@ -327,6 +327,7 @@ function closeMiniplayer() {
 
 function setVideoQuality() {
 	if (!videoElement.paused) videoElement.pause();
+	if (videoElement.currentTime) videoElement.currentTime = 0;
 	function findElement(el_options, el_selection, label_lowercase) {
 		return Array.from(document.querySelectorAll(el_options)).find(item => 
 			item.querySelector(el_selection)?.textContent?.trim().toLowerCase() === label_lowercase);
