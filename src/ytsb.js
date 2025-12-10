@@ -537,12 +537,13 @@ function setupHeaderBarListener() {
 			if (mutation.attributeName === 'inert') {
 				headerBar.removeAttribute('inert');
 				(debugGlobal) && 
-					console.log('[ytsb] removed inert from header-bar.')
+					console.log('[ytsb] removed inert from header-bar.');
 			}
 		}
 	});
 	const config = { attributes: true };
 	observer.observe(headerBar, config);
+	isHeaderBarListenerAttached = true;
 	return true;
 }
 
