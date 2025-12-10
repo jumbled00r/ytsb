@@ -32,6 +32,7 @@ let stdResI = null;
 let videoElement = null;
 let checkPlayedID = null;
 let checkNavigationID = null;
+let headerBarObserver = null;
 let autoHDglobal = false;
 let backgroundPlayState = false;
 let blockExploreSectionGlobal = false;
@@ -525,17 +526,16 @@ function setupResolution() {
 	(debugGlobal) && console.log(`[ytsb] Resolution = ${resolution}`);
 }
 
-let isHeaderBarListenerAttached = false;
-
 function setupHeaderBarListener() {
-	if (isHeaderBarListenerAttached) {
-		return true;
+	if (headerBarObserver) {
+		headerBarObserver.disconnect();
+		headerBarObserver = null;
 	}
 	const headerBar = document.getElementById('header-bar');
 	if (!headerBar) {
 		return false;
 	}
-	const observer = new MutationObserver((mutationsList) => {
+	headerBarObserver = new MutationObserver((mutationsList) => {
 		for (const mutation of mutationsList) {
 			if (mutation.attributeName === 'inert') {
 				headerBar.removeAttribute('inert');
@@ -545,8 +545,7 @@ function setupHeaderBarListener() {
 		}
 	});
 	const config = { attributes: true };
-	observer.observe(headerBar, config);
-	isHeaderBarListenerAttached = true;
+	headerBarObserver.observe(headerBar, config);
 	return true;
 }
 
@@ -584,6 +583,7 @@ function setupNavigationListener() {
 					(debugGlobal) &&
 						console.log('[ytsb] new currentVideoID = ' + currentVideoID);
 					attempt(setVideoElement, 225, 10);
+					attempt(setupHeaderBarListener, 30, 75);
 				}
 			}
 		}
