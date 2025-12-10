@@ -326,8 +326,7 @@ function closeMiniplayer() {
 }
 
 function setVideoQuality() {
-	if (!videoElement.paused) videoElement.pause();
-	if (videoElement.currentTime) videoElement.currentTime = 0;
+	if (videoElement.currentTime < 5) videoElement.currentTime = 0;
 	function findElement(el_options, el_selection, label_lowercase) {
 		return Array.from(document.querySelectorAll(el_options)).find(item => 
 			item.querySelector(el_selection)?.textContent?.trim().toLowerCase() === label_lowercase);
@@ -395,7 +394,7 @@ function setVideoQuality() {
 				attempt(mvq_qualityOption, 250, 1);
 			});
 		});
-		if (videoElement.currentTime) videoElement.currentTime = 0;
+		if (videoElement.currentTime < 5) videoElement.currentTime = 0;
 		videoElement.play();
 	} else {
 		function dvq_settings() {
@@ -457,7 +456,7 @@ function setVideoQuality() {
 				});
 			});
 		});
-		if (videoElement.currentTime) videoElement.currentTime = 0;
+		if (videoElement.currentTime < 5) videoElement.currentTime = 0;
 		videoElement.play();
 	}
 }
@@ -478,7 +477,7 @@ function setVideoElement() {
 		if (autoHDglobal) {
 			if (videoElement.muted) videoElement.muted = false;
 			if (!videoElement.paused) videoElement.pause();
-			if (videoElement.currentTime) videoElement.currentTime = 0;
+			if (videoElement.currentTime < 5) videoElement.currentTime = 0;
 			if (!mobileDomain) {
 				setVideoQuality();
 			} else {
