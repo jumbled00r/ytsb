@@ -596,9 +596,6 @@ function setupNavigationListener() {
 					videoElement.pause();
 				}
 			}
-			if (location.pathname === '/watch') {
-				attempt(setVideoElement, 500, 10);
-			}
 			redirectHomepage();
 		});
 		document.addEventListener('yt-navigate-finish', function(event) {
@@ -608,6 +605,9 @@ function setupNavigationListener() {
 				}
 			}
 			currentPathName = location.pathname;
+			if (currentPathName === '/watch') {
+				attempt(setVideoElement, 225, 10);
+			}
 			if (!mobileDomain && settingsApplied) {
 				attempt(blockSidebarSections, 30, 75);
 			}
@@ -915,9 +915,6 @@ browser.runtime.onMessage.addListener((request) => {
 			if (request.backgroundPlay) {
 				setupBackgroundPlay();
 				backgroundPlayState = true;
-			}
-			if (!mobileDomain && location.pathname === '/watch') {
-				attempt(setVideoElement, 500, 10);
 			}
 			setTimeout(() => {
 				settingsApplied = true;
