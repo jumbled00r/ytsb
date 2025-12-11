@@ -539,10 +539,10 @@ function clearKeepPaused() {
 function setupKeepPaused() {
 	if (keepPausedID) return;
 	function keepPaused() {
-		const lVideoElement = document.querySelector('.html5-main-video');
-		if (!lVideoElement) return;
-		lVideoElement.pause();
-		if (lVideoElement.currentTime < 2) lVideoElement.currentTime = 0;
+		const tVideoElement = document.querySelector('.html5-main-video');
+		if (!tVideoElement) return;
+		tVideoElement.pause();
+		if (tVideoElement.currentTime < 2) tVideoElement.currentTime = 0;
 	}
 	keepPausedID = setInterval(keepPaused, 16);
 	(debugGlobal) && console.log('[ytsb] keepPaused() started.');
@@ -585,7 +585,7 @@ function setupNavigationListener() {
 	if (mobileDomain) {
 		currentPathName = null;
 		function checkNavigation() {
-			if (location.pathname != currentPathName) {
+			if (location.pathname !== currentPathName) {
 				redirectHomepage();
 				currentPathName = location.pathname;
 				if (currentPathName === '/watch') {
@@ -599,7 +599,7 @@ function setupNavigationListener() {
 			} else if (currentPathName === '/watch') {
 				const fullURL = new URL(location.href);
 				const newVideoID = extractVideoID(fullURL.search);
-				if (newVideoID != currentVideoID) {
+				if (newVideoID !== currentVideoID) {
 					currentVideoID = newVideoID;
 					(debugGlobal) &&
 						console.log('[ytsb] new currentVideoID = ' + currentVideoID);
@@ -795,7 +795,7 @@ function updateBlocking(
 		removeCSS(VOICE_SEARCH_STYLE_ID);
 	}
 	autoHDglobal = autoHD;
-	if (backgroundPlay != backgroundPlayState) {
+	if (backgroundPlay !== backgroundPlayState) {
 		if (backgroundPlay && !backgroundPlayState) {
 			setupBackgroundPlay();
 			backgroundPlayState = true;
@@ -930,6 +930,8 @@ browser.runtime.onMessage.addListener((request) => {
 			}
 			settingsInitialized = true;
 			debugGlobal = request.debug;
+			autoHDglobal = request.autoHD;
+			setupResolution();
 			mobileDomain =
 				window.location.hostname.startsWith('m.') ? true : mobileDomain;
 			if (!mobileDomain &&
@@ -939,7 +941,6 @@ browser.runtime.onMessage.addListener((request) => {
 				setupKeepPaused();
 				attempt(setVideoElement, 225, 10);	
 			}
-			setupResolution();
 			setupNavigationListener();
 			if (!mobileDomain) {
 				attempt(setupGuideButtonListener, 30, 75);
