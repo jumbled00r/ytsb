@@ -31,6 +31,7 @@ const stdRes = [
 let stdResI = null;
 let videoElement = null;
 let checkPlayedID = null;
+let keepPausedID = null;
 let checkNavigationID = null;
 let headerBarObserver = null;
 let autoHDglobal = false;
@@ -327,7 +328,6 @@ function closeMiniplayer() {
 }
 
 function setVideoQuality() {
-	if (videoElement.currentTime < 5) videoElement.currentTime = 0;
 	function findElement(el_options, el_selection, label_lowercase) {
 		return Array.from(document.querySelectorAll(el_options)).find(item => 
 			item.querySelector(el_selection)?.textContent?.trim().toLowerCase() === label_lowercase);
@@ -392,11 +392,11 @@ function setVideoQuality() {
 		}
 		attempt(mvq_settings, 250, 1, () => {
 			attempt(mvq_qualityListOption, 250, 1, () => {
-				attempt(mvq_qualityOption, 250, 1);
+				attempt(mvq_qualityOption, 250, 1, () => {
+					videoElement.play();
+				});
 			});
 		});
-		if (videoElement.currentTime < 5) videoElement.currentTime = 0;
-		videoElement.play();
 	} else {
 		function dvq_settings() {
 			const settingsButton = document.querySelector('.ytp-settings-button');
@@ -444,21 +444,22 @@ function setVideoQuality() {
 			if (!settingsButton) return false;
 			setTimeout(() => {
 				settingsButton.click();
-			}, 0);
+			}, 1);
 			setTimeout(() => {
 				settingsButton.click();
-			}, 0);
+			}, 1);
 			return true;
 		}
 		attempt(dvq_settings, 250, 1, () => {
 			attempt(dvq_qualityMenuItem, 250, 1, () => {
 				attempt(dvq_qualityOption, 250, 1, () => {
-					attempt(dvq_closeSettings, 250, 1);
+					attempt(dvq_closeSettings, 250, 1, () => {
+						clearKeepPaused();
+						videoElement.play();
+					});
 				});
 			});
 		});
-		if (videoElement.currentTime < 5) videoElement.currentTime = 0;
-		videoElement.play();
 	}
 }
 
@@ -478,7 +479,7 @@ function setVideoElement() {
 		if (autoHDglobal) {
 			if (videoElement.muted) videoElement.muted = false;
 			if (!videoElement.paused) videoElement.pause();
-			if (videoElement.currentTime < 5) videoElement.currentTime = 0;
+			if (videoElement.currentTime < 2) videoElement.currentTime = 0;
 			if (!mobileDomain) {
 				setVideoQuality();
 			} else {
@@ -525,6 +526,22 @@ function setupResolution() {
 	}
 	(debugGlobal) && console.log(`[ytsb] Resolution = ${resolution}`);
 }
+	
+function clearKeepPaused() {
+	if (!keepPausedID) return;
+	clearInterval(keepPausedID);
+	keepPausedID = null;
+	(debugGlobal) && console.log('[ytsb] keepPaused() finished.');
+}
+
+function setupKeepPaused() {
+	if (keepPausedID) return;
+	function keepPaused() {
+		document.querySelector('.html5-main-video').pause();
+	}
+	keepPausedID = setInterval(keepPaused, 16);
+	(debugGlobal) && console.log('[ytsb] keepPaused() started.');
+}
 
 function setupHeaderBarObserver() {
 	if (headerBarObserver) {
@@ -564,6 +581,7 @@ function setupNavigationListener() {
 		currentPathName = null;
 		function checkNavigation() {
 			if (location.pathname != currentPathName) {
+				redirectHomepage();
 				currentPathName = location.pathname;
 				if (currentPathName === '/watch') {
 					const fullURL = new URL(location.href);
@@ -571,9 +589,7 @@ function setupNavigationListener() {
 					(debugGlobal) &&
 						console.log('[ytsb] currentVideoID = ' + currentVideoID);
 					attempt(setVideoElement, 225, 10);
-				}
-				if (settingsApplied) {
-					redirectHomepage();
+					attempt(setupHeaderBarObserver, 30, 75);
 				}
 			} else if (currentPathName === '/watch') {
 				const fullURL = new URL(location.href);
@@ -591,12 +607,14 @@ function setupNavigationListener() {
 		attempt(setupHeaderBarObserver, 30, 75);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
+			redirectHomepage();
 			if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
-				if (videoElement && !videoElement.paused) {
+				if (autoHDglobal) {
+					setupKeepPaused();
+				} else if (videoElement && !videoElement.paused) {
 					videoElement.pause();
 				}
 			}
-			redirectHomepage();
 		});
 		document.addEventListener('yt-navigate-finish', function(event) {
 			if (currentPathName === '/watch' && location.pathname !== '/watch') {
@@ -608,7 +626,7 @@ function setupNavigationListener() {
 			if (currentPathName === '/watch') {
 				attempt(setVideoElement, 225, 10);
 			}
-			if (!mobileDomain && settingsApplied) {
+			if (settingsApplied) {
 				attempt(blockSidebarSections, 30, 75);
 			}
 		});
