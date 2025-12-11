@@ -538,6 +538,7 @@ function setupKeepPaused() {
 	if (keepPausedID) return;
 	function keepPaused() {
 		const lVideoElement = document.querySelector('.html5-main-video');
+		if (!lVideoElement) return;
 		lVideoElement.pause();
 		if (lVideoElement.currentTime < 2) lVideoElement.currentTime = 0;
 	}
