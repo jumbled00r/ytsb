@@ -537,7 +537,9 @@ function clearKeepPaused() {
 function setupKeepPaused() {
 	if (keepPausedID) return;
 	function keepPaused() {
-		document.querySelector('.html5-main-video').pause();
+		const lVideoElement = document.querySelector('.html5-main-video');
+		lVideoElement.pause();
+		if (lVideoElement.currentTime < 2) lVideoElement.currentTime = 0;
 	}
 	keepPausedID = setInterval(keepPaused, 16);
 	(debugGlobal) && console.log('[ytsb] keepPaused() started.');
@@ -623,10 +625,10 @@ function setupNavigationListener() {
 				}
 			}
 			currentPathName = location.pathname;
-			if (currentPathName === '/watch') {
-				attempt(setVideoElement, 225, 10);
-			}
 			if (settingsApplied) {
+				if (currentPathName === '/watch') {
+					attempt(setVideoElement, 225, 10);
+				}
 				attempt(blockSidebarSections, 30, 75);
 			}
 		});
@@ -924,6 +926,13 @@ browser.runtime.onMessage.addListener((request) => {
 			debugGlobal = request.debug;
 			mobileDomain =
 				window.location.hostname.startsWith('m.') ? true : mobileDomain;
+			if (!mobileDomain &&
+				request.autoHD &&
+				request.blockPlaybackOnNav &&
+				location.pathname === '/watch') {
+				setupKeepPaused();
+				attempt(setVideoElement, 225, 10);	
+			}
 			setupResolution();
 			setupNavigationListener();
 			if (!mobileDomain) {
