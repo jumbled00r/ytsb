@@ -611,10 +611,13 @@ function setupNavigationListener() {
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
 			redirectHomepage();
-			if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
-				if (autoHDglobal) {
+			if (autoHDglobal &&
+				blockPlaybackOnNavGlobal &&
+				location.pathname === '/watch') {
 					setupKeepPaused();
-				} else if (videoElement && !videoElement.paused) {
+			}
+			if (blockPlaybackOnNavGlobal && currentPathName === '/watch') {
+				if (videoElement && !videoElement.paused) {
 					videoElement.pause();
 				}
 			}
