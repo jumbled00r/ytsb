@@ -109,6 +109,8 @@ ytm-compact-channel-renderer:has(
 	a[href*="/@youtubetv"]),
 ytm-video-with-context-renderer:has(
 	ytm-badge[data-type="BADGE_STYLE_TYPE_YPC"]),
+ytd-universal-watch-card-renderer:has(badge-shape[aria-label="$"]),
+yt-lockup-view-model:has(.yt-badge-shape--commerce),
 ytd-shelf-renderer:has(
 	a[href*="/feed/storefront"]),
 ytd-channel-renderer:has(
