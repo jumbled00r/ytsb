@@ -92,7 +92,7 @@ ytd-expandable-metadata-renderer[has-video-summary] {
 `;
 
 const AI_PLAYLISTS_CSS = `
-ytm-rich-section-renderer:has(a[href*="/feed/history"]),
+ytm-rich-section-renderer:has(a[href^="/feed/history"]),
 ytm-rich-item-renderer:has(a[href*="list=RD"]),
 ytm-universal-watch-card-renderer:has(a[href*="list=RD"]),
 ytd-rich-item-renderer:has(div[class*="content-id-RD"]),
@@ -104,37 +104,37 @@ ytd-playlist-panel-renderer[playlist-type^="RD"] {
 
 const MOVIES_CSS = `
 ytm-compact-link-renderer:has(
-	a[href*="/feed/storefront"]),
+	a[href^="/feed/storefront"]),
 ytm-compact-channel-renderer:has(
-	a[href*="/channel/UClgRkhTL3_hImCAmdLfDE4g"],
-	a[href*="/channel/UCC7QOlwrWzQyOlZ1zpjOSjg"],
-	a[href*="/@youtubetv"]),
+	a[href^="/channel/UClgRkhTL3_hImCAmdLfDE4g"],
+	a[href^="/channel/UCC7QOlwrWzQyOlZ1zpjOSjg"],
+	a[href^="/@youtubetv"]),
 ytm-video-with-context-renderer:has(
 	ytm-badge[data-type="BADGE_STYLE_TYPE_YPC"]),
 ytd-universal-watch-card-renderer:has(badge-shape[aria-label="$"]),
 yt-lockup-view-model:has(.yt-badge-shape--commerce),
 ytd-shelf-renderer:has(
-	a[href*="/feed/storefront"]),
+	a[href^="/feed/storefront"]),
 ytd-channel-renderer:has(
-	a[href*="/channel/UClgRkhTL3_hImCAmdLfDE4g"],
-	a[href*="/channel/UCC7QOlwrWzQyOlZ1zpjOSjg"],
-	a[href*="/@youtubetv"]),
+	a[href^="/channel/UClgRkhTL3_hImCAmdLfDE4g"],
+	a[href^="/channel/UCC7QOlwrWzQyOlZ1zpjOSjg"],
+	a[href^="/@youtubetv"]),
 ytd-movie-renderer {
 	display: none !important;
 }
 `;
 
 const PLAYABLES_CSS = `
-ytd-horizontal-card-list-renderer:has([href*="/gaming/games"]),
-ytd-item-section-renderer:has(a[href*="/playables"]),
-ytd-rich-shelf-renderer:has(a[href*="/playables"]) {
+ytd-horizontal-card-list-renderer:has([href^="/gaming"]),
+ytd-item-section-renderer:has(a[href^="/playables"]),
+ytd-rich-shelf-renderer:has(a[href^="/playables"]) {
 	display: none !important;
 }
 `;
 
 const PREMIUM_NAG_CSS = `
 tp-yt-iron-dropdown.style-scope.ytd-popup-container,
-ytm-compact-link-renderer:has(a[href*="/premium"]),
+ytm-compact-link-renderer:has(a[href^="/premium"]),
 a[aria-label="Open App"],
 yt-mealbar-promo-renderer,
 tp-yt-paper-toast#toast {
@@ -219,11 +219,11 @@ ytd-guide-downloads-entry-renderer {
 
 const EXPLORE_LINK_CSS = `
 ytm-chip-cloud-chip-renderer > .chip-container[aria-label="Explore"],
-ytd-rich-metadata-renderer:has(a[href="/gaming"]),
-ytd-rich-metadata-renderer:has(a[href="/podcasts"]),
+ytd-rich-metadata-renderer:has(a[href^="/gaming"]),
+ytd-rich-metadata-renderer:has(a[href^="/podcasts"]),
 ytd-rich-metadata-renderer:has(a[href^="/feed/storefront"]),
-ytd-rich-metadata-renderer:has(a[href="/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ"]),
-ytd-rich-metadata-renderer:has(a[href="/channel/UCEgdi0XIXXZ-qJOFPf4JSKw"]) {
+ytd-rich-metadata-renderer:has(a[href^="/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ"]),
+ytd-rich-metadata-renderer:has(a[href^="/channel/UCEgdi0XIXXZ-qJOFPf4JSKw"]) {
 	display: none !important;
 }
 `;
@@ -231,7 +231,7 @@ ytd-rich-metadata-renderer:has(a[href="/channel/UCEgdi0XIXXZ-qJOFPf4JSKw"]) {
 const SHORTS_LINK_CSS = `
 ytm-pivot-bar-item-renderer:has(.pivot-shorts),
 a[title="Shorts"],
-a[href="/shorts/"] {
+a[href^="/shorts"] {
 	display: none !important;
 }
 `;
