@@ -222,7 +222,8 @@ ytm-chip-cloud-chip-renderer > .chip-container[aria-label="Explore"] {
 `;
 
 const SHORTS_LINK_CSS = `
-ytd-guide-entry-renderer:has(a[title="Shorts"]),
+ytm-pivot-bar-item-renderer:has(.pivot-shorts),
+a[title="Shorts"],
 a[href="/shorts/"] {
 	display: none !important;
 }
