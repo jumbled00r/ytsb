@@ -590,7 +590,7 @@ function setupNavigationListener() {
 				redirectHomepage();
 				currentPathName = location.pathname;
 				if (currentPathName === '/' && blockChipBarGlobal) 
-						applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
+					applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
 				if (currentPathName === '/watch') {
 					if (blockChipBarGlobal) removeCSS(CHIP_BAR_STYLE_ID);
 					const fullURL = new URL(location.href);
