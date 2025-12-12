@@ -500,7 +500,7 @@ function setVideoElement() {
 	if (videoElement) {
 		if (autoHDglobal) {
 			if (videoElement.muted) videoElement.muted = false;
-			if (isPlaylistPanelVisible) return;
+			if (isPlaylistPanelVisible) return true;
 			if (!videoElement.paused) videoElement.pause();
 			if (videoElement.currentTime < 2) videoElement.currentTime = 0;
 			if (!mobileDomain) {
