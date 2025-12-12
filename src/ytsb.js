@@ -36,6 +36,7 @@ let checkNavigationID = null;
 let headerBarObserver = null;
 let autoHDglobal = false;
 let backgroundPlayState = false;
+let isPlaylistPanelVisible = false;
 let blockChipBarGlobal = false;
 let blockExploreSectionGlobal = false;
 let blockMoreSectionGlobal = false;
@@ -134,6 +135,7 @@ ytd-rich-shelf-renderer:has(a[href^="/playables"]) {
 
 const PREMIUM_NAG_CSS = `
 tp-yt-iron-dropdown.style-scope.ytd-popup-container,
+tp-yt-paper-tooltip,
 ytm-compact-link-renderer:has(a[href^="/premium"]),
 a[aria-label="Open App"],
 yt-mealbar-promo-renderer,
@@ -219,6 +221,7 @@ ytd-guide-downloads-entry-renderer {
 
 const EXPLORE_LINK_CSS = `
 ytm-chip-cloud-chip-renderer > .chip-container[aria-label="Explore"],
+#teaser-carousel:has(a[href*="ytkids"]),
 ytd-rich-metadata-renderer:has(a[href^="/gaming"]),
 ytd-rich-metadata-renderer:has(a[href^="/podcasts"]),
 ytd-rich-metadata-renderer:has(a[href^="/feed/storefront"]),
@@ -488,14 +491,15 @@ function redirectHomepage() {
 	}
 }
 
-function isPlaylistPanelVisible() {
+function setIsPlaylistPanelVisible() {
 	const playlistPanel =
 		mobileDomain ? 
 		document.querySelector('ytm-playlist-engagement-panel-header') : 
 		document.querySelector('ytd-playlist-panel-renderer');
-	if (!playlistPanel) return false;
-	const isVisible = window.getComputedStyle(playlistPanel).display !== 'none';
-	return isVisible;
+	isPlaylistPanelVisible =
+		!playlistPanel ?
+		false :
+		window.getComputedStyle(playlistPanel).display !== 'none';
 }
 
 function setVideoElement() {
@@ -503,7 +507,8 @@ function setVideoElement() {
 	if (videoElement) {
 		if (videoElement.muted) videoElement.muted = false;
 		if (autoHDglobal) {
-			if (isPlaylistPanelVisible()) return true;
+			setIsPlaylistPanelVisible();
+			if (isPlaylistPanelVisible) return true;
 			if (!videoElement.paused) videoElement.pause();
 			if (videoElement.currentTime < 2) videoElement.currentTime = 0;
 			if (!mobileDomain) {
@@ -519,9 +524,10 @@ function setVideoElement() {
 						setVideoQuality();
 						clearCheckPlayed();
 					}
+					setIsPlaylistPanelVisible();
 					if (currentPathName !== '/watch' ||
 						!autoHDglobal ||
-						isPlaylistPanelVisible())
+						isPlaylistPanelVisible)
 							clearCheckPlayed();
 					videoElement = document.querySelector('.html5-main-video');
 				}
@@ -564,13 +570,15 @@ function clearKeepPaused() {
 }
 
 function setupKeepPaused() {
-	if (isPlaylistPanelVisible() || keepPausedID) return;
+	setIsPlaylistPanelVisible();
+	if (keepPausedID || isPlaylistPanelVisible) return;
 	function keepPaused() {
 		const tVideoElement = document.querySelector('.html5-main-video');
 		if (!tVideoElement) return;
 		tVideoElement.pause();
 		if (tVideoElement.currentTime < 2) tVideoElement.currentTime = 0;
-		if (isPlaylistPanelVisible()) clearKeepPaused();
+		setIsPlaylistPanelVisible();
+		if (isPlaylistPanelVisible) clearKeepPaused();
 	}
 	keepPausedID = setInterval(keepPaused, 16);
 	(debugGlobal) && console.log('[ytsb] keepPaused() started.');
@@ -646,7 +654,7 @@ function setupNavigationListener() {
 			redirectHomepage();
 			if (autoHDglobal &&
 				blockPlaybackOnNavGlobal &&
-				!isPlaylistPanelVisible() &&
+				!isPlaylistPanelVisible &&
 				location.pathname === '/watch') {
 					setupKeepPaused();
 			}
