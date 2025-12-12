@@ -488,11 +488,19 @@ function redirectHomepage() {
 	}
 }
 
+function isPlaylistPanelVisible() {
+	const playlistPanel = document.querySelector('ytd-playlist-panel-renderer');
+	if (!playlistPanel) return false;
+	const isVisible = !playlistPanel.hasAttribute('hidden');
+	return isVisible;
+}
+
 function setVideoElement() {
 	videoElement = document.querySelector('.html5-main-video');
 	if (videoElement) {
 		if (autoHDglobal) {
 			if (videoElement.muted) videoElement.muted = false;
+			if (isPlaylistPanelVisible) return;
 			if (!videoElement.paused) videoElement.pause();
 			if (videoElement.currentTime < 2) videoElement.currentTime = 0;
 			if (!mobileDomain) {
@@ -550,6 +558,11 @@ function clearKeepPaused() {
 }
 
 function setupKeepPaused() {
+	if (isPlaylistPanelVisible) {
+		(debugGlobal) &&
+			console.log('[ytsb] temporarily disabled autoHD because a playlist is visible.');
+		return;
+	}
 	if (keepPausedID) return;
 	function keepPaused() {
 		const tVideoElement = document.querySelector('.html5-main-video');
