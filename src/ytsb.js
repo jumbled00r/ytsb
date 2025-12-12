@@ -494,7 +494,7 @@ function isPlaylistPanelVisible() {
 		document.querySelector('ytm-playlist-engagement-panel-header') : 
 		document.querySelector('ytd-playlist-panel-renderer');
 	if (!playlistPanel) return false;
-	const isVisible = !playlistPanel.hasAttribute('hidden');
+	const isVisible = window.getComputedStyle(playlistPanel).display !== 'none';
 	return isVisible;
 }
 
@@ -519,7 +519,10 @@ function setVideoElement() {
 						setVideoQuality();
 						clearCheckPlayed();
 					}
-					if (currentPathName !== '/watch' || !autoHDglobal) clearCheckPlayed();
+					if (currentPathName !== '/watch' ||
+						!autoHDglobal ||
+						isPlaylistPanelVisible())
+							clearCheckPlayed();
 					videoElement = document.querySelector('.html5-main-video');
 				}
 				if(!checkPlayedID) {
@@ -561,17 +564,13 @@ function clearKeepPaused() {
 }
 
 function setupKeepPaused() {
-	if (isPlaylistPanelVisible()) {
-		(debugGlobal) &&
-			console.log('[ytsb] temporarily disabled autoHD because a playlist is visible.');
-		return;
-	}
-	if (keepPausedID) return;
+	if (isPlaylistPanelVisible() || keepPausedID) return;
 	function keepPaused() {
 		const tVideoElement = document.querySelector('.html5-main-video');
 		if (!tVideoElement) return;
 		tVideoElement.pause();
 		if (tVideoElement.currentTime < 2) tVideoElement.currentTime = 0;
+		if (isPlaylistPanelVisible()) clearKeepPaused();
 	}
 	keepPausedID = setInterval(keepPaused, 16);
 	(debugGlobal) && console.log('[ytsb] keepPaused() started.');
@@ -647,6 +646,7 @@ function setupNavigationListener() {
 			redirectHomepage();
 			if (autoHDglobal &&
 				blockPlaybackOnNavGlobal &&
+				!isPlaylistPanelVisible() &&
 				location.pathname === '/watch') {
 					setupKeepPaused();
 			}
