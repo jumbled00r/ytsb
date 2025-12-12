@@ -523,9 +523,8 @@ function setVideoElement() {
 }
 
 function setupResolution() {
-	const DPR = mobileDomain ? window.devicePixelRatio : 1;
-	const width = window.screen.width * DPR;
-	const height = window.screen.height * DPR;
+	const width = window.screen.width * window.devicePixelRatio;
+	const height = window.screen.height * window.devicePixelRatio;
 	const minRes = Math.min(width, height);
 	let minDiff = Infinity;
 	resolution = stdRes[0];
