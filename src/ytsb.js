@@ -36,6 +36,7 @@ let checkNavigationID = null;
 let headerBarObserver = null;
 let autoHDglobal = false;
 let backgroundPlayState = false;
+let blockChipBarGlobal = false;
 let blockExploreSectionGlobal = false;
 let blockMoreSectionGlobal = false;
 let blockPlaybackOnNavGlobal = false;
@@ -588,7 +589,10 @@ function setupNavigationListener() {
 			if (location.pathname !== currentPathName) {
 				redirectHomepage();
 				currentPathName = location.pathname;
+				if (currentPathName === '/' && blockChipBarGlobal) 
+						applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
 				if (currentPathName === '/watch') {
+					if (blockChipBarGlobal) removeCSS(CHIP_BAR_STYLE_ID);
 					const fullURL = new URL(location.href);
 					currentVideoID = extractVideoID(fullURL.search);
 					(debugGlobal) &&
@@ -866,8 +870,10 @@ function updateBlocking(
 	} else {
 		removeCSS(CLIP_STYLE_ID);
 	}
+	blockChipBarGlobal = blockChipBar;
 	if (blockChipBar) {
-		applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
+		if (mobileDomain && currentPathName === '/' || !mobileDomain)
+			applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
 	} else {
 		removeCSS(CHIP_BAR_STYLE_ID);
 	}
