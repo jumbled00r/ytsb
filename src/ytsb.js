@@ -126,14 +126,15 @@ ytd-movie-renderer {
 
 const PLAYABLES_CSS = `
 ytd-horizontal-card-list-renderer:has([href*="/gaming/games"]),
-ytd-item-section-renderer:has(a[href="/playables"]),
+ytd-item-section-renderer:has(a[href*="/playables"]),
 ytd-rich-shelf-renderer:has(a[href*="/playables"]) {
 	display: none !important;
 }
 `;
 
 const PREMIUM_NAG_CSS = `
-ytm-compact-link-renderer:has(a[href="/premium"]),
+tp-yt-iron-dropdown.style-scope.ytd-popup-container,
+ytm-compact-link-renderer:has(a[href*="/premium"]),
 a[aria-label="Open App"],
 yt-mealbar-promo-renderer,
 tp-yt-paper-toast#toast {
@@ -217,7 +218,12 @@ ytd-guide-downloads-entry-renderer {
 `;
 
 const EXPLORE_LINK_CSS = `
-ytm-chip-cloud-chip-renderer > .chip-container[aria-label="Explore"] {
+ytm-chip-cloud-chip-renderer > .chip-container[aria-label="Explore"],
+ytd-rich-metadata-renderer:has(a[href="/gaming"]),
+ytd-rich-metadata-renderer:has(a[href="/podcasts"]),
+ytd-rich-metadata-renderer:has(a[href^="/feed/storefront"]),
+ytd-rich-metadata-renderer:has(a[href="/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ"]),
+ytd-rich-metadata-renderer:has(a[href="/channel/UCEgdi0XIXXZ-qJOFPf4JSKw"]) {
 	display: none !important;
 }
 `;
@@ -361,7 +367,7 @@ function setVideoQuality() {
 			if (!qualityListOption) return false;
 			setTimeout(() => {
 				qualityListOption.click();
-			}, 0);
+			}, 1);
 			return true;
 		}
 		function mvq_qualityOption() {
@@ -372,7 +378,7 @@ function setVideoQuality() {
 			if (qualityOption) {
 				setTimeout(() => {
 					qualityOption.click();
-				}, 0);
+				}, 1);
 				(debugGlobal) && 
 					console.log(`[ytsb] Successfully set video quality to ${resolution}p`);
 				return true;
@@ -385,7 +391,7 @@ function setVideoQuality() {
 						if (tResOpt) {
 							setTimeout(() => {
 								tResOpt.click();
-							}, 0);
+							}, 1);
 							(debugGlobal) && 
 								console.log(`[ytsb] ${resolution}p unavailable. Set quality to closest fallback: ${altRes}p`);
 							return true;
@@ -398,7 +404,9 @@ function setVideoQuality() {
 		attempt(mvq_settings, 250, 1, () => {
 			attempt(mvq_qualityListOption, 250, 1, () => {
 				attempt(mvq_qualityOption, 250, 1, () => {
-					videoElement.play();
+					setTimeout(() => {
+						videoElement.play();
+					}, 1);
 				});
 			});
 		});
@@ -416,7 +424,7 @@ function setVideoQuality() {
 			if (!qualityMenuItem) return false;
 			setTimeout(() => {
 				qualityMenuItem.click();
-			}, 0);
+			}, 1);
 			return true;
 		}
 		function dvq_qualityOption() {
@@ -424,7 +432,7 @@ function setVideoQuality() {
 			if (qualityOption) {
 				setTimeout(() => {
 					qualityOption.click();
-				}, 0);
+				}, 1);
 				(debugGlobal) && 
 					console.log(`[ytsb] Successfully set video quality to ${resolution}p`);
 				return true;
@@ -435,7 +443,7 @@ function setVideoQuality() {
 					if (tResOpt) {
 						setTimeout(() => {
 							tResOpt.click();
-						}, 0);
+						}, 1);
 						(debugGlobal) && 
 							console.log(`[ytsb] ${resolution}p unavailable. Set quality to closest fallback: ${altRes}p`);
 						return true;
@@ -460,7 +468,9 @@ function setVideoQuality() {
 				attempt(dvq_qualityOption, 250, 1, () => {
 					attempt(dvq_closeSettings, 250, 1, () => {
 						clearKeepPaused();
-						videoElement.play();
+						setTimeout(() => {
+							videoElement.play();
+						}, 1);
 					});
 				});
 			});
@@ -473,7 +483,7 @@ function redirectHomepage() {
 		if (location.pathname === '/') {
 			setTimeout(() => {
 				location.href = '/feed/subscriptions';
-			}, 500);
+			}, 250);
 		}
 	}
 }
@@ -513,8 +523,9 @@ function setVideoElement() {
 }
 
 function setupResolution() {
-	const width = window.screen.width * window.devicePixelRatio;
-	const height = window.screen.height * window.devicePixelRatio;
+	const DPR = mobileDomain ? window.devicePixelRatio : 1;
+	const width = window.screen.width * DPR;
+	const height = window.screen.height * DPR;
 	const minRes = Math.min(width, height);
 	let minDiff = Infinity;
 	resolution = stdRes[0];
@@ -599,8 +610,8 @@ function setupNavigationListener() {
 					currentVideoID = extractVideoID(fullURL.search);
 					(debugGlobal) &&
 						console.log('[ytsb] currentVideoID = ' + currentVideoID);
-					attempt(setVideoElement, 150, 10);
-					attempt(setupHeaderBarObserver, 30, 75);
+					attempt(setVideoElement, 200, 10);
+					attempt(setupHeaderBarObserver, 40, 50);
 				}
 			} else if (currentPathName === '/watch') {
 				const fullURL = new URL(location.href);
@@ -609,13 +620,13 @@ function setupNavigationListener() {
 					currentVideoID = newVideoID;
 					(debugGlobal) &&
 						console.log('[ytsb] new currentVideoID = ' + currentVideoID);
-					attempt(setVideoElement, 150, 10);
-					attempt(setupHeaderBarObserver, 30, 75);
+					attempt(setVideoElement, 200, 10);
+					attempt(setupHeaderBarObserver, 40, 50);
 				}
 			}
 		}
-		checkNavigationID = setInterval(checkNavigation, 1000);
-		attempt(setupHeaderBarObserver, 30, 75);
+		checkNavigationID = setInterval(checkNavigation, 750);
+		attempt(setupHeaderBarObserver, 40, 50);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
 			redirectHomepage();
@@ -633,15 +644,15 @@ function setupNavigationListener() {
 		document.addEventListener('yt-navigate-finish', function(event) {
 			if (currentPathName === '/watch' && location.pathname !== '/watch') {
 				if (blockMiniplayerGlobal) {
-					attempt(closeMiniplayer, 30, 75);
+					attempt(closeMiniplayer, 40, 50);
 				}
 			}
 			currentPathName = location.pathname;
 			if (settingsApplied) {
 				if (currentPathName === '/watch') {
-					if (!initPaused) attempt(setVideoElement, 150, 10);
+					if (!initPaused) attempt(setVideoElement, 200, 10);
 				}
-				attempt(blockSidebarSections, 30, 75);
+				attempt(blockSidebarSections, 40, 50);
 			}
 		});
 	}
@@ -657,7 +668,7 @@ function setupGuideButtonListener() {
 	const guideButton = document.querySelector('#guide-button');
 	if (guideButton) {
 		guideButton.addEventListener('click', () => {
-			attempt(blockSidebarSections, 30, 75);
+			attempt(blockSidebarSections, 40, 50);
 		});
 		isGuideListenerAttached = true;
 		return true;
@@ -906,7 +917,7 @@ function updateBlocking(
 		removeCSS(EXPLORE_LINK_STYLE_ID);
 	}
 	blockMoreSectionGlobal = blockMoreSection;
-	(!mobileDomain) && attempt(blockSidebarSections, 30, 75);
+	(!mobileDomain) && attempt(blockSidebarSections, 40, 50);
 	if (blockShortsLink) {
 		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
 	} else {
@@ -939,23 +950,23 @@ browser.runtime.onMessage.addListener((request) => {
 			settingsInitialized = true;
 			debugGlobal = request.debug;
 			autoHDglobal = request.autoHD;
-			setupResolution();
 			mobileDomain =
 				window.location.hostname.startsWith('m.') ? true : mobileDomain;
+			setupResolution();
 			if (!mobileDomain &&
 				request.autoHD &&
 				request.blockPlaybackOnNav &&
 				location.pathname === '/watch') {
 				setupKeepPaused();
-				attempt(setVideoElement, 150, 10);	
+				attempt(setVideoElement, 200, 10);	
 				initPaused = true;
 				setTimeout(() => {
 					initPaused = false;
-				}, 1500);
+				}, 2000);
 			}
 			setupNavigationListener();
 			if (!mobileDomain) {
-				attempt(setupGuideButtonListener, 30, 75);
+				attempt(setupGuideButtonListener, 40, 50);
 				setupResizeListener();
 			}
 			if (request.backgroundPlay) {
@@ -964,7 +975,7 @@ browser.runtime.onMessage.addListener((request) => {
 			}
 			setTimeout(() => {
 				settingsApplied = true;
-			}, 500);
+			}, 1000);
 		case "updateSettings":
 			updateBlocking(
 				request.blockSearchSuggestions,
