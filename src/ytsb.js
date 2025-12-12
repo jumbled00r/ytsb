@@ -44,6 +44,7 @@ let blockMiniplayerGlobal = false;
 let blockHomepageGlobal = false;
 let settingsInitialized = false;
 let settingsApplied = false;
+let initPaused = false;
 let mobileDomain = false;
 let debugGlobal = false;
 
@@ -598,7 +599,7 @@ function setupNavigationListener() {
 					currentVideoID = extractVideoID(fullURL.search);
 					(debugGlobal) &&
 						console.log('[ytsb] currentVideoID = ' + currentVideoID);
-					attempt(setVideoElement, 225, 10);
+					attempt(setVideoElement, 150, 10);
 					attempt(setupHeaderBarObserver, 30, 75);
 				}
 			} else if (currentPathName === '/watch') {
@@ -608,7 +609,7 @@ function setupNavigationListener() {
 					currentVideoID = newVideoID;
 					(debugGlobal) &&
 						console.log('[ytsb] new currentVideoID = ' + currentVideoID);
-					attempt(setVideoElement, 225, 10);
+					attempt(setVideoElement, 150, 10);
 					attempt(setupHeaderBarObserver, 30, 75);
 				}
 			}
@@ -638,7 +639,7 @@ function setupNavigationListener() {
 			currentPathName = location.pathname;
 			if (settingsApplied) {
 				if (currentPathName === '/watch') {
-					attempt(setVideoElement, 225, 10);
+					if (!initPaused) attempt(setVideoElement, 150, 10);
 				}
 				attempt(blockSidebarSections, 30, 75);
 			}
@@ -946,7 +947,11 @@ browser.runtime.onMessage.addListener((request) => {
 				request.blockPlaybackOnNav &&
 				location.pathname === '/watch') {
 				setupKeepPaused();
-				attempt(setVideoElement, 225, 10);	
+				attempt(setVideoElement, 150, 10);	
+				initPaused = true;
+				setTimeout(() => {
+					initPaused = false;
+				}, 1500);
 			}
 			setupNavigationListener();
 			if (!mobileDomain) {
