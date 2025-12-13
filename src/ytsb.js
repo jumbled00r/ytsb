@@ -18,11 +18,11 @@ function setupYTSBinitBlock() {
 	}
 	`;
 	styleBlock.id = YTSB_INIT_BLOCK_STYLE_ID;
-	const blockText = document.createElement('div');
-	blockText.id = YTSB_INIT_BLOCK_TEXT_ID;
 	const scriptBlock = document.createElement('script');
 	scriptBlock.type = 'text/javascript';
 	scriptBlock.id = YTSB_INIT_BLOCK_SCRIPT_ID;
+	const blockText = document.createElement('div');
+	blockText.id = YTSB_INIT_BLOCK_TEXT_ID;
 	blockText.textContent = 'YouTube Suggestion Blocker is initializing...';
 	const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 	const TEXT_COLOR = isDark ? '#ffffff' : '#000000';
