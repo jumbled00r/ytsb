@@ -1105,7 +1105,7 @@ browser.runtime.onMessage.addListener((request) => {
 			);
 			setTimeout(() => {
 				destroyYTSBinitBlock();
-			}, 500);
+			}, 750);
 			(debugGlobal) && console.log("[ytsb] Settings applied.");
 			break;
 		default:
