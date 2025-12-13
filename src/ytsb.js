@@ -55,7 +55,6 @@ function setupYTSBinitBlock() {
 setupYTSBinitBlock();
 
 function destroyYTSBinitBlock() {
-	if (!initBlock) return;
 	document.documentElement.classList.remove(YTSB_INIT_BLOCK_STYLE_ID);
 	const blockIDs = [
 		YTSB_INIT_BLOCK_STYLE_ID,
@@ -1071,9 +1070,11 @@ browser.runtime.onMessage.addListener((request) => {
 				settingsApplied = true;
 			}, 1000);
 		case "updateSettings":
-			setTimeout(() => {
-				destroyYTSBinitBlock();
-			}, 1000);
+			if (initBlock) {
+				setTimeout(() => {
+					destroyYTSBinitBlock();
+				}, 1000);
+			}
 			updateBlocking(
 				request.blockSearchSuggestions,
 				request.blockVoiceSearch,
