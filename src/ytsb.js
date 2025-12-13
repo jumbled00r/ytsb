@@ -1,10 +1,10 @@
 const YTSB_INIT_BLOCK_STYLE_ID = 'ytsb-init-style';
 const YTSB_INIT_BLOCK_SCRIPT_ID = 'ytsb-init-script';
 const YTSB_INIT_BLOCK_TEXT_ID = 'ytsb-init-text';
-let initBlockDestroyed = true;
+let initBlock = false;
 
 function setupYTSBinitBlock() {
-	if (!initBlockDestroyed) return;
+	if (initBlock) return;
 	const styleBlock = document.createElement('style');
 	styleBlock.textContent = `
 	.${YTSB_INIT_BLOCK_STYLE_ID} body {
@@ -18,15 +18,18 @@ function setupYTSBinitBlock() {
 	}
 	`;
 	styleBlock.id = YTSB_INIT_BLOCK_STYLE_ID;
-	const initTextBlock = document.createElement('div');
-	initTextBlock.id = YTSB_INIT_BLOCK_TEXT_ID;
-	initTextBlock.textContent = 'YouTube Suggestion Blocker is initializing...';
+	const blockText = document.createElement('div');
+	blockText.id = YTSB_INIT_BLOCK_TEXT_ID;
+	const scriptBlock = document.createElement('script');
+	scriptBlock.type = 'text/javascript';
+	scriptBlock.id = YTSB_INIT_BLOCK_SCRIPT_ID;
+	blockText.textContent = 'YouTube Suggestion Blocker is initializing...';
 	const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 	const TEXT_COLOR = isDark ? '#ffffff' : '#000000';
 	const BG_COLOR = isDark ? '#202020' : '#f0f0f0';
 	const BORDER_COLOR = isDark ? '#ffffff' : '#444444';
 	const SHADOW_COLOR = isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)';
-	initTextBlock.style.cssText = `
+	blockText.style.cssText = `
 		font-family: Arial, sans-serif;
 		position: fixed;
 		top: 50%;
@@ -39,23 +42,20 @@ function setupYTSBinitBlock() {
 		border: 1px solid ${BORDER_COLOR};
 		box-shadow: 0 4px 8px ${SHADOW_COLOR};
 	`;
-	const scriptBlock = document.createElement('script');
-	scriptBlock.type = 'text/javascript';
-	scriptBlock.id = YTSB_INIT_BLOCK_SCRIPT_ID;
 	const target = document.documentElement;
 	if (target) {
 		target.appendChild(styleBlock);
 		target.classList.add(YTSB_INIT_BLOCK_STYLE_ID);
-		target.prepend(initTextBlock);
 		target.appendChild(scriptBlock);
-		initBlockDestroyed = false;
+		target.prepend(blockText);
+		initBlock = true;
 	}
 }
 
 setupYTSBinitBlock();
 
 function destroyYTSBinitBlock() {
-	if (initBlockDestroyed) return;
+	if (!initBlock) return;
 	document.documentElement.classList.remove(YTSB_INIT_BLOCK_STYLE_ID);
 	const blockIDs = [
 		YTSB_INIT_BLOCK_STYLE_ID,
@@ -66,7 +66,7 @@ function destroyYTSBinitBlock() {
 		const element = document.getElementById(id);
 		if (element) element.remove();
 	}
-	initBlockDestroyed = true;
+	initBlock = false;
 }
 
 const SEARCH_SUGGESTIONS_STYLE_ID = 'ytsb-search-suggestions';
@@ -1105,7 +1105,7 @@ browser.runtime.onMessage.addListener((request) => {
 			);
 			setTimeout(() => {
 				destroyYTSBinitBlock();
-			}, 1000);
+			}, 500);
 			(debugGlobal) && console.log("[ytsb] Settings applied.");
 			break;
 		default:
