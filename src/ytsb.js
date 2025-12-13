@@ -62,6 +62,9 @@ function destroyYTSBinitBlock() {
 		const element = document.getElementById(id);
 		if (element) element.remove();
 	}
+	const target = document.documentElement;
+	target.classList.remove(YTSB_INIT_BLOCK_STYLE_ID);
+	if (target.className === '') target.removeAttribute('class');
 	initBlock = false;
 }
 
