@@ -113,6 +113,7 @@ ytm-compact-channel-renderer:has(
 ytm-video-with-context-renderer:has(
 	ytm-badge[data-type="BADGE_STYLE_TYPE_YPC"]),
 ytd-universal-watch-card-renderer:has(badge-shape[aria-label="$"]),
+ytd-tvfilm-offer-module-renderer,
 yt-lockup-view-model:has(.yt-badge-shape--commerce),
 ytd-shelf-renderer:has(
 	a[href^="/feed/storefront"]),
