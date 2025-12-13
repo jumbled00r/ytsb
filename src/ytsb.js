@@ -7,10 +7,13 @@ function setupYTSBinitBlock() {
 	const styleBlock = document.createElement('style');
 	styleBlock.textContent = `
 	.${YTSB_INIT_BLOCK_STYLE_ID} body {
-		display: none !important;
+		visibility: hidden !important;
+		overflow: hidden !important;
+		opacity: 0 !important;
 	}
 	.${YTSB_INIT_BLOCK_STYLE_ID} html {
 		visibility: hidden !important;
+		overflow: hidden !important;
 	}
 	#${YTSB_INIT_BLOCK_TEXT_ID} {
 		visibility: visible !important;
