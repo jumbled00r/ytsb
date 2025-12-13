@@ -134,8 +134,6 @@ ytd-rich-shelf-renderer:has(a[href^="/playables"]) {
 `;
 
 const PREMIUM_NAG_CSS = `
-tp-yt-iron-dropdown.style-scope.ytd-popup-container,
-tp-yt-paper-tooltip,
 ytm-compact-link-renderer:has(a[href^="/premium"]),
 a[aria-label="Open App"],
 yt-mealbar-promo-renderer,
@@ -214,6 +212,7 @@ const RELATED_SESSION_END_CARDS_CSS = `
 const DOWNLOADS_LINK_CSS = `
 ytd-download-button-renderer,
 ytd-mini-guide-entry-renderer a[title="Downloads"],
+.ytDownloadListItemViewModelHost,
 ytd-guide-downloads-entry-renderer {
 	display: none !important;
 }
