@@ -54,7 +54,6 @@ setupYTSBinitBlock();
 
 function destroyYTSBinitBlock() {
 	if (!initBlock) return;
-	document.documentElement.classList.remove(YTSB_INIT_BLOCK_STYLE_ID);
 	const blockIDs = [
 		YTSB_INIT_BLOCK_STYLE_ID,
 		YTSB_INIT_BLOCK_TEXT_ID
