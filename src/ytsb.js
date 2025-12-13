@@ -1,3 +1,74 @@
+const YTSB_INIT_BLOCK_STYLE_ID = 'ytsb-init-style';
+const YTSB_INIT_BLOCK_SCRIPT_ID = 'ytsb-init-script';
+const YTSB_INIT_BLOCK_TEXT_ID = 'ytsb-init-text';
+let initBlockDestroyed = true;
+
+function setupYTSBinitBlock() {
+	if (!initBlockDestroyed) return;
+	const styleBlock = document.createElement('style');
+	styleBlock.textContent = `
+	.${YTSB_INIT_BLOCK_STYLE_ID} body {
+		display: none !important;
+	}
+	.${YTSB_INIT_BLOCK_STYLE_ID} html {
+		visibility: hidden !important;
+	}
+	#${YTSB_INIT_BLOCK_TEXT_ID} {
+		visibility: visible !important;
+	}
+	`;
+	styleBlock.id = YTSB_INIT_BLOCK_STYLE_ID;
+	const initTextBlock = document.createElement('div');
+	initTextBlock.id = YTSB_INIT_BLOCK_TEXT_ID;
+	initTextBlock.textContent = 'YouTube Suggestion Blocker is initializing...';
+	const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+	const TEXT_COLOR = isDark ? '#ffffff' : '#000000';
+	const BG_COLOR = isDark ? '#202020' : '#f0f0f0';
+	const BORDER_COLOR = isDark ? '#ffffff' : '#444444';
+	const SHADOW_COLOR = isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)';
+	initTextBlock.style.cssText = `
+		font-family: Arial, sans-serif;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		padding: 16px 16px;
+		font-size: 16px;
+		color: ${TEXT_COLOR};
+		background: ${BG_COLOR};
+		border: 1px solid ${BORDER_COLOR};
+		box-shadow: 0 4px 8px ${SHADOW_COLOR};
+	`;
+	const scriptBlock = document.createElement('script');
+	scriptBlock.type = 'text/javascript';
+	scriptBlock.id = YTSB_INIT_BLOCK_SCRIPT_ID;
+	const target = document.documentElement;
+	if (target) {
+		target.appendChild(styleBlock);
+		target.classList.add(YTSB_INIT_BLOCK_STYLE_ID);
+		target.prepend(initTextBlock);
+		target.appendChild(scriptBlock);
+		initBlockDestroyed = false;
+	}
+}
+
+setupYTSBinitBlock();
+
+function destroyYTSBinitBlock() {
+	if (initBlockDestroyed) return;
+	document.documentElement.classList.remove(YTSB_INIT_BLOCK_STYLE_ID);
+	const blockIDs = [
+		YTSB_INIT_BLOCK_STYLE_ID,
+		YTSB_INIT_BLOCK_SCRIPT_ID,
+		YTSB_INIT_BLOCK_TEXT_ID
+	];
+	for (const id of blockIDs) {
+		const element = document.getElementById(id);
+		if (element) element.remove();
+	}
+	initBlockDestroyed = true;
+}
+
 const SEARCH_SUGGESTIONS_STYLE_ID = 'ytsb-search-suggestions';
 const VOICE_SEARCH_STYLE_ID = 'ytsb-voice-search';
 const MINIPLAYER_STYLE_ID = 'ytsb-miniplayer';
@@ -1032,6 +1103,9 @@ browser.runtime.onMessage.addListener((request) => {
 				request.blockShortsSearchSuggestions,
 				request.debug
 			);
+			setTimeout(() => {
+				destroyYTSBinitBlock();
+			}, 1000);
 			(debugGlobal) && console.log("[ytsb] Settings applied.");
 			break;
 		default:
