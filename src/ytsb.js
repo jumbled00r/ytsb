@@ -1,5 +1,4 @@
 const YTSB_INIT_BLOCK_STYLE_ID = 'ytsb-init-style';
-const YTSB_INIT_BLOCK_SCRIPT_ID = 'ytsb-init-script';
 const YTSB_INIT_BLOCK_TEXT_ID = 'ytsb-init-text';
 let initBlock = false;
 
@@ -18,9 +17,6 @@ function setupYTSBinitBlock() {
 	}
 	`;
 	styleBlock.id = YTSB_INIT_BLOCK_STYLE_ID;
-	const scriptBlock = document.createElement('script');
-	scriptBlock.type = 'text/javascript';
-	scriptBlock.id = YTSB_INIT_BLOCK_SCRIPT_ID;
 	const blockText = document.createElement('div');
 	blockText.id = YTSB_INIT_BLOCK_TEXT_ID;
 	blockText.textContent = 'YouTube Suggestion Blocker is initializing...';
@@ -46,7 +42,6 @@ function setupYTSBinitBlock() {
 	if (target) {
 		target.appendChild(styleBlock);
 		target.classList.add(YTSB_INIT_BLOCK_STYLE_ID);
-		target.appendChild(scriptBlock);
 		target.prepend(blockText);
 		initBlock = true;
 	}
@@ -55,10 +50,10 @@ function setupYTSBinitBlock() {
 setupYTSBinitBlock();
 
 function destroyYTSBinitBlock() {
+	if (!initBlock) return;
 	document.documentElement.classList.remove(YTSB_INIT_BLOCK_STYLE_ID);
 	const blockIDs = [
 		YTSB_INIT_BLOCK_STYLE_ID,
-		YTSB_INIT_BLOCK_SCRIPT_ID,
 		YTSB_INIT_BLOCK_TEXT_ID
 	];
 	for (const id of blockIDs) {
@@ -1067,14 +1062,10 @@ browser.runtime.onMessage.addListener((request) => {
 				backgroundPlayState = true;
 			}
 			setTimeout(() => {
+				destroyYTSBinitBlock();
 				settingsApplied = true;
 			}, 1000);
 		case "updateSettings":
-			if (initBlock) {
-				setTimeout(() => {
-					destroyYTSBinitBlock();
-				}, 1000);
-			}
 			updateBlocking(
 				request.blockSearchSuggestions,
 				request.blockVoiceSearch,
