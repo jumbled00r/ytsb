@@ -257,6 +257,8 @@ ytm-app.sticky-player {
 const COMMENTS_CSS = `
 yt-video-metadata-carousel-view-model:has(
 	yt-comment-teaser-carousel-item-view-model),
+ytd-live-chat-frame,
+#teaser-carousel:has([aria-label*="chat"]),
 ytd-comments {
 	display: none !important;
 }
