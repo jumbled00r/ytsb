@@ -24,7 +24,7 @@ function setupYTSBinitBlock() {
 	const iW = window.innerWidth;
 	let sxRes = null;
 	if (iW >= 4000) {
-		xRes = 512;
+		sxRes = 512;
 	} else if (iW >= 2000) {
 		sxRes = 256;
 	} else if (iW >= 1000) {
