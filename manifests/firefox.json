@@ -12,7 +12,7 @@
 	],
 	"web_accessible_resources": [
 		{
-			"resources": ["backgroundPlay.js", "icons/*"],
+			"resources": ["backgroundPlay.js"],
 			"matches": ["*://*.youtube.com/*"]
 		}
 	],

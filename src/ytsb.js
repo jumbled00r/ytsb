@@ -1,5 +1,4 @@
 const YTSB_INIT_BLOCK_STYLE_ID = 'ytsb-init-style';
-const YTSB_INIT_BLOCK_TEXT_ID = 'ytsb-init-text';
 let initBlock = false;
 
 function setupYTSBinitBlock() {
@@ -15,63 +14,12 @@ function setupYTSBinitBlock() {
 		visibility: hidden !important;
 		overflow: hidden !important;
 	}
-	#${YTSB_INIT_BLOCK_TEXT_ID} {
-		visibility: visible !important;
-	}
 	`;
 	styleBlock.id = YTSB_INIT_BLOCK_STYLE_ID;
-	const blockImage = document.createElement('img');
-	const iW = window.innerWidth;
-	let sxRes = null;
-	if (iW >= 4000) {
-		sxRes = 512;
-	} else if (iW >= 2000) {
-		sxRes = 256;
-	} else if (iW >= 1000) {
-		sxRes = 128;
-	} else if (iW >= 600) {
-		sxRes = 96;
-	} else if (iW >= 400) {
-		sxRes = 64;
-	} else if (iW >= 300) {
-		sxRes = 48;
-	} else if (iW >= 200) {
-		sxRes = 32;
-	} else {
-		sxRes = 16;
-	}
-	blockImage.src = browser.runtime.getURL(`icons/sx-${sxRes}.png`);
-	const blockText = document.createElement('div');
-	blockText.id = YTSB_INIT_BLOCK_TEXT_ID;
-	blockText.textContent = 'Initializing';
-	const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-	const TEXT_COLOR = isDark ? '#ffffff' : '#000000';
-	const BG_COLOR = isDark ? '#3d3d3d' : '#f2f2f2';
-	const SHADOW_COLOR = isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.25)';
-	blockText.style.cssText = `
-		font-family: "Arial", sans-serif;
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		padding: 16px 16px;
-		font-size: 14px;
-		font-weight: 500;
-		color: ${TEXT_COLOR};
-		background: ${BG_COLOR};
-		box-shadow: 4px 4px 4px ${SHADOW_COLOR};
-		border-radius: 12px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-	`;
-	blockText.prepend(blockImage);
 	const target = document.documentElement;
 	if (target) {
 		target.appendChild(styleBlock);
 		target.classList.add(YTSB_INIT_BLOCK_STYLE_ID);
-		target.prepend(blockText);
 		initBlock = true;
 	}
 }
@@ -80,14 +28,7 @@ setupYTSBinitBlock();
 
 function destroyYTSBinitBlock() {
 	if (!initBlock) return;
-	const blockIDs = [
-		YTSB_INIT_BLOCK_STYLE_ID,
-		YTSB_INIT_BLOCK_TEXT_ID
-	];
-	for (const id of blockIDs) {
-		const element = document.getElementById(id);
-		if (element) element.remove();
-	}
+	document.getElementById(YTSB_INIT_BLOCK_STYLE_ID).remove();
 	const target = document.documentElement;
 	target.classList.remove(YTSB_INIT_BLOCK_STYLE_ID);
 	if (target.className === '') target.removeAttribute('class');
@@ -135,6 +76,8 @@ let backgroundPlayState = false;
 let isPlaylistPanelVisible = false;
 let blockChipBarGlobal = false;
 let blockExploreSectionGlobal = false;
+let exploreFound = true;
+let moreFound = true;
 let blockMoreSectionGlobal = false;
 let blockPlaybackOnNavGlobal = false;
 let blockMiniplayerGlobal = false;
@@ -395,8 +338,9 @@ function attempt(func, max_attempts, delay, callback) {
 }
 
 function blockSidebarSections() {
+	if (exploreFound && moreFound) return true;
 	const sections = document.querySelectorAll('ytd-guide-section-renderer');
-	if (sections.length < 6) {
+	if (sections.length < 4) {
 		return false;
 	}
 	for (const section of sections) {
@@ -411,9 +355,13 @@ function blockSidebarSections() {
 		let shouldBlock = false;
 		switch (title) {
 			case 'Explore':
+				if (exploreFound) continue;
+				exploreFound = true;
 				shouldBlock = blockExploreSectionGlobal;
 				break;
 			case 'More from YouTube':
+				if (moreFound) continue;
+				moreFound = true;
 				shouldBlock = blockMoreSectionGlobal;
 				break;
 			default:
@@ -425,7 +373,7 @@ function blockSidebarSections() {
 			section.style.removeProperty('display');
 		}
 	}
-	return true;
+	return (exploreFound && moreFound);
 }
 
 function closeMiniplayer() {
@@ -781,7 +729,7 @@ function setupNavigationListener() {
 				if (currentPathName === '/watch') {
 					if (!initPaused) attempt(setVideoElement, 200, 10);
 				}
-				attempt(blockSidebarSections, 40, 50);
+				(!exploreFound || !moreFound) && attempt(blockSidebarSections, 40, 50);
 			}
 		});
 	}
@@ -797,7 +745,7 @@ function setupGuideButtonListener() {
 	const guideButton = document.querySelector('#guide-button');
 	if (guideButton) {
 		guideButton.addEventListener('click', () => {
-			attempt(blockSidebarSections, 40, 50);
+			(!exploreFound || !moreFound) && attempt(blockSidebarSections, 40, 50);
 		});
 		isGuideListenerAttached = true;
 		return true;
@@ -1039,14 +987,20 @@ function updateBlocking(
 	} else {
 		removeCSS(DOWNLOADS_LINK_STYLE_ID);
 	}
-	blockExploreSectionGlobal = blockExploreSection;
+	if (blockExploreSection !== blockExploreSectionGlobal) {
+		exploreFound = false;
+		blockExploreSectionGlobal = blockExploreSection;
+	}
 	if (blockExploreSection) {
 		applyCSS(EXPLORE_LINK_CSS, EXPLORE_LINK_STYLE_ID);	
 	} else {
 		removeCSS(EXPLORE_LINK_STYLE_ID);
 	}
-	blockMoreSectionGlobal = blockMoreSection;
-	(!mobileDomain) && attempt(blockSidebarSections, 40, 50);
+	if (blockMoreSection !== blockMoreSectionGlobal) {
+		moreFound = false;
+		blockMoreSectionGlobal = blockMoreSection;
+	}
+	(!mobileDomain && !exploreFound || !moreFound) && attempt(blockSidebarSections, 40, 50);
 	if (blockShortsLink) {
 		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
 	} else {
@@ -1102,6 +1056,9 @@ browser.runtime.onMessage.addListener((request) => {
 				setupBackgroundPlay();
 				backgroundPlayState = true;
 			}
+			setTimeout(() => {
+				settingsApplied = true;
+			}, 500);
 		case "updateSettings":
 			updateBlocking(
 				request.blockSearchSuggestions,
@@ -1135,12 +1092,7 @@ browser.runtime.onMessage.addListener((request) => {
 				request.blockShortsSearchSuggestions,
 				request.debug
 			);
-			if (initBlock) {
-				setTimeout(() => {
-					destroyYTSBinitBlock();
-					settingsApplied = true;
-				}, 750);
-			}
+			destroyYTSBinitBlock();
 			(debugGlobal) && console.log("[ytsb] Settings applied.");
 			break;
 		default:
