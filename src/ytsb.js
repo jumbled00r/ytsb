@@ -733,7 +733,7 @@ function setupNavigationListener() {
 			if (location.pathname !== currentPathName) {
 				currentPathName = location.pathname;
 				if (blockChipBarGlobal && currentPathName === '/')
-						applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
+					applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
 				if (currentPathName === '/watch') {
 					if (blockChipBarGlobal) removeCSS(CHIP_BAR_STYLE_ID);
 					const cVideoID = extractVideoID(new URL(location.href).search);
