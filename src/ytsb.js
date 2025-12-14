@@ -1101,9 +1101,6 @@ browser.runtime.onMessage.addListener((request) => {
 				setupBackgroundPlay();
 				backgroundPlayState = true;
 			}
-			setTimeout(() => {
-				settingsApplied = true;
-			}, 500);
 		case "updateSettings":
 			updateBlocking(
 				request.blockSearchSuggestions,
@@ -1140,6 +1137,7 @@ browser.runtime.onMessage.addListener((request) => {
 			if (initBlock) {
 				setTimeout(() => {
 					destroyYTSBinitBlock();
+					settingsApplied = true;
 				}, 750);
 			}
 			(debugGlobal) && console.log("[ytsb] Settings applied.");
