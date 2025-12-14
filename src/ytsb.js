@@ -569,7 +569,7 @@ function setVideoElement() {
 			setIsPlaylistPanelVisible();
 			if (isPlaylistPanelVisible) return true;
 			if (!videoElement.paused) videoElement.pause();
-			if (videoElement.currentTime < 3) videoElement.currentTime = 0;
+			if (videoElement.currentTime <= 0.5) videoElement.currentTime = 0;
 			if (!mobileDomain) {
 				setVideoQuality();
 			} else {
@@ -635,7 +635,7 @@ function setupKeepPaused() {
 		const tVideoElement = document.querySelector('.html5-main-video');
 		if (!tVideoElement) return;
 		tVideoElement.pause();
-		if (tVideoElement.currentTime < 3) tVideoElement.currentTime = 0;
+		if (tVideoElement.currentTime <= 0.5) tVideoElement.currentTime = 0;
 		setIsPlaylistPanelVisible();
 		if (isPlaylistPanelVisible) clearKeepPaused();
 	}
