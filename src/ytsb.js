@@ -20,27 +20,52 @@ function setupYTSBinitBlock() {
 	}
 	`;
 	styleBlock.id = YTSB_INIT_BLOCK_STYLE_ID;
+	const blockImage = document.createElement('img');
+	const iW = window.innerWidth;
+	let sxRes = null;
+	if (iW >= 4000) {
+		xRes = 512;
+	} else if (iW >= 2000) {
+		sxRes = 256;
+	} else if (iW >= 1000) {
+		sxRes = 128;
+	} else if (iW >= 600) {
+		sxRes = 96;
+	} else if (iW >= 400) {
+		sxRes = 64;
+	} else if (iW >= 300) {
+		sxRes = 48;
+	} else if (iW >= 200) {
+		sxRes = 32;
+	} else {
+		sxRes = 16;
+	}
+	blockImage.src = browser.runtime.getURL(`icons/sx-${sxRes}.png`);
 	const blockText = document.createElement('div');
 	blockText.id = YTSB_INIT_BLOCK_TEXT_ID;
-	blockText.textContent = 'YouTube Suggestion Blocker is initializing...';
+	blockText.textContent = 'Initializing...';
 	const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 	const TEXT_COLOR = isDark ? '#ffffff' : '#000000';
-	const BG_COLOR = isDark ? '#202020' : '#f0f0f0';
-	const BORDER_COLOR = isDark ? '#ffffff' : '#444444';
+	const BG_COLOR = isDark ? '#272727' : '#f2f2f2';
 	const SHADOW_COLOR = isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)';
 	blockText.style.cssText = `
-		font-family: Arial, sans-serif;
+		font-family: "Arial", sans-serif;
 		position: fixed;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
 		padding: 16px 16px;
-		font-size: 16px;
+		font-size: 14px;
+		font-weight: 500;
 		color: ${TEXT_COLOR};
 		background: ${BG_COLOR};
-		border: 1px solid ${BORDER_COLOR};
-		box-shadow: 0 4px 8px ${SHADOW_COLOR};
+		box-shadow: 4px 4px 4px ${SHADOW_COLOR};
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
 	`;
+	blockText.prepend(blockImage);
 	const target = document.documentElement;
 	if (target) {
 		target.appendChild(styleBlock);
@@ -205,7 +230,6 @@ ytd-rich-shelf-renderer:has(a[href^="/playables"]) {
 `;
 
 const PREMIUM_NAG_CSS = `
-tp-yt-iron-dropdown:has(.ytPanelHeaderViewModelTitleHeader),
 ytm-compact-link-renderer:has(a[href^="/premium"]),
 a[aria-label="Open App"],
 yt-mealbar-promo-renderer,
@@ -596,7 +620,7 @@ function setVideoElement() {
 			setIsPlaylistPanelVisible();
 			if (isPlaylistPanelVisible) return true;
 			if (!videoElement.paused) videoElement.pause();
-			if (videoElement.currentTime < 2) videoElement.currentTime = 0;
+			if (videoElement.currentTime < 3) videoElement.currentTime = 0;
 			if (!mobileDomain) {
 				setVideoQuality();
 			} else {
@@ -662,7 +686,7 @@ function setupKeepPaused() {
 		const tVideoElement = document.querySelector('.html5-main-video');
 		if (!tVideoElement) return;
 		tVideoElement.pause();
-		if (tVideoElement.currentTime < 2) tVideoElement.currentTime = 0;
+		if (tVideoElement.currentTime < 3) tVideoElement.currentTime = 0;
 		setIsPlaylistPanelVisible();
 		if (isPlaylistPanelVisible) clearKeepPaused();
 	}
@@ -1113,7 +1137,11 @@ browser.runtime.onMessage.addListener((request) => {
 				request.blockShortsSearchSuggestions,
 				request.debug
 			);
-			destroyYTSBinitBlock();
+			if (initBlock) {
+				setTimeout(() => {
+					destroyYTSBinitBlock();
+				}, 750);
+			}
 			(debugGlobal) && console.log("[ytsb] Settings applied.");
 			break;
 		default:
