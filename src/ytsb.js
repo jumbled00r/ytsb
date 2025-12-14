@@ -553,12 +553,25 @@ function setVideoQuality() {
 	}
 }
 
+function clickSubscriptions() {
+	if (!location.pathname === '/') return true;
+	if (mobileDomain) {
+		const link = document.querySelector('div[role="tab"].pivot-subs')
+		if (!link) return false;
+		link.click();
+		return true;
+	} else {
+		const link = document.querySelector('a[href="/feed/subscriptions"]');
+		if (!link) return false;
+		link.click();
+		return true;
+	}
+}
+
 function redirectHomepage() {
 	if (blockHomepageGlobal) {
 		if (location.pathname === '/') {
-			setTimeout(() => {
-				location.href = '/feed/subscriptions';
-			}, 250);
+			attempt(clickSubscriptions, 9999, 50);
 		}
 	}
 }
@@ -679,11 +692,6 @@ function setupHeaderBarObserver() {
 	return true;
 }
 
-function extractVideoID(searchString) {
-	const params = new URLSearchParams(searchString);
-	return params.get('v');
-}
-
 let isNavigationListenerAttached = false;
 
 function setupNavigationListener() {
@@ -691,27 +699,27 @@ function setupNavigationListener() {
 		return;
 	}
 	if (mobileDomain) {
+		const extractVideoID = (searchString) => new URLSearchParams(searchString).get('v');
 		currentPathName = null;
+		let cVideoID = null;
 		function checkNavigation() {
+			redirectHomepage();
 			if (location.pathname !== currentPathName) {
-				redirectHomepage();
 				currentPathName = location.pathname;
 				if (currentPathName === '/' && blockChipBarGlobal) 
 					applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
 				if (currentPathName === '/watch') {
 					if (blockChipBarGlobal) removeCSS(CHIP_BAR_STYLE_ID);
-					const fullURL = new URL(location.href);
-					currentVideoID = extractVideoID(fullURL.search);
+					const cVideoID = extractVideoID(new URL(location.href).search);
 					(debugGlobal) &&
 						console.log('[ytsb] currentVideoID = ' + currentVideoID);
 					attempt(setVideoElement, 200, 10);
 					attempt(setupHeaderBarObserver, 40, 50);
 				}
 			} else if (currentPathName === '/watch') {
-				const fullURL = new URL(location.href);
-				const newVideoID = extractVideoID(fullURL.search);
-				if (newVideoID !== currentVideoID) {
-					currentVideoID = newVideoID;
+				const nVideoID = extractVideoID(new URL(location.href).search);
+				if (cVideoID !== nVideoID) {
+					cVideoID = nVideoID;
 					(debugGlobal) &&
 						console.log('[ytsb] new currentVideoID = ' + currentVideoID);
 					attempt(setVideoElement, 200, 10);
@@ -719,7 +727,7 @@ function setupNavigationListener() {
 				}
 			}
 		}
-		checkNavigationID = setInterval(checkNavigation, 750);
+		checkNavigationID = setInterval(checkNavigation, 500);
 		attempt(setupHeaderBarObserver, 40, 50);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
@@ -1069,9 +1077,8 @@ browser.runtime.onMessage.addListener((request) => {
 				backgroundPlayState = true;
 			}
 			setTimeout(() => {
-				destroyYTSBinitBlock();
 				settingsApplied = true;
-			}, 1000);
+			}, 500);
 		case "updateSettings":
 			updateBlocking(
 				request.blockSearchSuggestions,
@@ -1105,6 +1112,7 @@ browser.runtime.onMessage.addListener((request) => {
 				request.blockShortsSearchSuggestions,
 				request.debug
 			);
+			destroyYTSBinitBlock();
 			(debugGlobal) && console.log("[ytsb] Settings applied.");
 			break;
 		default:
