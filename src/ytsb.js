@@ -43,11 +43,11 @@ function setupYTSBinitBlock() {
 	blockImage.src = browser.runtime.getURL(`icons/sx-${sxRes}.png`);
 	const blockText = document.createElement('div');
 	blockText.id = YTSB_INIT_BLOCK_TEXT_ID;
-	blockText.textContent = 'Initializing...';
+	blockText.textContent = 'Initializing';
 	const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 	const TEXT_COLOR = isDark ? '#ffffff' : '#000000';
-	const BG_COLOR = isDark ? '#272727' : '#f2f2f2';
-	const SHADOW_COLOR = isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)';
+	const BG_COLOR = isDark ? '#3d3d3d' : '#f2f2f2';
+	const SHADOW_COLOR = isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.25)';
 	blockText.style.cssText = `
 		font-family: "Arial", sans-serif;
 		position: fixed;
@@ -60,6 +60,7 @@ function setupYTSBinitBlock() {
 		color: ${TEXT_COLOR};
 		background: ${BG_COLOR};
 		box-shadow: 4px 4px 4px ${SHADOW_COLOR};
+		border-radius: 12px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -596,7 +597,7 @@ function clickSubscriptions() {
 function redirectHomepage() {
 	if (blockHomepageGlobal) {
 		if (location.pathname === '/') {
-			attempt(clickSubscriptions, 9999, 50);
+			attempt(clickSubscriptions, 100, 50);
 		}
 	}
 }
@@ -731,8 +732,8 @@ function setupNavigationListener() {
 			redirectHomepage();
 			if (location.pathname !== currentPathName) {
 				currentPathName = location.pathname;
-				if (currentPathName === '/' && blockChipBarGlobal) 
-					applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
+				if (blockChipBarGlobal && currentPathName === '/')
+						applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
 				if (currentPathName === '/watch') {
 					if (blockChipBarGlobal) removeCSS(CHIP_BAR_STYLE_ID);
 					const cVideoID = extractVideoID(new URL(location.href).search);

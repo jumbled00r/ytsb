@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		document.body.style.width = '410px';
 	}
 	function updateBackground(isDark) {
-		document.body.style.setProperty('--background-color', isDark ? '#272727' : '#f2f2f2');
+		document.body.style.setProperty('--background-color', isDark ? '#202020' : '#f2f2f2');
 		document.body.style.setProperty('--text-color', isDark ? '#ffffff' : '#000000');
 	}
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
