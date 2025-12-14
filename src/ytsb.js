@@ -76,9 +76,9 @@ let backgroundPlayState = false;
 let isPlaylistPanelVisible = false;
 let blockChipBarGlobal = false;
 let blockExploreSectionGlobal = false;
+let blockMoreSectionGlobal = false;
 let exploreFound = true;
 let moreFound = true;
-let blockMoreSectionGlobal = false;
 let blockPlaybackOnNavGlobal = false;
 let blockMiniplayerGlobal = false;
 let blockHomepageGlobal = false;
@@ -340,9 +340,7 @@ function attempt(func, max_attempts, delay, callback) {
 function blockSidebarSections() {
 	if (exploreFound && moreFound) return true;
 	const sections = document.querySelectorAll('ytd-guide-section-renderer');
-	if (sections.length < 4) {
-		return false;
-	}
+	if (sections.length == 0) return false;
 	for (const section of sections) {
 		const element = section.querySelector('#guide-section-title');
 		if (!element) {
