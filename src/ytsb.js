@@ -205,6 +205,7 @@ ytd-rich-shelf-renderer:has(a[href^="/playables"]) {
 `;
 
 const PREMIUM_NAG_CSS = `
+tp-yt-iron-dropdown:has(.ytPanelHeaderViewModelTitleHeader),
 ytm-compact-link-renderer:has(a[href^="/premium"]),
 a[aria-label="Open App"],
 yt-mealbar-promo-renderer,
