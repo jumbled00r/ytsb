@@ -1039,7 +1039,6 @@ browser.runtime.onMessage.addListener((request) => {
 					settingsApplied = true;
 				}, 1000);
 			}
-
 			setupNavigationListener();
 			if (!mobileDomain) {
 				attempt(setupGuideButtonListener, 40, 50);
