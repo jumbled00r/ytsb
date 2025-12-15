@@ -342,13 +342,9 @@ function blockSidebarSections() {
 	if (sections.length === 0) return false;
 	for (const section of sections) {
 		const element = section.querySelector('#guide-section-title');
-		if (!element) {
-			continue;
-		}
+		if (!element) continue;
 		const title = element.textContent.trim();
-		if (!title) {
-			continue;
-		}
+		if (!title) continue;
 		let shouldBlock = false;
 		switch (title) {
 			case 'Explore':
@@ -652,9 +648,7 @@ function setupHeaderBarObserver() {
 		headerBarObserver = null;
 	}
 	const headerBar = document.getElementById('header-bar');
-	if (!headerBar) {
-		return false;
-	}
+	if (!headerBar) return false;
 	headerBarObserver = new MutationObserver((mutationsList) => {
 		for (const mutation of mutationsList) {
 			if (mutation.attributeName === 'inert') {
@@ -672,9 +666,7 @@ function setupHeaderBarObserver() {
 let isNavigationListenerAttached = false;
 
 function setupNavigationListener() {
-	if (isNavigationListenerAttached) {
-		return;
-	}
+	if (isNavigationListenerAttached) return;
 	if (mobileDomain) {
 		const getVideoID = () => new URLSearchParams(new URL(location.href).search).get('v');
 		currentPathName = null;
@@ -685,7 +677,7 @@ function setupNavigationListener() {
 			if (location.pathname !== currentPathName) {
 				currentPathName = location.pathname;
 				if (blockChipBarGlobal && currentPathName === '/')
-					applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
+					appendCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
 				if (currentPathName === '/watch') {
 					if (blockChipBarGlobal) removeCSS(CHIP_BAR_STYLE_ID);
 					cVideoID = getVideoID();
@@ -743,9 +735,7 @@ function setupNavigationListener() {
 let isGuideListenerAttached = false;
 
 function setupGuideButtonListener() {
-	if (isGuideListenerAttached) {
-		return true;
-	}
+	if (isGuideListenerAttached) return true;
 	const guideButton = document.querySelector('#guide-button');
 	if (guideButton) {
 		guideButton.addEventListener('click', () => {
@@ -761,9 +751,7 @@ let isResizeListenerAttached = false;
 const throttledBlockSidebarSections = throttle(blockSidebarSections, 25);
 
 function setupResizeListener() {
-	if (isResizeListenerAttached) {
-		return;
-	}
+	if (isResizeListenerAttached) return;
 	window.addEventListener('resize', throttledBlockSidebarSections);
 	isResizeListenerAttached = true;
 }
@@ -775,9 +763,7 @@ function toggleProgressFocus(enable) {
 		document.removeEventListener('focusin', progressFocusListener, true); 
 		progressFocusListener = null;
 	}
-	if (!enable) {
-		return;
-	}
+	if (!enable) return;
 	progressFocusListener = (event) => {
 		if (location.pathname !== '/watch' || !videoElement) {
 			return;
@@ -834,9 +820,10 @@ function setupBackgroundPlay() {
 		console.log('[ytsb] backgroundPlay.js injected.');
 }
 
-function applyCSS(css, styleId) {
+function appendCSS(css, styleId) {
 	let style = document.getElementById(styleId);
-	if (!style) {
+	if (style) return;
+	else {
 		style = document.createElement('style');
 		style.id = styleId;
 		(document.head || document.documentElement).appendChild(style);
@@ -846,9 +833,7 @@ function applyCSS(css, styleId) {
 
 function removeCSS(styleId) {
 	const style = document.getElementById(styleId);
-	if (style) {
-		style.remove();
-	}
+	if (style) style.remove();
 }
 
 function updateBlocking(
@@ -883,12 +868,12 @@ function updateBlocking(
 	blockShortsSearchSuggestions,
 	debug) {
 	if (blockSearchSuggestions) {
-		applyCSS(SEARCH_SUGGESTIONS_CSS, SEARCH_SUGGESTIONS_STYLE_ID);
+		appendCSS(SEARCH_SUGGESTIONS_CSS, SEARCH_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(SEARCH_SUGGESTIONS_STYLE_ID);
 	}
 	if (blockVoiceSearch) {
-		applyCSS(VOICE_SEARCH_CSS, VOICE_SEARCH_STYLE_ID);
+		appendCSS(VOICE_SEARCH_CSS, VOICE_SEARCH_STYLE_ID);
 	} else {
 		removeCSS(VOICE_SEARCH_STYLE_ID);
 	}
@@ -908,86 +893,86 @@ function updateBlocking(
 	blockMiniplayerGlobal = blockMiniplayer;
 	if (blockMiniplayer) {
 		closeMiniplayer();
-		applyCSS(MINIPLAYER_CSS, MINIPLAYER_STYLE_ID);
+		appendCSS(MINIPLAYER_CSS, MINIPLAYER_STYLE_ID);
 	} else {
 		removeCSS(MINIPLAYER_STYLE_ID);
 	}
 	blockHomepageGlobal = blockHomepage;
 	redirectHomepage();
 	if (blockAIrec) {
-		applyCSS(AI_REC_CSS, AI_REC_STYLE_ID);
+		appendCSS(AI_REC_CSS, AI_REC_STYLE_ID);
 	} else {
 		removeCSS(AI_REC_STYLE_ID);
 	}
 	if (blockAIplaylists) {
-		applyCSS(AI_PLAYLISTS_CSS, AI_PLAYLISTS_STYLE_ID);
+		appendCSS(AI_PLAYLISTS_CSS, AI_PLAYLISTS_STYLE_ID);
 	} else {
 		removeCSS(AI_PLAYLISTS_STYLE_ID);
 	}
 	if (blockAIsessionAsk) {
-		applyCSS(AI_SESSION_ASK_CSS, AI_SESSION_ASK_STYLE_ID);
+		appendCSS(AI_SESSION_ASK_CSS, AI_SESSION_ASK_STYLE_ID);
 	} else {
 		removeCSS(AI_SESSION_ASK_STYLE_ID);
 	}
 	if (blockAIsessionVideoSummary) {
-		applyCSS(AI_SESSION_VIDEO_SUMMARY_CSS, AI_SESSION_VIDEO_SUMMARY_STYLE_ID);
+		appendCSS(AI_SESSION_VIDEO_SUMMARY_CSS, AI_SESSION_VIDEO_SUMMARY_STYLE_ID);
 	} else {
 		removeCSS(AI_SESSION_VIDEO_SUMMARY_STYLE_ID);
 	}
 	if (blockMovies) {
-		applyCSS(MOVIES_CSS, MOVIES_STYLE_ID);
+		appendCSS(MOVIES_CSS, MOVIES_STYLE_ID);
 	} else {
 		removeCSS(MOVIES_STYLE_ID);
 	}
 	if (blockPlayables) {
-		applyCSS(PLAYABLES_CSS, PLAYABLES_STYLE_ID);
+		appendCSS(PLAYABLES_CSS, PLAYABLES_STYLE_ID);
 	} else {
 		removeCSS(PLAYABLES_STYLE_ID);
 	}
 	if (blockPremiumNag) {
-		applyCSS(PREMIUM_NAG_CSS, PREMIUM_NAG_STYLE_ID);
+		appendCSS(PREMIUM_NAG_CSS, PREMIUM_NAG_STYLE_ID);
 	} else {
 		removeCSS(PREMIUM_NAG_STYLE_ID);
 	}
 	if (blockSurveys) {
-		applyCSS(SURVEYS_CSS, SURVEYS_STYLE_ID);
+		appendCSS(SURVEYS_CSS, SURVEYS_STYLE_ID);
 	} else {
 		removeCSS(SURVEYS_STYLE_ID);
 	}
 	if (blockSponsor) {
-		applyCSS(SPONSOR_CSS, SPONSOR_STYLE_ID);
+		appendCSS(SPONSOR_CSS, SPONSOR_STYLE_ID);
 	} else {
 		removeCSS(SPONSOR_STYLE_ID);
 	}
 	if (blockClip) {
-		applyCSS(CLIP_CSS, CLIP_STYLE_ID);
+		appendCSS(CLIP_CSS, CLIP_STYLE_ID);
 	} else {
 		removeCSS(CLIP_STYLE_ID);
 	}
 	blockChipBarGlobal = blockChipBar;
 	if (blockChipBar) {
 		if (mobileDomain && currentPathName === '/' || !mobileDomain)
-			applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
+			appendCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
 	} else {
 		removeCSS(CHIP_BAR_STYLE_ID);
 	}
 	if (blockComments) {
-		applyCSS(COMMENTS_CSS, COMMENTS_STYLE_ID);
+		appendCSS(COMMENTS_CSS, COMMENTS_STYLE_ID);
 	} else {
 		removeCSS(COMMENTS_STYLE_ID);
 	}
 	if (blockRelatedSessionSuggestions) {
-		applyCSS(RELATED_SESSION_SUGGESTIONS_CSS, RELATED_SESSION_SUGGESTIONS_STYLE_ID);
+		appendCSS(RELATED_SESSION_SUGGESTIONS_CSS, RELATED_SESSION_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(RELATED_SESSION_SUGGESTIONS_STYLE_ID);
 	}
 	if (blockRelatedSessionEndCards) {
-		applyCSS(RELATED_SESSION_END_CARDS_CSS, RELATED_SESSION_END_CARDS_STYLE_ID);
+		appendCSS(RELATED_SESSION_END_CARDS_CSS, RELATED_SESSION_END_CARDS_STYLE_ID);
 	} else {
 		removeCSS(RELATED_SESSION_END_CARDS_STYLE_ID);
 	}
 	if (blockDownloadsLink) {
-		applyCSS(DOWNLOADS_LINK_CSS, DOWNLOADS_LINK_STYLE_ID);
+		appendCSS(DOWNLOADS_LINK_CSS, DOWNLOADS_LINK_STYLE_ID);
 	} else {
 		removeCSS(DOWNLOADS_LINK_STYLE_ID);
 	}
@@ -996,7 +981,7 @@ function updateBlocking(
 		blockExploreSectionGlobal = blockExploreSection;
 	}
 	if (blockExploreSection) {
-		applyCSS(EXPLORE_LINK_CSS, EXPLORE_LINK_STYLE_ID);	
+		appendCSS(EXPLORE_LINK_CSS, EXPLORE_LINK_STYLE_ID);	
 	} else {
 		removeCSS(EXPLORE_LINK_STYLE_ID);
 	}
@@ -1006,22 +991,22 @@ function updateBlocking(
 	}
 	(!mobileDomain && !exploreFound || !moreFound) && attempt(blockSidebarSections, 40, 50);
 	if (blockShortsLink) {
-		applyCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
+		appendCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
 	} else {
 		removeCSS(SHORTS_LINK_STYLE_ID);
 	}
 	if (blockShortsHomepageSuggestions) {
-		applyCSS(SHORTS_HOMEPAGE_SUGGESTIONS_CSS, SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID);
+		appendCSS(SHORTS_HOMEPAGE_SUGGESTIONS_CSS, SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(SHORTS_HOMEPAGE_SUGGESTIONS_STYLE_ID);
 	}
 	if (blockShortsSessionSuggestions) {
-		applyCSS(SHORTS_SESSION_SUGGESTIONS_CSS, SHORTS_SESSION_SUGGESTIONS_STYLE_ID);
+		appendCSS(SHORTS_SESSION_SUGGESTIONS_CSS, SHORTS_SESSION_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(SHORTS_SESSION_SUGGESTIONS_STYLE_ID);
 	}
 	if (blockShortsSearchSuggestions) {
-		applyCSS(SHORTS_SEARCH_SUGGESTIONS_CSS, SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
+		appendCSS(SHORTS_SEARCH_SUGGESTIONS_CSS, SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
 	} else {
 		removeCSS(SHORTS_SEARCH_SUGGESTIONS_STYLE_ID);
 	}
