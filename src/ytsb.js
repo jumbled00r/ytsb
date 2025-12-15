@@ -543,7 +543,9 @@ function clickSubscriptions() {
 function redirectHomepage() {
 	if (blockHomepageGlobal) {
 		if (location.pathname === '/') {
-			attempt(clickSubscriptions, 40, 50);
+			let ma = 50;
+			if (mobileDomain) ma = 15;
+			attempt(clickSubscriptions, 40, ma);
 		}
 	}
 }
@@ -562,14 +564,16 @@ function setIsPlaylistPanelVisible() {
 function setVideoElement() {
 	videoElement = document.querySelector('.html5-main-video');
 	if (videoElement) {
-		if (mobileDomain && videoElement.muted) videoElement.muted = false;
+		if (mobileDomain) {
+			if (videoElement.muted) videoElement.muted = false;
+			if (videoElement.currentTime < 0.5) videoElement.currentTime = 0;
+		}
 		if (autoHDglobal) {
 			setIsPlaylistPanelVisible();
 			if (isPlaylistPanelVisible) return true;
 			if (!mobileDomain) {
 				setVideoQuality();
 			} else {
-				if (videoElement.currentTime <= 2) videoElement.currentTime = 0;
 				function clearCheckPlayed() {
 					clearInterval(checkPlayedID);
 					checkPlayedID = null;
