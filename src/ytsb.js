@@ -1,3 +1,5 @@
+"use strict";
+
 const YTSB_INIT_BLOCK_STYLE_ID = 'ytsb-init-style';
 let initBlock = false;
 
@@ -261,6 +263,7 @@ ytd-guide-downloads-entry-renderer {
 
 const EXPLORE_LINK_CSS = `
 ytm-chip-cloud-chip-renderer > .chip-container[aria-label="Explore"],
+ytm-item-section-renderer:has(a[href*="ytkids"]),
 #teaser-carousel:has(a[href*="ytkids"]),
 ytd-rich-metadata-renderer:has(a[href^="/gaming"]),
 ytd-rich-metadata-renderer:has(a[href^="/podcasts"]),
@@ -538,9 +541,7 @@ function clickSubscriptions() {
 function redirectHomepage() {
 	if (blockHomepageGlobal) {
 		if (location.pathname === '/') {
-			let ma = 50;
-			if (mobileDomain) ma = 15;
-			attempt(clickSubscriptions, 40, ma);
+			attempt(clickSubscriptions, 40, mobileDomain ? 15 : 50);
 		}
 	}
 }
@@ -697,7 +698,7 @@ function setupNavigationListener() {
 				}
 			}
 		}
-		checkNavigationID = setInterval(checkNavigation, 750);
+		checkNavigationID = setInterval(checkNavigation, 1000);
 		attempt(setupHeaderBarObserver, 40, 50);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
@@ -987,7 +988,7 @@ function updateBlocking(
 		moreFound = false;
 		blockMoreSectionGlobal = blockMoreSection;
 	}
-	(!mobileDomain && !exploreFound || !moreFound) && attempt(blockSidebarSections, 40, 50);
+	(!mobileDomain && (!exploreFound || !moreFound)) && attempt(blockSidebarSections, 40, 50);
 	if (blockShortsLink) {
 		appendCSS(SHORTS_LINK_CSS, SHORTS_LINK_STYLE_ID);
 	} else {
