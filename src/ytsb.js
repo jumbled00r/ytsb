@@ -567,7 +567,7 @@ function setVideoElement() {
 			setIsPlaylistPanelVisible();
 			if (isPlaylistPanelVisible) return true;
 			if (!videoElement.paused) videoElement.pause();
-			if (videoElement.currentTime <= 0.5) videoElement.currentTime = 0;
+			if (mobileDomain && videoElement.currentTime <= 2) videoElement.currentTime = 0;
 			if (!mobileDomain) {
 				setVideoQuality();
 			} else {
@@ -633,9 +633,12 @@ function setupKeepPaused() {
 		const tVideoElement = document.querySelector('.html5-main-video');
 		if (!tVideoElement) return;
 		tVideoElement.pause();
-		if (tVideoElement.currentTime <= 0.5) tVideoElement.currentTime = 0;
+		if (tVideoElement.currentTime <= 0.1) tVideoElement.currentTime = 0;
 		setIsPlaylistPanelVisible();
-		if (isPlaylistPanelVisible) clearKeepPaused();
+		if (isPlaylistPanelVisible) {
+			clearKeepPaused();
+			tVideoElement.play();
+		}
 	}
 	keepPausedID = setInterval(keepPaused, 16);
 	(debugGlobal) && console.log('[ytsb] keepPaused() started.');
