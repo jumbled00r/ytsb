@@ -60,7 +60,6 @@ const SHORTS_SESSION_SUGGESTIONS_STYLE_ID = 'ytsb-shorts-session-suggestions';
 const SHORTS_SEARCH_SUGGESTIONS_STYLE_ID = 'ytsb-shorts-search-suggestions';
 
 let currentPathName = location.pathname;
-let currentVideoID = null;
 let resolution = null;
 const stdRes = [
 	144, 240, 360, 480, 720, 1080, 1440, 2160, 4320
