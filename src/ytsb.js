@@ -566,7 +566,7 @@ function setVideoElement() {
 	if (videoElement) {
 		if (mobileDomain) {
 			if (videoElement.muted) videoElement.muted = false;
-			if (videoElement.currentTime < 0.5) videoElement.currentTime = 0;
+			if (videoElement.currentTime <= 0.75) videoElement.currentTime = 0;
 		}
 		if (autoHDglobal) {
 			setIsPlaylistPanelVisible();
