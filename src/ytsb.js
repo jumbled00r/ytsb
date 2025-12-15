@@ -823,12 +823,10 @@ function setupBackgroundPlay() {
 function appendCSS(css, styleId) {
 	let style = document.getElementById(styleId);
 	if (style) return;
-	else {
-		style = document.createElement('style');
-		style.id = styleId;
-		(document.head || document.documentElement).appendChild(style);
-	}
+	style = document.createElement('style');
+	style.id = styleId;
 	style.textContent = css;
+	(document.head || document.documentElement).appendChild(style);
 }
 
 function removeCSS(styleId) {
@@ -1034,8 +1032,14 @@ browser.runtime.onMessage.addListener((request) => {
 				initPaused = true;
 				setTimeout(() => {
 					initPaused = false;
+					settingsApplied = true;
 				}, 2000);
+			} else {
+				setTimeout(() => {
+					settingsApplied = true;
+				}, 1000);
 			}
+
 			setupNavigationListener();
 			if (!mobileDomain) {
 				attempt(setupGuideButtonListener, 40, 50);
@@ -1045,9 +1049,6 @@ browser.runtime.onMessage.addListener((request) => {
 				setupBackgroundPlay();
 				backgroundPlayState = true;
 			}
-			setTimeout(() => {
-				settingsApplied = true;
-			}, 500);
 		case "updateSettings":
 			updateBlocking(
 				request.blockSearchSuggestions,
