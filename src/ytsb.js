@@ -340,7 +340,7 @@ function attempt(func, max_attempts, delay, callback) {
 function blockSidebarSections() {
 	if (exploreFound && moreFound) return true;
 	const sections = document.querySelectorAll('ytd-guide-section-renderer');
-	if (sections.length == 0) return false;
+	if (sections.length === 0) return false;
 	for (const section of sections) {
 		const element = section.querySelector('#guide-section-title');
 		if (!element) {
@@ -543,7 +543,7 @@ function clickSubscriptions() {
 function redirectHomepage() {
 	if (blockHomepageGlobal) {
 		if (location.pathname === '/') {
-			attempt(clickSubscriptions, 100, 50);
+			attempt(clickSubscriptions, 40, 50);
 		}
 	}
 }
@@ -562,34 +562,33 @@ function setIsPlaylistPanelVisible() {
 function setVideoElement() {
 	videoElement = document.querySelector('.html5-main-video');
 	if (videoElement) {
-		if (videoElement.muted) videoElement.muted = false;
+		if (mobileDomain && videoElement.muted) videoElement.muted = false;
 		if (autoHDglobal) {
 			setIsPlaylistPanelVisible();
 			if (isPlaylistPanelVisible) return true;
-			if (!videoElement.paused) videoElement.pause();
-			if (mobileDomain && videoElement.currentTime <= 2) videoElement.currentTime = 0;
 			if (!mobileDomain) {
 				setVideoQuality();
 			} else {
+				if (videoElement.currentTime <= 2) videoElement.currentTime = 0;
 				function clearCheckPlayed() {
 					clearInterval(checkPlayedID);
 					checkPlayedID = null;
 					(debugGlobal) && console.log('[ytsb] checkPlayed() finished.');
 				}
 				function checkPlayed() {
+					videoElement = document.querySelector('.html5-main-video');
 					if (!videoElement.paused) {
-						setVideoQuality();
 						clearCheckPlayed();
+						setVideoQuality();
 					}
 					setIsPlaylistPanelVisible();
 					if (currentPathName !== '/watch' ||
 						!autoHDglobal ||
 						isPlaylistPanelVisible)
-							clearCheckPlayed();
-					videoElement = document.querySelector('.html5-main-video');
+						clearCheckPlayed();
 				}
 				if(!checkPlayedID) {
-					checkPlayedID = setInterval(checkPlayed, 100);
+					checkPlayedID = setInterval(checkPlayed, 250);
 					(debugGlobal) && console.log('[ytsb] checkPlayed() started.');
 				}
 			}
@@ -674,9 +673,10 @@ function setupNavigationListener() {
 		return;
 	}
 	if (mobileDomain) {
-		const extractVideoID = (searchString) => new URLSearchParams(searchString).get('v');
+		const getVideoID = () => new URLSearchParams(new URL(location.href).search).get('v');
 		currentPathName = null;
 		let cVideoID = null;
+		let nVideoID = null;
 		function checkNavigation() {
 			redirectHomepage();
 			if (location.pathname !== currentPathName) {
@@ -685,24 +685,24 @@ function setupNavigationListener() {
 					applyCSS(CHIP_BAR_CSS, CHIP_BAR_STYLE_ID);
 				if (currentPathName === '/watch') {
 					if (blockChipBarGlobal) removeCSS(CHIP_BAR_STYLE_ID);
-					const cVideoID = extractVideoID(new URL(location.href).search);
+					cVideoID = getVideoID();
 					(debugGlobal) &&
-						console.log('[ytsb] currentVideoID = ' + currentVideoID);
+						console.log('[ytsb] cVideoID = ' + cVideoID);
 					attempt(setVideoElement, 200, 10);
 					attempt(setupHeaderBarObserver, 40, 50);
 				}
 			} else if (currentPathName === '/watch') {
-				const nVideoID = extractVideoID(new URL(location.href).search);
+				nVideoID = getVideoID();
 				if (cVideoID !== nVideoID) {
 					cVideoID = nVideoID;
 					(debugGlobal) &&
-						console.log('[ytsb] new currentVideoID = ' + currentVideoID);
+						console.log('[ytsb] cVideoID = ' + cVideoID);
 					attempt(setVideoElement, 200, 10);
 					attempt(setupHeaderBarObserver, 40, 50);
 				}
 			}
 		}
-		checkNavigationID = setInterval(checkNavigation, 500);
+		checkNavigationID = setInterval(checkNavigation, 750);
 		attempt(setupHeaderBarObserver, 40, 50);
 	} else {
 		document.addEventListener('yt-navigate-start', function(event) {
