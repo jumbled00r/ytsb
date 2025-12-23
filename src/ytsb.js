@@ -110,6 +110,7 @@ ytd-miniplayer {
 `;
 
 const AI_REC_CSS = `
+ytm-feed-nudge-renderer,
 ytd-feed-nudge-renderer,
 ytd-statement-banner-renderer,
 yt-talk-to-recs-view-model,
