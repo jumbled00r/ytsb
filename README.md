@@ -1,3 +1,6 @@
+# ⚠️ This repository has moved to Codeberg
+## Please visit the new home for YTSB here: [https://codeberg.org/jumbledoor/ytsb](https://codeberg.org/jumbledoor/ytsb)
+
 # YouTube Suggestion Blocker (YTSB)
 
 Supported on: **Desktop** (`youtube.com`) and **Mobile Web** (`m.youtube.com`).
